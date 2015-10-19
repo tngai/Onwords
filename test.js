@@ -2,6 +2,30 @@ var loadfunction = window.onload;
 
 window.onload = function(event) {
 
+  //////////////////////////////////////////
+
+    $('body').append("<div class='annotation-sidebar'></div>");
+    $('.annotation-sidebar').append("<div class=scrollview>hello</div>");
+
+    function sidebar(open) {
+      var width = $('.annotation-sidebar').width();
+      var duration = 200;
+      if (open) {
+        $('.annotation-sidebar').animate({right: 0}, duration);
+      } else {
+        $('.annotation-sidebar').animate({right: -(width-20)}, duration);
+      }
+    }
+
+    var open = false;
+    $('body').on('click', '.annotator-hl', function() {
+      console.log('esdfjkla;sjfs');
+      open = !open;
+      sidebar(open);
+    })
+
+  //////////////////////////////////////////
+
 
   var pageUri = function() {
     return {
