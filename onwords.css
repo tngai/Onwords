@@ -1,0 +1,16 @@
+.annotation-sidebar {
+  position: fixed; 
+  top: 0; 
+  width: 300px; 
+  right: -280px; 
+  background-color: black; 
+  height: 100%; 
+  z-index: 10000; 
+  background: rgba(0, 0, 31, 0.6);
+  overflow-y: scroll;
+}
+
+.scrollview {
+  height: 1000px;
+  color: white; 
+}
