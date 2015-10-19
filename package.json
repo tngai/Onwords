@@ -1,0 +1,22 @@
+{
+  "name": "onwords",
+  "version": "1.0.0",
+  "description": "Article Annotator",
+  "main": "annotator-firebase.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IrvingAxelB/Onwords.git"
+  },
+  "author": "Irving",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IrvingAxelB/Onwords/issues"
+  },
+  "homepage": "https://github.com/IrvingAxelB/Onwords#readme",
+  "dependencies": {
+    "react": "^0.14.0"
+  }
+}
