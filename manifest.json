@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "Annotator",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["annotator-firebase.js", "test.js"],
+      "css": ["annotator.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    "annotator.css",
+    "annotator.js"
+  ]
+
+}
