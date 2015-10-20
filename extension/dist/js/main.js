@@ -1510,6 +1510,7 @@ var equalsConstructorPrototype = function (o) {
 };
 var blacklistedKeys = {
 	$console: true,
+	$frame: true,
 	$frameElement: true,
 	$frames: true,
 	$parent: true,
@@ -22369,6 +22370,32 @@ module.exports = App;
 var App = require('./components/app');
 var React = require('react');
 
-React.render(React.createElement(App, null), document.getElementById('main'));
+
+//////////////////////////////////////////
+
+$('body').append("<div class='annotation-sidebar'></div>");
+$('.annotation-sidebar').append("<div id=scrollview></div>");
+
+function sidebar(open) {
+  var width = $('.annotation-sidebar').width();
+  var duration = 200;
+  if (open) {
+    $('.annotation-sidebar').animate({right: 0}, duration);
+  } else {
+    $('.annotation-sidebar').animate({right: -(width-20)}, duration);
+  }
+}
+
+var open = false;
+$('body').on('click', '.annotator-hl', function() {
+  console.log('esdfjkla;sjfs');
+  open = !open;
+  sidebar(open);
+})
+
+//////////////////////////////////////////
+
+
+React.render(React.createElement(App, null), document.getElementById('scrollview'));
 
 },{"./components/app":189,"react":188}]},{},[190]);
