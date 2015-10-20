@@ -10,7 +10,7 @@
   overflow-y: scroll;
 }
 
-.scrollview {
+#scrollview {
   height: 1000px;
   color: white; 
 }
