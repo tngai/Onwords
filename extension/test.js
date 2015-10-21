@@ -2,7 +2,6 @@ var loadfunction = window.onload;
 
 window.onload = function(event) {
 
-
   var pageUri = function() {
     return {
       beforeAnnotationCreated: function(ann) {
