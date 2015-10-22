@@ -1,18 +1,18 @@
-var Promise = require('bluebird');
-var dbOptions = {
-  client: process.env.dbClient || 'postgres',
-  connection: process.env.DATABASE_URL
-}
+// var Promise = require('bluebird');
 // var dbOptions = {
 //   client: process.env.dbClient || 'postgres',
-//   connection: {
-//     host: process.env.dbHost || '127.0.0.1',
-//     user: process.env.dbUser || 'root',
-//     password: process.env.dbPassword || '',
-//     database: process.env.dbDatabase || 'onwordsdb',
-//     charset: 'utf8'
-//   }
-// };
+//   connection: process.env.DATABASE_URL
+// }
+var dbOptions = process.env.DATABASE_URL || {
+  client: process.env.dbClient || 'postgres',
+  connection: {
+    host: process.env.dbHost || '127.0.0.1',
+    user: process.env.dbUser || 'root',
+    password: process.env.dbPassword || '',
+    database: process.env.dbDatabase || 'onwordsdb',
+    charset: 'utf8'
+  }
+};
 
 var knex = require('knex')(dbOptions);
 
