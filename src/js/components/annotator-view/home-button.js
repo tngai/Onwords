@@ -7,7 +7,7 @@ var HomeButton = React.createClass({
   render: function() {   
     return (
       <div onClick={this.handleClick}>
-        <img className='home-button' src='https://image.freepik.com/free-icon/home_318-42210.png' />
+        <img className='home-button' src='http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png' />
       </div>
     );
   }

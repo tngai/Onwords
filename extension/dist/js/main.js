@@ -19853,7 +19853,7 @@ var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimize
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        "Minimize!"
+        React.createElement("img", {className: "annotator-minimize-button", src: "http://res.freestockphotos.biz/pictures/3/3551-illustration-of-a-black-right-arrow-pv.png"})
       )
     );
   }
@@ -19893,7 +19893,7 @@ var HomeButton = React.createClass({displayName: "HomeButton",
   render: function() {   
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        React.createElement("img", {className: "home-button", src: "https://image.freepik.com/free-icon/home_318-42210.png"})
+        React.createElement("img", {className: "home-button", src: "http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png"})
       )
     );
   }
@@ -19991,7 +19991,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        "MinimizeButton!"
+        React.createElement("img", {className: "minimize-button", src: "http://res.freestockphotos.biz/pictures/3/3551-illustration-of-a-black-right-arrow-pv.png"})
       )
     );
   }
@@ -20006,8 +20006,7 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
   render: function() {
     return (
       React.createElement("div", {className: "annotator-head-container"}, 
-        "Head!"
-
+        "Header!"
       )
     );
   }

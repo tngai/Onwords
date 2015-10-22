@@ -29,10 +29,25 @@
   background: rgba(55, 54, 68, 0);
 }
 
+.annotator-minimize-button {
+  width: 20px; 
+  height: 20px;
+  background: rgba(55, 54, 68, 0);
+  /*position: absolute;*/
+  display: block;
+  right: 0;
+}
+
 .home-button {
   width: 20px;
   height: 20px;
   background: rgba(55, 54, 68, 0); 
+}
+
+.minimize-button {
+  width: 20px;
+  height: 20px;
+  background: rgba(55, 54, 68, 0);  
 }
 
 .feed-view-container {
