@@ -60,11 +60,10 @@ app.post('/api/annotations', function(req,res){
 
 // Create Users 
 app.post('/api/users', function(req,res){
-  var reqbody = req.body;
   var facebook_id = req.body.facebook_id;
   var full_name = req.body.full_name;
   var pic_url = req.body.pic_url;
-
+  var email = req.body.email;
 });
 
 
