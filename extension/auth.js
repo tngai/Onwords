@@ -1,4 +1,4 @@
-var fetchToken = function() {
+function fetchToken() {
   debugger;
 
   var access_token;
