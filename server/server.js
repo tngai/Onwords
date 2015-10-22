@@ -125,7 +125,7 @@ app.get('api/search',function(req,res){
 
     var returnObj = {};
     returnObj.rows = resultsArray;
-    if(returnObj) {
+    if(data.models.length !== 0) {
       res.set('Content-Type', 'application/JSON');
       res.json(returnObj);
       res.end();
