@@ -3,7 +3,7 @@ var React = require('react');
 var AnnotatorBody = React.createClass({
   render: function() {
     return (
-      <div className='annotator-body-container'>
+      <div id='annotator-body-container'>
         BODY!
 
       </div>

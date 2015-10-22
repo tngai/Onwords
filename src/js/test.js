@@ -1,9 +1,11 @@
+// var loadfunction = window.onload;
+var renderAnnotations = require('./annotationRender');
 
-var annotationRender = require('./annotationRender');
 
+exports.annotate = function(event) {
 
-exports.highlight = function() {
-  console.log('highlight')
+debugger;
+
   var pageUri = function() {
     return {
       beforeAnnotationCreated: function(ann) {
@@ -24,12 +26,35 @@ exports.highlight = function() {
         }
       })
      .include(pageUri)
-     .include(annotationRender);
+     .include(renderAnnotations);
 
-  app.start()
-     .then(function() {
-        app.annotations.load({uri: window.location.href.split("?")[0]});
-     })
+  // chrome.storage.onChanged.addListener(function(changes) {
+  //   if(changes.access_token.newValue) {
+  //     app.start()
+  //        .then(function() {
+  //           app.annotations.load({uri: window.location.href.split("?")[0]});
+  //        })
+  //   }
+  // })
+
+  // chrome.storage.sync.get('access_token', function(obj) {
+  //   if(obj['access_token']) {
+      app.start()
+         .then(function() {
+            app.annotations.load({uri: window.location.href.split("?")[0]});
+         })
+    // } else {
+    //   chrome.storage.onChanged.addListener(function(changes) {
+    //     if(changes.access_token.newValue) {
+    //       app.start()
+    //          .then(function() {
+    //             app.annotations.load({uri: window.location.href.split("?")[0]});
+    //          })
+    //     }
+    //   })
+    // }
+  // })
+
 
 
 }

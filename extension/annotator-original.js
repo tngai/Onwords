@@ -12327,6 +12327,7 @@ App.prototype.destroy = function () {
  * :rtype: Promise
  */
 App.prototype.runHook = function (name, args) {
+   debugger; 
     var results = [];
     for (var i = 0, len = this.modules.length; i < len; i++) {
         var mod = this.modules[i];
@@ -15627,6 +15628,7 @@ var Viewer = exports.Viewer = Widget.extend({
 
             $(this.options.autoViewHighlights)
                 .on("mouseover." + NS, '.annotator-hl', function (event) {
+                  debugger;
                     // If there are many overlapping highlights, still only
                     // call _onHighlightMouseover once.
                     if (event.target === this) {
@@ -15872,6 +15874,7 @@ var Viewer = exports.Viewer = Widget.extend({
         var self = this;
         this._startHideTimer(true)
             .done(function () {
+              debugger;
                 var annotations = $(event.target)
                     .parents('.annotator-hl')
                     .addBack()
