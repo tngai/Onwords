@@ -64,23 +64,6 @@ app.post('/api/users', function(req,res){
   var facebook_id = req.body.facebook_id;
   var full_name = req.body.full_name;
   var pic_url = req.body.pic_url;
- 
-  db.model('Annotation').newAnnotation({
-    text: text,
-    quote: quote,
-    uri: uri,
-    user_id: user_id,
-    start: start,
-    end: end,
-    startOffset: startOffset,
-    endOffset: endOffset
-  }).save().then(function(data){
-    console.log('heres the annotation id ', data.id);
-    ann.id = data.id;
-    res.set('Content-Type','application/JSON');
-    res.json(ann);
-    res.end();
-  });
 
 });
 
