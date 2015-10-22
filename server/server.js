@@ -115,7 +115,7 @@ app.get('/api/search',function(req,res){
   var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
   db.model('Annotation').fetchByUri(uri).then(function(data){
     
-    if(data.models.length !== 0) {
+    
     var resultsArray = data.models.map(function(e){
       var resObj = {
         id: e.attributes.id,
@@ -138,12 +138,7 @@ app.get('/api/search',function(req,res){
       res.set('Content-Type', 'application/JSON');
       res.json(returnObj);
       res.end();
-    }else{
-      var empty = {rows:[]}
-      res.set('Content-Type', 'application/JSON');
-      res.json(empty);
-      res.end(); 
-    }
+    
 
   })
 
