@@ -125,10 +125,15 @@ app.get('api/search',function(req,res){
 
     var returnObj = {};
     returnObj.rows = resultsArray;
-    
-    res.set('Content-Type', 'application/JSON');
-    res.json(returnObj);
-    res.end();
+    if(returnObj) {
+      res.set('Content-Type', 'application/JSON');
+      res.json(returnObj);
+      res.end();
+    }else{
+      res.set('Content-Type', 'application/JSON');
+      res.end(); 
+    }
+
   })
 
 })
