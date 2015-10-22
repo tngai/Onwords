@@ -1,20 +1,22 @@
 var App = require('./components/app');
 var React = require('react');
 
-//////////////////////////////////////////
-
 console.log('inside main')
 var renderComponents = function() {
   $('body').append("<div class='annotation-sidebar'></div>");
   $('.annotation-sidebar').append("<div id=scrollview></div>");
 
   function sidebar(open) {
-    var width = $('.annotation-sidebar').width();
+    var position = $('.annotation-sidebar').position();
     var duration = 200;
+    var PL = position.left;
+    var PR = position.right;
+    console.log('Current position: ', position, PL, PR);
+
     if (open) {
-      $('.annotation-sidebar').animate({right: 0}, duration);
+      $('.annotation-sidebar').animate({right: -300}, duration);
     } else {
-      $('.annotation-sidebar').animate({right: -(width-20)}, duration);
+      $('.annotation-sidebar').animate({right: -580}, duration);
     }
   }
 
@@ -40,7 +42,3 @@ chrome.storage.sync.get('access_token', function(obj) {
     renderComponents();
   }
 })
-
-//////////////////////////////////////////
-
-React.render(<App />, document.getElementById('scrollview'));

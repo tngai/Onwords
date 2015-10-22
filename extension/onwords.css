@@ -20,18 +20,18 @@
 .annotator-view-container {
   width: 300px;
   height: 1000px;
-  background: rgba(55, 54, 68, 1);
+  background: rgba(249, 249, 249, 1);
 }
 
 .annotator-button {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   background: rgba(55, 54, 68, 0);
 }
 
 .annotator-minimize-button {
-  width: 20px; 
-  height: 20px;
+  width: 25px; 
+  height: 25px;
   background: rgba(55, 54, 68, 0);
   /*position: absolute;*/
   display: block;
@@ -39,14 +39,14 @@
 }
 
 .home-button {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   background: rgba(55, 54, 68, 0); 
 }
 
 .minimize-button {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   background: rgba(55, 54, 68, 0);  
 }
 

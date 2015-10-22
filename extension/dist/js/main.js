@@ -19853,7 +19853,7 @@ var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimize
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        React.createElement("img", {className: "annotator-minimize-button", src: "http://res.freestockphotos.biz/pictures/3/3551-illustration-of-a-black-right-arrow-pv.png"})
+        React.createElement("img", {className: "annotator-minimize-button", src: "../../../assets/right-copy.png"})
       )
     );
   }
@@ -19916,28 +19916,39 @@ var App = React.createClass({displayName: "App",
     };
   },
 
+  componentWillMount: function() {
+
+  },
+
+  componentDidMount: function() {
+    console.log('It MOUNTED!');
+    $('.annotation-sidebar').click(function() {
+      console.log('it worked bro!!!!');
+    });
+  },
+
   updateView: function(action){
     var duration = 200;
 
     switch(action) {
         case 'showAnnotatorButton':
             console.log('showAnnotatorButton!!');
+            $('.annotation-sidebar').animate({right: -(580)}, duration);
             this.setState({showAnnotatorButton: true});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(580)}, duration);
             break;
         case 'showAnnotatorView':
+            $('.annotation-sidebar').animate({right: -(300)}, duration);
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: true});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(300)}, duration);
             break;
         case 'showFeedView':
+            $('.annotation-sidebar').animate({right: (0)}, duration);
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: true});
-            $('.annotation-sidebar').animate({right: (0)}, duration);
             break;
         default:
             console.log('nothing happened')
@@ -19971,7 +19982,7 @@ var FeedView = React.createClass({displayName: "FeedView",
         ), 
 
         React.createElement("div", {className: "feed-container"}, 
-          "Feed DIVS go HERE!"
+          "Feed DIVS go HERE!!!!"
         )
 
       )
@@ -19991,7 +20002,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        React.createElement("img", {className: "minimize-button", src: "http://res.freestockphotos.biz/pictures/3/3551-illustration-of-a-black-right-arrow-pv.png"})
+        React.createElement("img", {className: "minimize-button", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Angle_right_font_awesome.svg/1000px-Angle_right_font_awesome.svg.png"})
       )
     );
   }
@@ -20018,20 +20029,22 @@ module.exports = AnnotatorHead;
 var App = require('./components/app');
 var React = require('react');
 
-//////////////////////////////////////////
-
 console.log('inside main')
 var renderComponents = function() {
   $('body').append("<div class='annotation-sidebar'></div>");
   $('.annotation-sidebar').append("<div id=scrollview></div>");
 
   function sidebar(open) {
-    var width = $('.annotation-sidebar').width();
+    var position = $('.annotation-sidebar').position();
     var duration = 200;
+    var PL = position.left;
+    var PR = position.right;
+    console.log('Current position: ', position, PL, PR);
+
     if (open) {
-      $('.annotation-sidebar').animate({right: 0}, duration);
+      $('.annotation-sidebar').animate({right: -300}, duration);
     } else {
-      $('.annotation-sidebar').animate({right: -(width-20)}, duration);
+      $('.annotation-sidebar').animate({right: -580}, duration);
     }
   }
 
@@ -20057,9 +20070,5 @@ chrome.storage.sync.get('access_token', function(obj) {
     renderComponents();
   }
 })
-
-//////////////////////////////////////////
-
-React.render(React.createElement(App, null), document.getElementById('scrollview'));
 
 },{"./components/app":162,"react":156}]},{},[166]);

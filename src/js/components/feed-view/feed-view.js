@@ -11,7 +11,7 @@ var FeedView = React.createClass({
         </div>
 
         <div className='feed-container'>
-          Feed DIVS go HERE!
+          Feed DIVS go HERE!!!!
         </div>
 
       </div>

@@ -12,28 +12,39 @@ var App = React.createClass({
     };
   },
 
+  componentWillMount: function() {
+
+  },
+
+  componentDidMount: function() {
+    console.log('It MOUNTED!');
+    $('.annotation-sidebar').click(function() {
+      console.log('it worked bro!!!!');
+    });
+  },
+
   updateView: function(action){
     var duration = 200;
 
     switch(action) {
         case 'showAnnotatorButton':
             console.log('showAnnotatorButton!!');
+            $('.annotation-sidebar').animate({right: -(580)}, duration);
             this.setState({showAnnotatorButton: true});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(580)}, duration);
             break;
         case 'showAnnotatorView':
+            $('.annotation-sidebar').animate({right: -(300)}, duration);
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: true});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(300)}, duration);
             break;
         case 'showFeedView':
+            $('.annotation-sidebar').animate({right: (0)}, duration);
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: true});
-            $('.annotation-sidebar').animate({right: (0)}, duration);
             break;
         default:
             console.log('nothing happened')
