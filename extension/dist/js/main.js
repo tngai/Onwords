@@ -19834,8 +19834,8 @@ var AnnotatorButton = React.createClass({displayName: "AnnotatorButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick, className: "annotator-button"}, 
-        "BTN!"
+      React.createElement("div", {onClick: this.handleClick, className: "annotator-button-container"}, 
+        React.createElement("img", {className: "annotator-button", src: "https://cdn1.iconfinder.com/data/icons/education-set-5/512/dialogue-512.png"})
       )
     );
   }
@@ -19853,7 +19853,7 @@ var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimize
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        "Minimize!"
+        React.createElement("img", {className: "annotator-minimize-button", src: "../../../assets/right-copy.png"})
       )
     );
   }
@@ -19893,7 +19893,7 @@ var HomeButton = React.createClass({displayName: "HomeButton",
   render: function() {   
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        "HomeButton!"
+        React.createElement("img", {className: "home-button", src: "http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png"})
       )
     );
   }
@@ -19916,6 +19916,18 @@ var App = React.createClass({displayName: "App",
     };
   },
 
+  componentWillMount: function() {
+    console.log('componentWillMount..');
+  },
+
+  componentDidMount: function() {
+    var THIS = this;
+
+    $('.annotator-hl').click(function() {
+      THIS.updateView('showAnnotatorView');
+    });
+  },
+
   updateView: function(action){
     var duration = 200;
 
@@ -19931,7 +19943,7 @@ var App = React.createClass({displayName: "App",
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: true});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(300)}, duration);
+            $('.annotation-sidebar').animate({right: -(300)}, 50);
             break;
         case 'showFeedView':
             this.setState({showAnnotatorButton: false});
@@ -19971,7 +19983,7 @@ var FeedView = React.createClass({displayName: "FeedView",
         ), 
 
         React.createElement("div", {className: "feed-container"}, 
-          "Feed DIVS go HERE!"
+          "Feed DIVS go HERE!!!!"
         )
 
       )
@@ -19991,7 +20003,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        "MinimizeButton!"
+        React.createElement("img", {className: "minimize-button", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Angle_right_font_awesome.svg/1000px-Angle_right_font_awesome.svg.png"})
       )
     );
   }
@@ -20006,8 +20018,15 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
   render: function() {
     return (
       React.createElement("div", {className: "annotator-head-container"}, 
-        "Head!"
-
+        React.createElement("div", {className: "user-image"}
+        ), 
+        
+        React.createElement("div", {className: "user-info"}, 
+        "Jihoon Kim", 
+        React.createElement("br", null), 
+        "Hoonthegoon9000"
+        )
+        
       )
     );
   }
@@ -20019,29 +20038,11 @@ module.exports = AnnotatorHead;
 var App = require('./components/app');
 var React = require('react');
 
-//////////////////////////////////////////
-
 console.log('inside main')
 var renderComponents = function() {
   $('body').append("<div class='annotation-sidebar'></div>");
   $('.annotation-sidebar').append("<div id=scrollview></div>");
 
-  function sidebar(open) {
-    var width = $('.annotation-sidebar').width();
-    var duration = 200;
-    if (open) {
-      $('.annotation-sidebar').animate({right: 0}, duration);
-    } else {
-      $('.annotation-sidebar').animate({right: -(width-20)}, duration);
-    }
-  }
-
-  var open = false;
-  $('body').on('click', '.annotator-hl', function() {
-    open = !open;
-    sidebar(open);
-  })
-  
   React.render(React.createElement(App, null), document.getElementById('scrollview'));
 }
 
@@ -20058,9 +20059,5 @@ chrome.storage.sync.get('access_token', function(obj) {
     renderComponents();
   }
 })
-
-//////////////////////////////////////////
-
-React.render(React.createElement(App, null), document.getElementById('scrollview'));
 
 },{"./components/app":162,"react":156}]},{},[166]);
