@@ -19834,8 +19834,8 @@ var AnnotatorButton = React.createClass({displayName: "AnnotatorButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick, className: "annotator-button"}, 
-        "BTN!"
+      React.createElement("div", {onClick: this.handleClick, className: "annotator-button-container"}, 
+        React.createElement("img", {className: "annotator-button", src: "https://cdn1.iconfinder.com/data/icons/education-set-5/512/dialogue-512.png"})
       )
     );
   }
@@ -19893,7 +19893,7 @@ var HomeButton = React.createClass({displayName: "HomeButton",
   render: function() {   
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        "HomeButton!"
+        React.createElement("img", {className: "home-button", src: "https://image.freepik.com/free-icon/home_318-42210.png"})
       )
     );
   }

@@ -26,7 +26,13 @@
 .annotator-button {
   width: 20px;
   height: 20px;
-  background: rgba(55, 54, 68, 1);
+  background: rgba(55, 54, 68, 0);
+}
+
+.home-button {
+  width: 20px;
+  height: 20px;
+  background: rgba(55, 54, 68, 0); 
 }
 
 .feed-view-container {
