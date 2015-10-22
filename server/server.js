@@ -64,6 +64,21 @@ app.post('/api/users', function(req,res){
   var full_name = req.body.full_name;
   var pic_url = req.body.pic_url;
   var email = req.body.email;
+  
+  var user = {
+    facebook_id: facebook_id,
+    full_name: full_name,
+    pic_url: pic_url,
+    email: email
+  };
+
+  db.model('User').fetchByFacebookId(facebook_id).then(function(data){
+      
+  });
+
+  db.model('User').newUser(newUser).save().then(function(data){
+
+  })
 });
 
 
