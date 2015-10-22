@@ -19917,13 +19917,14 @@ var App = React.createClass({displayName: "App",
   },
 
   componentWillMount: function() {
-
+    console.log('componentWillMount..');
   },
 
   componentDidMount: function() {
-    console.log('It MOUNTED!');
-    $('.annotation-sidebar').click(function() {
-      console.log('it worked bro!!!!');
+    var THIS = this;
+
+    $('.annotator-hl').click(function() {
+      THIS.updateView('showAnnotatorView');
     });
   },
 
@@ -19933,22 +19934,22 @@ var App = React.createClass({displayName: "App",
     switch(action) {
         case 'showAnnotatorButton':
             console.log('showAnnotatorButton!!');
-            $('.annotation-sidebar').animate({right: -(580)}, duration);
             this.setState({showAnnotatorButton: true});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: false});
+            $('.annotation-sidebar').animate({right: -(580)}, duration);
             break;
         case 'showAnnotatorView':
-            $('.annotation-sidebar').animate({right: -(300)}, duration);
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: true});
             this.setState({showFeedView: false});
+            $('.annotation-sidebar').animate({right: -(300)}, 50);
             break;
         case 'showFeedView':
-            $('.annotation-sidebar').animate({right: (0)}, duration);
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: true});
+            $('.annotation-sidebar').animate({right: (0)}, duration);
             break;
         default:
             console.log('nothing happened')
@@ -20017,7 +20018,15 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
   render: function() {
     return (
       React.createElement("div", {className: "annotator-head-container"}, 
-        "Header!"
+        React.createElement("div", {className: "user-image"}
+        ), 
+        
+        React.createElement("div", {className: "user-info"}, 
+        "Jihoon Kim", 
+        React.createElement("br", null), 
+        "Hoonthegoon9000"
+        )
+        
       )
     );
   }
@@ -20034,26 +20043,6 @@ var renderComponents = function() {
   $('body').append("<div class='annotation-sidebar'></div>");
   $('.annotation-sidebar').append("<div id=scrollview></div>");
 
-  function sidebar(open) {
-    var position = $('.annotation-sidebar').position();
-    var duration = 200;
-    var PL = position.left;
-    var PR = position.right;
-    console.log('Current position: ', position, PL, PR);
-
-    if (open) {
-      $('.annotation-sidebar').animate({right: -300}, duration);
-    } else {
-      $('.annotation-sidebar').animate({right: -580}, duration);
-    }
-  }
-
-  var open = false;
-  $('body').on('click', '.annotator-hl', function() {
-    open = !open;
-    sidebar(open);
-  })
-  
   React.render(React.createElement(App, null), document.getElementById('scrollview'));
 }
 

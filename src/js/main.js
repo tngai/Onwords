@@ -6,26 +6,6 @@ var renderComponents = function() {
   $('body').append("<div class='annotation-sidebar'></div>");
   $('.annotation-sidebar').append("<div id=scrollview></div>");
 
-  function sidebar(open) {
-    var position = $('.annotation-sidebar').position();
-    var duration = 200;
-    var PL = position.left;
-    var PR = position.right;
-    console.log('Current position: ', position, PL, PR);
-
-    if (open) {
-      $('.annotation-sidebar').animate({right: -300}, duration);
-    } else {
-      $('.annotation-sidebar').animate({right: -580}, duration);
-    }
-  }
-
-  var open = false;
-  $('body').on('click', '.annotator-hl', function() {
-    open = !open;
-    sidebar(open);
-  })
-  
   React.render(<App />, document.getElementById('scrollview'));
 }
 
