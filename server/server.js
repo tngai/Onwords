@@ -21,7 +21,7 @@ app.use(function(req, res, next) {
 });
 
 
-app.get('/api',function(req,res){
+app.get('/',function(req,res){
   res.send('connected')
 });
 
@@ -130,7 +130,7 @@ app.get('/api/search',function(req,res){
     res.json(returnObj);
     res.end();
   })
-   if() 
+
 })
 
 
