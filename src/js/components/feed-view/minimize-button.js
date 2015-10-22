@@ -7,7 +7,7 @@ var MinimizeButton = React.createClass({
   render: function() {
     return (
       <div onClick={this.handleClick}>
-        MinimizeButton!
+        <img className='minimize-button' src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Angle_right_font_awesome.svg/1000px-Angle_right_font_awesome.svg.png' />
       </div>
     );
   }

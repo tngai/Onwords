@@ -4,8 +4,15 @@ var AnnotatorHead = React.createClass({
   render: function() {
     return (
       <div className='annotator-head-container'>
-        Head!
-
+        <div className='user-image'>
+        </div>
+        
+        <div className='user-info'>
+        Jihoon Kim
+        <br />
+        Hoonthegoon9000
+        </div>
+        
       </div>
     );
   }
