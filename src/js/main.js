@@ -1,8 +1,10 @@
 var App = require('./components/app');
 var React = require('react');
+// var MINI = require('../../dependencies/minified/dist/minified.js');
+// var _=MINI._, $=MINI.$, $$=MINI.$$, EE=MINI.EE, HTML=MINI.HTML;
 
 //////////////////////////////////////////
-
+$(function() {
 console.log('inside main')
 var renderComponents = function() {
   $('body').append("<div class='annotation-sidebar'></div>");
@@ -39,6 +41,7 @@ chrome.storage.sync.get('access_token', function(obj) {
   if (obj['access_token']) {
     renderComponents();
   }
+})
 })
 
 //////////////////////////////////////////

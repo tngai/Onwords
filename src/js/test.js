@@ -1,4 +1,6 @@
 var loadfunction = window.onload;
+var annotationRender = require('./annotationRender');
+
 
 window.onload = function(event) {
 
@@ -13,15 +15,16 @@ window.onload = function(event) {
   var app = new annotator.App();
   app.include(annotator.ui.main)
      .include(annotator.storage.http, {
-      prefix: 'https://onwords-test-server.herokuapp.com',
-      urls: {
-        create: '/api/annotations',
-        update: '/api/annotations/{id}',
-        destroy: '/api/annotations/{id}',
-        search: '/api/search'
-      }
-    })
+        prefix: 'https://onwords-test-server.herokuapp.com',
+        urls: {
+          create: '/api/annotations',
+          update: '/api/annotations/{id}',
+          destroy: '/api/annotations/{id}',
+          search: '/api/search'
+        }
+      })
      .include(pageUri)
+     .include(annotationRender);
 
   app.start()
      .then(function() {
@@ -33,5 +36,3 @@ window.onload = function(event) {
   }
 
 }
-// https://testing102.firebaseio.com/annotations.json?uri='http...'
-// https://testing102.firebaseio.com/annotations.json?sortBy="uri"&equalTo='http...'
