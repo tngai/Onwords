@@ -130,7 +130,7 @@ app.get('api/search',function(req,res){
       res.json(returnObj);
       res.end();
     }else{
-      var empty = {rows:[]}
+      var empty = {rows:[],empty:true}
       res.set('Content-Type', 'application/JSON');
       res.json(empty);
       res.end(); 
