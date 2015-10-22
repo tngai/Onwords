@@ -19815,21 +19815,21 @@ var React = require('React');
 var renderAnnotations = function() {
   return {
     annotationsLoaded: function(ann) {
-      console.log(ann[0])
+      console.log('annotation loaded', ann)
       // React.render(<App />, document.getElementById('scrollview'));
-      $('#scrollview').append("<div>"+ ann[0] + "</div>")
+      $('.annotator-body-container').append("<div>"+ ann[0].quote + "</div>")
     }
   }
 }
 
 module.exports = renderAnnotations;
 },{"React":155}],158:[function(require,module,exports){
-var loadfunction = window.onload;
+
 var annotationRender = require('./annotationRender');
 
 
-window.onload = function(event) {
-
+exports.highlight = function() {
+  console.log('highlight')
   var pageUri = function() {
     return {
       beforeAnnotationCreated: function(ann) {
@@ -19857,9 +19857,6 @@ window.onload = function(event) {
         app.annotations.load({uri: window.location.href.split("?")[0]});
      })
 
-  if (loadfunction) {
-    loadfunction(event);
-  }
 
 }
 

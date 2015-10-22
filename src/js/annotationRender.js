@@ -3,9 +3,9 @@ var React = require('React');
 var renderAnnotations = function() {
   return {
     annotationsLoaded: function(ann) {
-      console.log(ann[0])
+      console.log('annotation loaded', ann)
       // React.render(<App />, document.getElementById('scrollview'));
-      $('#scrollview').append("<div>"+ ann[0] + "</div>")
+      $('.annotator-body-container').append("<div>"+ ann[0].quote + "</div>")
     }
   }
 }

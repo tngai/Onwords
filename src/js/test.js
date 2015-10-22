@@ -1,9 +1,9 @@
-var loadfunction = window.onload;
+
 var annotationRender = require('./annotationRender');
 
 
-window.onload = function(event) {
-
+exports.highlight = function() {
+  console.log('highlight')
   var pageUri = function() {
     return {
       beforeAnnotationCreated: function(ann) {
@@ -31,8 +31,5 @@ window.onload = function(event) {
         app.annotations.load({uri: window.location.href.split("?")[0]});
      })
 
-  if (loadfunction) {
-    loadfunction(event);
-  }
 
 }

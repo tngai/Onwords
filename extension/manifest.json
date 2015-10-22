@@ -21,7 +21,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["annotator.min.js",  "dependencies/jquery/dist/jquery.min.js", "dist/js/main.js", "dist/js/test.js"],
+      "js": ["annotator-original.js",  "dependencies/jquery/dist/jquery.min.js", "dist/js/main.js", "dist/js/test.js"],
       "css": ["style/onwords.css"]
     }
   ],

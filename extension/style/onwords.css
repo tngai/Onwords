@@ -1,16 +1,45 @@
 .annotation-sidebar {
   position: fixed; 
   top: 0; 
-  width: 300px; 
-  right: -280px; 
+  width: 600px; 
+  right: -580px; 
   background-color: black; 
   height: 100%; 
   z-index: 10000; 
-  background: rgba(0, 0, 31, 0.6);
+  background: rgba(0, 0, 31, 0);
   overflow-y: scroll;
 }
 
 #scrollview {
   height: 1000px;
   color: white; 
+}
+
+/* React */
+
+.annotator-view-container {
+  width: 300px;
+  height: 1000px;
+  background: rgba(55, 54, 68, 1);
+}
+
+.annotator-button {
+  width: 20px;
+  height: 20px;
+  background: rgba(55, 54, 68, 1);
+}
+
+.feed-view-container {
+  width: 600px;
+  height: 1000px;
+  background: rgba(55, 54, 68, 1);
+}
+
+.feed-container {
+  width: 500px;
+  height: 700px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  margin: 0 auto;
 }
