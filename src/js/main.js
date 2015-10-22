@@ -43,3 +43,4 @@ chrome.storage.sync.get('access_token', function(obj) {
 
 //////////////////////////////////////////
 
+React.render(<App />, document.getElementById('scrollview'));
