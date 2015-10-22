@@ -25,5 +25,6 @@
     "flux": "^2.1.1",
     "react-router-component": "^0.26.1",
     "gulp": "^3.9.0"
+
   }
 }

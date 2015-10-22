@@ -13,12 +13,12 @@ window.onload = function(event) {
   var app = new annotator.App();
   app.include(annotator.ui.main)
      .include(annotator.storage.http, {
-      prefix: 'https://testing102.firebaseio.com',
+      prefix: 'https://onwords-test-server.herokuapp.com',
       urls: {
-        create: '/annotations.json',
-        update: '/annotations/{id}.json',
-        destroy: '/annotations/{id}.json',
-        search: '/annotations.json'
+        create: '/api/annotations',
+        update: '/api/annotations/{id}',
+        destroy: '/api/annotations/{id}',
+        search: '/api/search'
       }
     })
      .include(pageUri)

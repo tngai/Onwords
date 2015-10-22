@@ -2,7 +2,7 @@ function fetchToken() {
   debugger;
 
   var access_token;
-  var clientID = 'CLIENT_ID';
+  var clientID = 'missing';
   var redirectUri = 'https://' + chrome.runtime.id + '.chromiumapp.org/provider_cb';
 
   var options = {
