@@ -131,6 +131,7 @@ app.get('api/search',function(req,res){
       res.end();
     }else{
       res.set('Content-Type', 'application/JSON');
+      res.json({rows:[]});
       res.end(); 
     }
 
