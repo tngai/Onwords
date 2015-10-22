@@ -15,10 +15,10 @@ window.onload = function(event) {
      .include(annotator.storage.http, {
       prefix: 'https://onwords-test-server.herokuapp.com',
       urls: {
-        create: '/api/annotations',
-        update: '/api/annotations/{id}',
-        destroy: '/api/annotations/{id}',
-        search: '/api/search'
+        create: 'api/annotations',
+        update: 'api/annotations/{id}',
+        destroy: 'api/annotations/{id}',
+        search: 'api/search'
       }
     })
      .include(pageUri)
