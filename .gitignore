@@ -3,3 +3,4 @@
 node_modules/
 dependencies/
 npm-debug.log
+/server/node_modules/
