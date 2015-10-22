@@ -2,5 +2,6 @@
 #
 node_modules/
 /server/node_modules/
-/extension/**/jquery
+/extension/bower_components
+/extension/dependencies
 npm-debug.log
