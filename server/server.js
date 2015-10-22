@@ -134,8 +134,7 @@ app.get('api/search',function(req,res){
       var empty = {rows:[]}
       res.set('Content-Type', 'application/JSON');
       res.json(empty);
-      res.write('yo')
-      res.end(); 
+      res.end('yo'); 
     }
 
   })
