@@ -13,7 +13,7 @@ window.onload = function(event) {
   var app = new annotator.App();
   app.include(annotator.ui.main)
      .include(annotator.storage.http, {
-      prefix: 'https://localhost:8000',
+      prefix: 'https://onwords-test-server.herokuapp.com',
       urls: {
         create: '/api/annotations',
         update: '/api/annotations/{id}',
