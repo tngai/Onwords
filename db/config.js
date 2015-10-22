@@ -1,6 +1,6 @@
 var Promise = require('bluebird');
 
-var dbOptions = {
+var dbOptions = process.env.DATABASE_URL || {
   client: process.env.dbClient || 'postgres',
   connection: {
     host: process.env.dbHost || '127.0.0.1',
