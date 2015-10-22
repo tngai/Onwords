@@ -27,7 +27,7 @@ app.get('/',function(req,res){
 
 
 // Create annotations 
-app.post('/api/annotations', function(req,res){
+app.post('api/annotations', function(req,res){
   var ann = req.body;
   var text = req.body.text;
   var quote = req.body.quote;
@@ -64,7 +64,7 @@ app.post('/api/annotations', function(req,res){
 
 /// Delete functionality
 
-app.delete('/api/annotations/:id',function(req,res){
+app.delete('api/annotations/:id',function(req,res){
   var annId = req.params.id;
   console.log('the params id ',annId)
   db.model('Annotation').destroyById(annId).then(function(data){
@@ -74,7 +74,7 @@ app.delete('/api/annotations/:id',function(req,res){
 });
 // Update endpoint 
 
-app.put('/api/annotations/:id',function(req,res){
+app.put('api/annotations/:id',function(req,res){
   var annId = req.params.id;
   db.model('Annotation').updateById({id:annId, text:req.body.text}).then(function(data){
     console.log('database updated ');
@@ -103,7 +103,7 @@ app.put('/api/annotations/:id',function(req,res){
 });
 
 // Search endpoint(Read)
-app.get('/api/search',function(req,res){
+app.get('api/search',function(req,res){
   var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
   db.model('Annotation').fetchByUri(uri).then(function(data){
     var resultsArray = data.models.map(function(e){
