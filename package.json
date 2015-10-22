@@ -1,23 +1,30 @@
 {
-  "name": "server_test",
+  "name": "onwords",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "Article Annotator",
+  "main": "annotator-firebase.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IrvingAxelB/Onwords.git"
+  },
+  "author": "Irving",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IrvingAxelB/Onwords/issues"
+  },
+  "homepage": "https://github.com/IrvingAxelB/Onwords#readme",
   "dependencies": {
-    "bluebird": "^2.10.2",
-    "body-parser": "^1.14.1",
-    "bookshelf": "^0.8.2",
-    "express": "^4.13.3",
-    "http": "0.0.0",
-    "knex": "^0.8.6",
-    "morgan": "^1.6.1",
-    "node": "0.0.0",
-    "pg": "^4.4.3"
+    "react-async": "^2.1.0",
+    "react": "^0.13.3",
+    "vinyl-source-stream": "^1.1.0",
+    "reactify": "^1.1.1",
+    "browserify": "^11.2.0",
+    "flux": "^2.1.1",
+    "react-router-component": "^0.26.1",
+    "gulp": "^3.9.0"
+
   }
 }
