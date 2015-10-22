@@ -26,7 +26,8 @@ app.get('/',function(req,res){
 });
 
 
-// Create annotations 
+// Create Annotations
+
 app.post('/api/annotations', function(req,res){
   var ann = req.body;
   var text = req.body.text;
@@ -55,10 +56,34 @@ app.post('/api/annotations', function(req,res){
     res.end();
   });
 
+});
 
-
+// Create Users 
+app.post('/api/users', function(req,res){
+  var reqbody = req.body;
+  var facebook_id = req.body.facebook_id;
+  var full_name = req.body.full_name;
+  var pic_url = req.body.pic_url;
+ 
+  db.model('Annotation').newAnnotation({
+    text: text,
+    quote: quote,
+    uri: uri,
+    user_id: user_id,
+    start: start,
+    end: end,
+    startOffset: startOffset,
+    endOffset: endOffset
+  }).save().then(function(data){
+    console.log('heres the annotation id ', data.id);
+    ann.id = data.id;
+    res.set('Content-Type','application/JSON');
+    res.json(ann);
+    res.end();
+  });
 
 });
+
 
 
 
@@ -102,7 +127,7 @@ app.put('/api/annotations/:id',function(req,res){
 
 });
 
-// Search endpoint(Read)
+// Search Uri annotations endpoint(Read)
 app.get('/api/search',function(req,res){
   var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
   db.model('Annotation').fetchByUri(uri).then(function(data){
@@ -140,6 +165,40 @@ app.get('/api/search',function(req,res){
   })
 
 })
+
+// // Search for user feeds annotations 
+// app.post('/api/annotations', function(req,res){
+//   var ann = req.body;
+//   var text = req.body.text;
+//   var quote = req.body.quote;
+//   var uri = req.body.uri;
+//   var start = req.body.ranges[0].start;
+//   var end = req.body.ranges[0].end;
+//   var startOffset = req.body.ranges[0].startOffset;
+//   var endOffset = req.body.ranges[0].endOffset;
+//   var user_id = 1;
+ 
+//   db.model('Annotation').newAnnotation({
+//     text: text,
+//     quote: quote,
+//     uri: uri,
+//     user_id: user_id,
+//     start: start,
+//     end: end,
+//     startOffset: startOffset,
+//     endOffset: endOffset
+//   }).save().then(function(data){
+//     console.log('heres the annotation id ', data.id);
+//     ann.id = data.id;
+//     res.set('Content-Type','application/JSON');
+//     res.json(ann);
+//     res.end();
+//   });
+
+// });
+
+
+
 
 
 app.listen(process.env.PORT || 8000);
