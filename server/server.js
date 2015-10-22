@@ -21,6 +21,10 @@ app.use(function(req, res, next) {
 });
 
 
+app.get('/',function(req,res){
+  res.send('connected')
+});
+
 
 // Create annotations 
 app.post('/api/annotations', function(req,res){
@@ -126,6 +130,7 @@ app.get('/api/search',function(req,res){
     res.json(returnObj);
     res.end();
   })
+   if() 
 })
 
 
