@@ -4,7 +4,8 @@
   "version": "1.0",
   "web_accessible_resources": [
     "annotator.css",
-    "annotator.js"
+    "annotator.js",
+    "assets/*.png"
   ],
 
   "browser_action": {

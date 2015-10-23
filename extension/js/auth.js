@@ -4,7 +4,7 @@ function fetchToken() {
   var access_token;
 
 
-  var clientID = '190161771316309';
+  var clientID = '1637794013150731';
 
   var redirectUri = 'https://' + chrome.runtime.id + '.chromiumapp.org/provider_cb';
 
