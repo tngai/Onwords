@@ -23,6 +23,11 @@ var App = React.createClass({
       console.log('helllllllo')
       THIS.updateView('showAnnotatorView');
     });
+
+    $(document).on('click', '.annotator-hl', function() {
+      console.log('helllllllo')
+      THIS.updateView('showAnnotatorView');
+    });
   },
 
   updateView: function(action){

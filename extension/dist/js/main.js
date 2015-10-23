@@ -20008,6 +20008,11 @@ var App = React.createClass({displayName: "App",
       console.log('helllllllo')
       THIS.updateView('showAnnotatorView');
     });
+
+    $(document).on('click', '.annotator-hl', function() {
+      console.log('helllllllo')
+      THIS.updateView('showAnnotatorView');
+    });
   },
 
   updateView: function(action){
@@ -20085,7 +20090,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        React.createElement("img", {className: "minimize-button", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Angle_right_font_awesome.svg/1000px-Angle_right_font_awesome.svg.png"})
+        React.createElement("img", {className: "minimize-button", src: chrome.extension.getURL('/assets/right-copy.png')})
       )
     );
   }
@@ -20100,7 +20105,8 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
   render: function() {
     return (
       React.createElement("div", {className: "annotator-head-container"}, 
-        React.createElement("div", {className: "user-image"}
+        React.createElement("div", {className: "user-image-container"}, 
+          React.createElement("img", {src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg", className: "user-image"})
         ), 
         
         React.createElement("div", {className: "user-info"}, 
