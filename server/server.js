@@ -153,7 +153,7 @@ app.get('/api/search',function(req,res){
     var returnObj = {};
     returnObj.rows = returnArray;   
       res.set('Content-Type', 'application/JSON');
-      res.json(returnObj);
+      res.json(returnArray);
       res.end();
     });
   })
