@@ -17,9 +17,9 @@ var User = db.Model.extend({
     return new this(options).fetch();
   },
 
-  fetchByGoogleId: function(google_id) {
+  fetchByFacebookId: function(facebook_id) {
     return new this({
-      instagram_id: google_id
+      facebook_id: facebook_id
     }).fetch({withRelated:['annotations']});
   },
 

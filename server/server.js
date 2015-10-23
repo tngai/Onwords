@@ -158,39 +158,6 @@ app.get('/api/search',function(req,res){
     });
   })
 
-// // Search for user feeds annotations 
-// app.post('/api/annotations', function(req,res){
-//   var ann = req.body;
-//   var text = req.body.text;
-//   var quote = req.body.quote;
-//   var uri = req.body.uri;
-//   var start = req.body.ranges[0].start;
-//   var end = req.body.ranges[0].end;
-//   var startOffset = req.body.ranges[0].startOffset;
-//   var endOffset = req.body.ranges[0].endOffset;
-//   var user_id = 1;
- 
-//   db.model('Annotation').newAnnotation({
-//     text: text,
-//     quote: quote,
-//     uri: uri,
-//     user_id: user_id,
-//     start: start,
-//     end: end,
-//     startOffset: startOffset,
-//     endOffset: endOffset
-//   }).save().then(function(data){
-//     console.log('heres the annotation id ', data.id);
-//     ann.id = data.id;
-//     res.set('Content-Type','application/JSON');
-//     res.json(ann);
-//     res.end();
-//   });
-
-// });
-
-
-
 
 
 app.listen(process.env.PORT || 8000);
