@@ -7,7 +7,7 @@ var AnnotatorMinimizeButton = React.createClass({
   render: function() {
     return (
       <div onClick={this.handleClick}>
-        Minimize!
+        <img className='annotator-minimize-button' src={chrome.extension.getURL('/assets/right-copy.png')} />
       </div>
     );
   }

@@ -12,6 +12,19 @@ var App = React.createClass({
     };
   },
 
+  componentWillMount: function() {
+    console.log('componentWillMount..');
+  },
+
+  componentDidMount: function() {
+    var THIS = this;
+
+    $(document).on('click', '.annotator-hl', function() {
+      console.log('helllllllo')
+      THIS.updateView('showAnnotatorView');
+    });
+  },
+
   updateView: function(action){
     var duration = 200;
 
@@ -27,7 +40,7 @@ var App = React.createClass({
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: true});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(300)}, duration);
+            $('.annotation-sidebar').animate({right: -(300)}, 50);
             break;
         case 'showFeedView':
             this.setState({showAnnotatorButton: false});
