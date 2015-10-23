@@ -10,7 +10,7 @@ function fetchToken() {
 
   var options = {
     'interactive': true,
-    url: 'https://www.facebook.com/dialog/oauth?client_id=' + clientID + '&response_type=token&access_type=online&redirect_uri=' + encodeURIComponent(redirectUri) 
+    'url': 'https://www.facebook.com/dialog/oauth?client_id=' + clientID + '&response_type=token&access_type=online&redirect_uri=' + encodeURIComponent(redirectUri) 
   }
 
   chrome.identity.launchWebAuthFlow(options, function(redirectUri) {
@@ -33,7 +33,7 @@ function fetchToken() {
 
     chrome.storage.sync.set({'access_token': access_token});
   });
-}
+};
 
 chrome.storage.sync.clear();
 
