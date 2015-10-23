@@ -126,7 +126,12 @@ app.put('/api/annotations/:id',function(req,res){
 
 // Search Uri annotations endpoint(Read)
 app.get('/api/search',function(req,res){
-  var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
+  var qParam = req.url.split('?')[1];
+  var uriParam = qParam.split('&')[0];
+  var userParam = qParam.split('&')[1];
+  var uri = uriParam.split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
+  var user = userParam.split('=')[1];
+
   db.model('Annotation').fetchByUri(uri).then(function(data){
       
     var resultsArray = data.models.filter(function(e){
