@@ -128,9 +128,12 @@ app.put('/api/annotations/:id',function(req,res){
 app.get('/api/search',function(req,res){
   var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
   db.model('Annotation').fetchByUri(uri).then(function(data){
-    
-    
-    var resultsArray = data.models.map(function(e){
+      
+    var resultsArray = data.models.filter(function(e){
+      return (e.attributes.uri === uri);
+    });
+      
+    var returnArray = resultsArray.map(function(e){
       var resObj = {
         id: e.attributes.id,
         uri: e.attributes.uri,
@@ -146,18 +149,14 @@ app.get('/api/search',function(req,res){
         ]
        };
        return resObj;   
-    });
-
+    })
     var returnObj = {};
-    returnObj.rows = resultsArray;
+    returnObj.rows = resultsArray;   
       res.set('Content-Type', 'application/JSON');
       res.json(returnObj);
       res.end();
-    
-
+    });
   })
-
-})
 
 // // Search for user feeds annotations 
 // app.post('/api/annotations', function(req,res){
