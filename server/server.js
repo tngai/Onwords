@@ -133,6 +133,7 @@ app.get('/api/search',function(req,res){
     var resultsArray = data.models.map(function(e){
       var resObj = {
         id: e.attributes.id,
+        uri: e.attributes.uri,
         text: e.attributes.text,
         quote: e.attributes.quote,
         ranges: [
