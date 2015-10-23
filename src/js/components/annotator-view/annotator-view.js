@@ -5,6 +5,13 @@ var HomeButton = require('./home-button');
 var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 
 var AnnotatorView = React.createClass({
+  componentWillMount: function() {
+    console.log('Mounted inside bro!');
+    $(document).on('click', 'body', function() {
+        console.log('clicked on body!!')
+        THIS.updateView('showAnnotatorButton');
+    });
+  },
   render: function() {
     return (
       <div className='annotator-view-container'>

@@ -1,6 +1,7 @@
 var React = require('react');
 var MinimizeButton = require('./minimize-button');
 var Header = require('../header/header');
+var AnnotatorMixin = require('../mixins/annotatormixin');
 
 var FeedView = React.createClass({
   render: function() {

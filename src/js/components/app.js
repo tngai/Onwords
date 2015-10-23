@@ -18,12 +18,7 @@ var App = React.createClass({
 
   componentDidMount: function() {
     var THIS = this;
-
-    $(document).on('click', '.annotator-hl', function() {
-      console.log('helllllllo')
-      THIS.updateView('showAnnotatorView');
-    });
-
+    
     $(document).on('click', '.annotator-hl', function() {
       console.log('helllllllo')
       THIS.updateView('showAnnotatorView');

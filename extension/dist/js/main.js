@@ -19950,6 +19950,13 @@ var HomeButton = require('./home-button');
 var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 
 var AnnotatorView = React.createClass({displayName: "AnnotatorView",
+  componentWillMount: function() {
+    console.log('Mounted inside bro!');
+    $(document).on('click', 'body', function() {
+        console.log('clicked on body!!')
+        THIS.updateView('showAnnotatorButton');
+    });
+  },
   render: function() {
     return (
       React.createElement("div", {className: "annotator-view-container"}, 
@@ -20003,12 +20010,7 @@ var App = React.createClass({displayName: "App",
 
   componentDidMount: function() {
     var THIS = this;
-
-    $(document).on('click', '.annotator-hl', function() {
-      console.log('helllllllo')
-      THIS.updateView('showAnnotatorView');
-    });
-
+    
     $(document).on('click', '.annotator-hl', function() {
       console.log('helllllllo')
       THIS.updateView('showAnnotatorView');
@@ -20060,6 +20062,7 @@ module.exports = App;
 var React = require('react');
 var MinimizeButton = require('./minimize-button');
 var Header = require('../header/header');
+var AnnotatorMixin = require('../mixins/annotatormixin');
 
 var FeedView = React.createClass({displayName: "FeedView",
   render: function() {
@@ -20080,7 +20083,7 @@ var FeedView = React.createClass({displayName: "FeedView",
 
 module.exports = FeedView;
 
-},{"../header/header":167,"./minimize-button":166,"react":156}],166:[function(require,module,exports){
+},{"../header/header":167,"../mixins/annotatormixin":168,"./minimize-button":166,"react":156}],166:[function(require,module,exports){
 var React = require('react');
 
 var MinimizeButton = React.createClass({displayName: "MinimizeButton",
@@ -20123,6 +20126,23 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
 module.exports = AnnotatorHead;
 
 },{"react":156}],168:[function(require,module,exports){
+var React = require('react');
+
+var AnnotatorMixin = {
+
+  // componentWillMount: function() {
+  //   console.log('Mounted inside bro!');
+  //   $(document).on('click', 'body', function() {
+  //       console.log('clicked on body!!')
+  //       THIS.updateView('showAnnotatorButton');
+  //   };
+  // }
+
+};
+
+module.exports = AnnotatorMixin;
+
+},{"react":156}],169:[function(require,module,exports){
 var App = require('./components/app');
 var React = require('react');
 var test = require('./test');
@@ -20160,7 +20180,7 @@ chrome.storage.sync.get('access_token', function(obj) {
   }
 })
 
-},{"./components/app":164,"./test":169,"react":156}],169:[function(require,module,exports){
+},{"./components/app":164,"./test":170,"react":156}],170:[function(require,module,exports){
 // var loadfunction = window.onload;
 var renderAnnotations = require('./annotationRender');
 
@@ -20222,4 +20242,4 @@ debugger;
 
 }
 
-},{"./annotationRender":157}]},{},[168]);
+},{"./annotationRender":157}]},{},[169]);
