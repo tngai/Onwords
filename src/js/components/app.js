@@ -19,7 +19,7 @@ var App = React.createClass({
   componentDidMount: function() {
     var THIS = this;
 
-    $('.annotator-hl').click(function() {
+    $(document).on('click', '.annotator-hl', function() {
       console.log('helllllllo')
       THIS.updateView('showAnnotatorView');
     });

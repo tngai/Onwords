@@ -19899,7 +19899,6 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
     return (
       React.createElement("div", {id: "annotator-body-container"}, 
         React.createElement(AnnotationList, {annotations: this.state.annotations})
-
       )
     );
   }
@@ -19935,7 +19934,7 @@ var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimize
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        React.createElement("img", {className: "annotator-minimize-button", src: "../../../assets/right-copy.png"})
+        React.createElement("img", {className: "annotator-minimize-button", src: chrome.extension.getURL('/assets/right-copy.png')})
       )
     );
   }
@@ -20005,7 +20004,7 @@ var App = React.createClass({displayName: "App",
   componentDidMount: function() {
     var THIS = this;
 
-    $('.annotator-hl').click(function() {
+    $(document).on('click', '.annotator-hl', function() {
       console.log('helllllllo')
       THIS.updateView('showAnnotatorView');
     });
