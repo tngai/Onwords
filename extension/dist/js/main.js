@@ -19950,6 +19950,17 @@ var HomeButton = require('./home-button');
 var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 
 var AnnotatorView = React.createClass({displayName: "AnnotatorView",
+  componentWillMount: function() {
+    var THIS = this;
+    console.log('AnnotatorView mounted');
+    $(document).on('click', 'body', function() {
+        THIS.props.updateView('showAnnotatorButton');
+    });
+  },
+  componentWillUnmount: function() {
+    console.log('AnnotatorView unmounted');
+    $(document).off();
+  },
   render: function() {
     return (
       React.createElement("div", {className: "annotator-view-container"}, 
@@ -19996,20 +20007,22 @@ var App = React.createClass({displayName: "App",
       showFeedView: false
     };
   },
-
   componentWillMount: function() {
-    console.log('componentWillMount..');
-  },
-
-  componentDidMount: function() {
+    console.log('App componentWillMount');
+    
     var THIS = this;
-
     $(document).on('click', '.annotator-hl', function() {
-      console.log('helllllllo')
       THIS.updateView('showAnnotatorView');
     });
   },
-
+  componentDidUpdate: function() {
+    console.log('App componentDidUpdate');
+    
+    var THIS = this;
+    $(document).on('click', '.annotator-hl', function() {
+      THIS.updateView('showAnnotatorView');
+    });
+  },
   updateView: function(action){
     var duration = 200;
 
@@ -20037,7 +20050,6 @@ var App = React.createClass({displayName: "App",
             console.log('nothing happened')
     }
   },
-
   render: function() {
     return (
       React.createElement("div", {className: "app-container"}, 
@@ -20055,8 +20067,20 @@ module.exports = App;
 var React = require('react');
 var MinimizeButton = require('./minimize-button');
 var Header = require('../header/header');
+var AnnotatorMixin = require('../mixins/annotatormixin');
 
 var FeedView = React.createClass({displayName: "FeedView",
+  componentWillMount: function() {
+    var THIS = this;
+    console.log('FeedView mounted');
+    $(document).on('click', 'body', function() {
+        THIS.props.updateView('showAnnotatorButton');
+    });
+  },
+  componentWillUnmount: function() {
+    console.log('FeedView componentWillUnmount');
+    $(document).off();
+  },
   render: function() {
     return (
       React.createElement("div", {className: "feed-view-container"}, 
@@ -20075,7 +20099,7 @@ var FeedView = React.createClass({displayName: "FeedView",
 
 module.exports = FeedView;
 
-},{"../header/header":167,"./minimize-button":166,"react":156}],166:[function(require,module,exports){
+},{"../header/header":167,"../mixins/annotatormixin":168,"./minimize-button":166,"react":156}],166:[function(require,module,exports){
 var React = require('react');
 
 var MinimizeButton = React.createClass({displayName: "MinimizeButton",
@@ -20085,7 +20109,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        React.createElement("img", {className: "minimize-button", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Angle_right_font_awesome.svg/1000px-Angle_right_font_awesome.svg.png"})
+        React.createElement("img", {className: "minimize-button", src: chrome.extension.getURL('/assets/right-copy.png')})
       )
     );
   }
@@ -20100,7 +20124,8 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
   render: function() {
     return (
       React.createElement("div", {className: "annotator-head-container"}, 
-        React.createElement("div", {className: "user-image"}
+        React.createElement("div", {className: "user-image-container"}, 
+          React.createElement("img", {src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg", className: "user-image"})
         ), 
         
         React.createElement("div", {className: "user-info"}, 
@@ -20117,6 +20142,23 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
 module.exports = AnnotatorHead;
 
 },{"react":156}],168:[function(require,module,exports){
+var React = require('react');
+
+var AnnotatorMixin = {
+
+  componentWillMount: function() {
+    console.log('Mounted inside bro!');
+    $(document).on('click', 'body', function() {
+        // console.log('clicked on body!!', this)
+        // updateView('showAnnotatorButton');
+    });
+  }
+
+};
+
+module.exports = AnnotatorMixin;
+
+},{"react":156}],169:[function(require,module,exports){
 var App = require('./components/app');
 var React = require('react');
 var test = require('./test');
@@ -20154,7 +20196,7 @@ chrome.storage.sync.get('access_token', function(obj) {
   }
 })
 
-},{"./components/app":164,"./test":169,"react":156}],169:[function(require,module,exports){
+},{"./components/app":164,"./test":170,"react":156}],170:[function(require,module,exports){
 // var loadfunction = window.onload;
 var renderAnnotations = require('./annotationRender');
 
@@ -20216,4 +20258,4 @@ debugger;
 
 }
 
-},{"./annotationRender":157}]},{},[168]);
+},{"./annotationRender":157}]},{},[169]);
