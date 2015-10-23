@@ -12327,6 +12327,7 @@ App.prototype.destroy = function () {
  * :rtype: Promise
  */
 App.prototype.runHook = function (name, args) {
+   debugger; 
     var results = [];
     for (var i = 0, len = this.modules.length; i < len; i++) {
         var mod = this.modules[i];
