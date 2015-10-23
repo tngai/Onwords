@@ -8,9 +8,9 @@ var annotationList = React.createClass({
       return <li className="annotation" key={index}>
         <p>{annotation.quote}</p>
         <p>{annotation.text}</p>
+        <button>Remove</button>        
       </li>
     });
-    console.log(annotations)
 
     return (
       <ul className="annotationList">

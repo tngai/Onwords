@@ -18,19 +18,23 @@ var renderComponents = function() {
 //     }
 //   })
 
-
-
+var tokenListener = function(changes) {
+  debugger;
+  console.log("inside addlistener", changes);
+  if (changes.access_token.newValue) {
+    renderComponents();
+    test.annotate();
+  }
+  debugger;
+  chrome.storage.onChanged.removeListener(tokenListener);
+}
+debugger;
 chrome.storage.sync.get('access_token', function(obj) {
+  debugger;
   if (obj['access_token']) {
     renderComponents();
     test.annotate();
   } else {
-    chrome.storage.onChanged.addListener(function(changes) {
-      console.log("inside addlistener", changes);
-      if (changes.access_token.newValue) {
-        renderComponents();
-        test.annotate();
-      }
-    })
+    chrome.storage.onChanged.addListener(tokenListener);
   }
 })

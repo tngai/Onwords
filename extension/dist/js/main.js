@@ -19813,27 +19813,38 @@ module.exports = require('./lib/React');
 var renderAnnotations = function() {
   return {
     annotationsLoaded: function(annotations) {
+      var uri = window.location.href.split("?")[0];
       console.log("annotations loaded", annotations);
-      chrome.storage.local.set({'annotations': annotations});
+      var obj = {};
+      obj[uri] = annotations;
+      chrome.storage.local.set(obj);
     },
     annotationCreated: function(annotation) {
+      var uri = window.location.href.split("?")[0];
       console.log("annotation created:", annotation);
-      chrome.storage.local.get('annotations', function(obj) {
-        console.log('old values:', obj.annotations)
-          obj.annotations.push(annotation);
-          console.log('new values:', obj.annotations);
-          chrome.storage.local.set({'annotations': obj.annotations});
+      chrome.storage.local.get(uri, function(obj) {
+        console.log('old values:', obj[uri])
+        if (!obj[uri]) {
+          obj[uri] = [];
+        }
+        obj[uri].push(annotation);
+        console.log('new values:', obj[uri]);
+        var newObj = {};
+        newObj[uri] = obj[uri];
+        chrome.storage.local.set(newObj);
       })
     },
-    annotationDeleted: function(annotation) {
-      chrome.storage.local.get('annotations', function(obj) {
+    beforeAnnotationDeleted: function(annotation) {
+      var uri = window.location.href.split("?")[0];
+      chrome.storage.local.get(uri, function(obj) {
         debugger;
-        console.log('old values:', obj.annotations)
-        for (var i = 0; i < obj.annotations.length; i++) {
-          console.log(obj.annotations[i].id)
-          if (obj.annotations[i].id === annotation.id) {
-            obj.annotations.splice(i, 1);
-            chrome.storage.local.set({'annotations': obj.annotations})
+        console.log('old values:', obj[uri])
+        for (var i = 0; i < obj[uri].length; i++) {
+          if (obj[uri][i].id === annotation.id) {
+            obj[uri].splice(i, 1);
+            var newObj = {};
+            newObj[uri] = obj[uri];
+            chrome.storage.local.set(newObj);
           }
         }
       })
@@ -19853,10 +19864,10 @@ var annotationList = React.createClass({displayName: "annotationList",
     var annotations = this.props.annotations.map(function(annotation, index) {
       return React.createElement("li", {className: "annotation", key: index}, 
         React.createElement("p", null, annotation.quote), 
-        React.createElement("p", null, annotation.text)
+        React.createElement("p", null, annotation.text), 
+        React.createElement("button", null, "Remove")
       )
     });
-    console.log(annotations)
 
     return (
       React.createElement("ul", {className: "annotationList"}, 
@@ -19873,6 +19884,10 @@ var React = require('react');
 var AnnotationList = require('./annotationList');
 
 var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
+  deleteAnn: function(ann) {
+    
+  },
+
   getInitialState: function() {
     return {
       annotations: []
@@ -19881,16 +19896,17 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
 
   componentWillMount: function() {
     var self = this;
-    chrome.storage.local.get('annotations', function(object) {
-      console.log('inside annotator body', object.annotations);
-      if (object.annotations) {
-        self.setState({annotations: object.annotations});
+    var uri = window.location.href.split("?")[0];
+    chrome.storage.local.get(uri, function(object) {
+      console.log('inside annotator body', object);
+      if (object[uri]) {
+        self.setState({annotations: object[uri]});
       }
     })
     chrome.storage.onChanged.addListener(function(changes) {
-      console.log('annotator body, storage updated', changes.annotations);
-      if (changes.annotations.newValue) {
-        self.setState({annotations: changes.annotations.newValue});
+      console.log('annotator body, storage updated', changes[uri]);
+      if (changes[uri].newValue) {
+        self.setState({annotations: changes[uri].newValue});
       }
     })
   },
@@ -20137,20 +20153,24 @@ var renderComponents = function() {
 //     }
 //   })
 
-
-
+var tokenListener = function(changes) {
+  debugger;
+  console.log("inside addlistener", changes);
+  if (changes.access_token.newValue) {
+    renderComponents();
+    test.annotate();
+  }
+  debugger;
+  chrome.storage.onChanged.removeListener(tokenListener);
+}
+debugger;
 chrome.storage.sync.get('access_token', function(obj) {
+  debugger;
   if (obj['access_token']) {
     renderComponents();
     test.annotate();
   } else {
-    chrome.storage.onChanged.addListener(function(changes) {
-      console.log("inside addlistener", changes);
-      if (changes.access_token.newValue) {
-        renderComponents();
-        test.annotate();
-      }
-    })
+    chrome.storage.onChanged.addListener(tokenListener);
   }
 })
 
