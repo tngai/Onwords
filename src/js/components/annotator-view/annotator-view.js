@@ -8,7 +8,11 @@ var AnnotatorView = React.createClass({
   componentWillMount: function() {
     var THIS = this;
     console.log('AnnotatorView mounted');
-    $(document).on('click', 'body', function() {
+    $(document).on('click', 'body', function(e) {
+        if($(e.target).attr('data-reactid')){
+            e.preventDefault();
+            return;
+        }
         THIS.props.updateView('showAnnotatorButton');
     });
   },
