@@ -19953,7 +19953,11 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
   componentWillMount: function() {
     var THIS = this;
     console.log('AnnotatorView mounted');
-    $(document).on('click', 'body', function() {
+    $(document).on('click', 'body', function(e) {
+        if($(e.target).attr('data-reactid')){
+            e.preventDefault();
+            return;
+        }
         THIS.props.updateView('showAnnotatorButton');
     });
   },
@@ -20073,7 +20077,11 @@ var FeedView = React.createClass({displayName: "FeedView",
   componentWillMount: function() {
     var THIS = this;
     console.log('FeedView mounted');
-    $(document).on('click', 'body', function() {
+    $(document).on('click', 'body', function(e) {
+        if($(e.target).attr('data-reactid')){
+            e.preventDefault();
+            return;
+        }
         THIS.props.updateView('showAnnotatorButton');
     });
   },
