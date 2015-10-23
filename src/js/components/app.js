@@ -11,20 +11,22 @@ var App = React.createClass({
       showFeedView: false
     };
   },
-
   componentWillMount: function() {
-    console.log('componentWillMount..');
-  },
-
-  componentDidMount: function() {
-    var THIS = this;
+    console.log('App componentWillMount');
     
+    var THIS = this;
     $(document).on('click', '.annotator-hl', function() {
-      console.log('helllllllo')
       THIS.updateView('showAnnotatorView');
     });
   },
-
+  componentDidUpdate: function() {
+    console.log('App componentDidUpdate');
+    
+    var THIS = this;
+    $(document).on('click', '.annotator-hl', function() {
+      THIS.updateView('showAnnotatorView');
+    });
+  },
   updateView: function(action){
     var duration = 200;
 
@@ -52,7 +54,6 @@ var App = React.createClass({
             console.log('nothing happened')
     }
   },
-
   render: function() {
     return (
       <div className='app-container'>      

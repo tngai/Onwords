@@ -19951,11 +19951,15 @@ var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 
 var AnnotatorView = React.createClass({displayName: "AnnotatorView",
   componentWillMount: function() {
-    console.log('Mounted inside bro!');
+    var THIS = this;
+    console.log('AnnotatorView mounted');
     $(document).on('click', 'body', function() {
-        console.log('clicked on body!!')
-        THIS.updateView('showAnnotatorButton');
+        THIS.props.updateView('showAnnotatorButton');
     });
+  },
+  componentWillUnmount: function() {
+    console.log('AnnotatorView unmounted');
+    $(document).off();
   },
   render: function() {
     return (
@@ -20003,20 +20007,22 @@ var App = React.createClass({displayName: "App",
       showFeedView: false
     };
   },
-
   componentWillMount: function() {
-    console.log('componentWillMount..');
-  },
-
-  componentDidMount: function() {
-    var THIS = this;
+    console.log('App componentWillMount');
     
+    var THIS = this;
     $(document).on('click', '.annotator-hl', function() {
-      console.log('helllllllo')
       THIS.updateView('showAnnotatorView');
     });
   },
-
+  componentDidUpdate: function() {
+    console.log('App componentDidUpdate');
+    
+    var THIS = this;
+    $(document).on('click', '.annotator-hl', function() {
+      THIS.updateView('showAnnotatorView');
+    });
+  },
   updateView: function(action){
     var duration = 200;
 
@@ -20044,7 +20050,6 @@ var App = React.createClass({displayName: "App",
             console.log('nothing happened')
     }
   },
-
   render: function() {
     return (
       React.createElement("div", {className: "app-container"}, 
@@ -20065,6 +20070,17 @@ var Header = require('../header/header');
 var AnnotatorMixin = require('../mixins/annotatormixin');
 
 var FeedView = React.createClass({displayName: "FeedView",
+  componentWillMount: function() {
+    var THIS = this;
+    console.log('FeedView mounted');
+    $(document).on('click', 'body', function() {
+        THIS.props.updateView('showAnnotatorButton');
+    });
+  },
+  componentWillUnmount: function() {
+    console.log('FeedView componentWillUnmount');
+    $(document).off();
+  },
   render: function() {
     return (
       React.createElement("div", {className: "feed-view-container"}, 
@@ -20130,13 +20146,13 @@ var React = require('react');
 
 var AnnotatorMixin = {
 
-  // componentWillMount: function() {
-  //   console.log('Mounted inside bro!');
-  //   $(document).on('click', 'body', function() {
-  //       console.log('clicked on body!!')
-  //       THIS.updateView('showAnnotatorButton');
-  //   };
-  // }
+  componentWillMount: function() {
+    console.log('Mounted inside bro!');
+    $(document).on('click', 'body', function() {
+        // console.log('clicked on body!!', this)
+        // updateView('showAnnotatorButton');
+    });
+  }
 
 };
 
