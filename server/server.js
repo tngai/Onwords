@@ -73,12 +73,11 @@ app.post('/api/users', function(req,res){
   };
 
   db.model('User').fetchByFacebookId(facebook_id).then(function(data){
-      
+      if (data === null) {
+        db.model('User').newUser(user).save()
+      }
+      res.end();
   });
-
-  db.model('User').newUser(newUser).save().then(function(data){
-
-  })
 });
 
 
@@ -126,21 +125,13 @@ app.put('/api/annotations/:id',function(req,res){
 
 // Search Uri annotations endpoint(Read)
 app.get('/api/search',function(req,res){
-  var qParam = req.url.split('?')[1];
-  var uriParam = qParam.split('&')[0];
-  var userParam = qParam.split('&')[1];  
-  var uri = uriParam.split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
-  
-  if (userParam) {
-    var userId = userParam.split('=')[1];  
-  }
-
-  db.model('User').fetchById(userId).then(function(data) { 
-    var resultsArray = data.relations.annotations.models.filter(function(e) {
-      console.log(e.attributes.uri,' = ',uri)
+  var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
+  db.model('Annotation').fetchByUri(uri).then(function(data){
+      
+    var resultsArray = data.models.filter(function(e){
       return (e.attributes.uri === uri);
-    }); 
-
+    });
+      
     var returnArray = resultsArray.map(function(e){
       var resObj = {
         id: e.attributes.id,
@@ -158,15 +149,12 @@ app.get('/api/search',function(req,res){
        };
        return resObj;   
     })
-    
     var returnObj = {};
     returnObj.rows = returnArray;   
       res.set('Content-Type', 'application/JSON');
       res.json(returnObj);
       res.end();
-    
     });
-     
   })
 
 app.listen(process.env.PORT || 8000);
