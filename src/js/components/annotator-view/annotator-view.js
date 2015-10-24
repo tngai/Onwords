@@ -23,6 +23,7 @@ var AnnotatorView = React.createClass({
     console.log('AnnotatorView unmounted');
     $(document).off();
   },
+
   render: function() {
     return (
       <div className='annotator-view-container'>

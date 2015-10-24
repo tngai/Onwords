@@ -19,6 +19,7 @@ var FeedView = React.createClass({
     console.log('FeedView componentWillUnmount');
     $(document).off();
   },
+
   render: function() {
     return (
       <div className='feed-view-container'>
