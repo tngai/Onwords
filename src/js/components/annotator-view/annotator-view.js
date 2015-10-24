@@ -9,10 +9,16 @@ var AnnotatorView = React.createClass({
     console.log('AnnotatorView mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
+      console.log('e is : ', e);
       if(getSelection().toString()) {
         return;
       }
       if ($(e.target).attr('data-reactid')) {
+        e.preventDefault();
+        return;
+      }
+      if($(e.target).is('div[class^="annotator-"]') || $(e.target).is('div[id^="annotator-"]')){
+        console.log('STOPPINH SOME SHIT BRO');
         e.preventDefault();
         return;
       }
