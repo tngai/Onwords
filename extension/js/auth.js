@@ -1,8 +1,7 @@
 function fetchToken() {
   var access_token;
 
-  var clientID = 'ADD YOUR OWN';
-
+  var clientID = '190161771316309';
 
   var redirectUri = 'https://' + chrome.runtime.id + '.chromiumapp.org/provider_cb';
 
@@ -56,10 +55,7 @@ function fetchFbProfile(accessToken) {
       profile.full_name = resp.name;
       profile.pic_url = resp.picture.data.url;
       profile.email = resp.email;
-<<<<<<< HEAD
-=======
       chrome.storage.sync.set({'facebook_id': resp.id});
->>>>>>> 768dec184b54d0bef822014868b9530d2329c522
       sendFbProfile(profile);
     }
   }
