@@ -16,6 +16,19 @@ var renderAnnotations = function() {
           obj[uri] = [];
         }
         obj[uri].push(annotation);
+        obj[uri].sort(function(a,b) {
+          if (a.offsetTop < b.offsetTop) {
+           return -1;
+          } else if (a.offsetTop > b.offsetTop){
+           return 1;
+          } else {
+             if (a.offsetLeft < b.offsetLeft) { 
+              return -1;
+             } else if (a.offsetLeft > b.offsetLeft){
+              return 1;
+             }
+          }
+        })
         console.log('new values:', obj[uri]);
         var newObj = {};
         newObj[uri] = obj[uri];

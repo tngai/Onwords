@@ -18,6 +18,7 @@ var annotationList = React.createClass({
         <p>{annotation.quote}</p>
         <p>{annotation.text}</p>
         <button data-id={annotation} onClick={self.deleteAnn.bind(null, annotation)}>Remove</button> 
+        <button>Edit</button>
       </li>
     });
 
