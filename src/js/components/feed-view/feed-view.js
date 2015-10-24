@@ -7,7 +7,11 @@ var FeedView = React.createClass({
   componentWillMount: function() {
     var THIS = this;
     console.log('FeedView mounted');
-    $(document).on('click', 'body', function() {
+    $(document).on('click', 'body', function(e) {
+        if($(e.target).attr('data-reactid')){
+            e.preventDefault();
+            return;
+        }
         THIS.props.updateView('showAnnotatorButton');
     });
   },
@@ -15,6 +19,7 @@ var FeedView = React.createClass({
     console.log('FeedView componentWillUnmount');
     $(document).off();
   },
+
   render: function() {
     return (
       <div className='feed-view-container'>

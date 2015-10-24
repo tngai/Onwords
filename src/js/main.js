@@ -10,27 +10,20 @@ var renderComponents = function() {
   React.render(<App />, document.getElementById('scrollview'));
 }
 
-
-// chrome.runtime.onMessage.addListener(
-//   function(request, sender, sendResponse) {
-//     if (request.annotations) {
-//       console.log('got the message', request.annotations)
-//     }
-//   })
-
-
+var tokenListener = function(changes) {
+  console.log("inside addlistener", changes);
+  if (changes.access_token.newValue) {
+    renderComponents();
+    test.annotate();
+  }
+  chrome.storage.onChanged.removeListener(tokenListener);
+}
 
 chrome.storage.sync.get('access_token', function(obj) {
   if (obj['access_token']) {
     renderComponents();
     test.annotate();
   } else {
-    chrome.storage.onChanged.addListener(function(changes) {
-      console.log("inside addlistener", changes);
-      if (changes.access_token.newValue) {
-        renderComponents();
-        test.annotate();
-      }
-    })
+    chrome.storage.onChanged.addListener(tokenListener);
   }
 })
