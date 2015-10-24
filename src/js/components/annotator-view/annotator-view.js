@@ -35,6 +35,7 @@ var AnnotatorView = React.createClass({
         <HomeButton {...this.props} />
         <AnnotatorMinimizeButton {...this.props} />
         <AnnotatorHeader {...this.props} />
+        <br />
         <AnnotatorBody {...this.props} />
       </div>
     );

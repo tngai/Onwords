@@ -14,6 +14,7 @@ var AnnotatorHead = React.createClass({
         Hoonthegoon9000
         </div>
         
+        <br />
       </div>
     );
   }

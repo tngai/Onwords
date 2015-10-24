@@ -20003,6 +20003,7 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
         React.createElement(HomeButton, React.__spread({},  this.props)), 
         React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
         React.createElement(AnnotatorHeader, React.__spread({},  this.props)), 
+        React.createElement("br", null), 
         React.createElement(AnnotatorBody, React.__spread({},  this.props))
       )
     );
@@ -20068,7 +20069,7 @@ var App = React.createClass({displayName: "App",
             this.setState({showAnnotatorButton: true});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(580)}, duration);
+            $('.annotation-sidebar').animate({right: -(565)}, duration);
             break;
         case 'showAnnotatorView':
             this.setState({showAnnotatorButton: false});
@@ -20173,8 +20174,9 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
         "Jihoon Kim", 
         React.createElement("br", null), 
         "Hoonthegoon9000"
-        )
+        ), 
         
+        React.createElement("br", null)
       )
     );
   }
