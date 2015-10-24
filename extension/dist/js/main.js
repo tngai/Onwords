@@ -19828,6 +19828,19 @@ var renderAnnotations = function() {
           obj[uri] = [];
         }
         obj[uri].push(annotation);
+        obj[uri].sort(function(a,b) {
+          if (a.offsetTop < b.offsetTop) {
+           return -1;
+          } else if (a.offsetTop > b.offsetTop){
+           return 1;
+          } else {
+             if (a.offsetLeft < b.offsetLeft) { 
+              return -1;
+             } else if (a.offsetLeft > b.offsetLeft){
+              return 1;
+             }
+          }
+        })
         console.log('new values:', obj[uri]);
         var newObj = {};
         newObj[uri] = obj[uri];
@@ -19876,7 +19889,8 @@ var annotationList = React.createClass({displayName: "annotationList",
       return React.createElement("li", {className: "annotation", key: index}, 
         React.createElement("p", null, annotation.quote), 
         React.createElement("p", null, annotation.text), 
-        React.createElement("button", {"data-id": annotation, onClick: self.deleteAnn.bind(null, annotation)}, "Remove")
+        React.createElement("button", {"data-id": annotation, onClick: self.deleteAnn.bind(null, annotation)}, "Remove"), 
+        React.createElement("button", null, "Edit")
       )
     });
 
