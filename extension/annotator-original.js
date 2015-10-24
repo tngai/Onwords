@@ -13351,6 +13351,7 @@ StorageAdapter.prototype.load = function (query) {
     var self = this;
     return this.query(query)
         .then(function (data) {
+
             self.runHook('annotationsLoaded', [data.results]);
         });
 };
@@ -14744,13 +14745,34 @@ Highlighter.prototype.drawAll = function (annotations) {
             var now = annList.splice(0, self.options.chunkSize);
             for (var i = 0, len = now.length; i < len; i++) {
                 highlights = highlights.concat(self.draw(now[i]));
+                // now[i]['offsetTop'] = now[i]._local.highlights[0].offsetTop;
+                // now[i]['offsetLeft'] = now[i]._local.highlights[0].offsetLeft;
             }
-            console.log('hellooooo', now);
+            
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            now.sort(function(a,b) {
+              if (a.offsetTop < b.offsetTop) {
+               return -1;
+              } else if (a.offsetTop > b.offsetTop){
+               return 1;
+              } else {
+                 if (a.offsetLeft < b.offsetLeft) { 
+                  return -1;
+                 } else if (a.offsetLeft > b.offsetLeft){
+                  return 1;
+                 }
+              }
+            })
+
             var uri = window.location.href.split("?")[0];
-            console.log("annotations loaded", annotations);
+            console.log("annotations loaded", now);
             var obj = {};
-            obj[uri] = annotations;
+            obj[uri] = now;
             chrome.storage.local.set(obj);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
             // If there are more to do, do them after a delay
             if (annList.length > 0) {
                 setTimeout(function () {
@@ -14802,6 +14824,9 @@ Highlighter.prototype.draw = function (annotation) {
             highlightRange(normed, this.options.highlightClass)
         );
     }
+
+    annotation['offsetTop'] = $(annotation._local.highlights[0]).offset().top;
+    annotation['offsetLeft'] = $(annotation._local.highlights[0]).offset().left;
 
     // Save the annotation data on each highlighter element.
     $(annotation._local.highlights).data('annotation', annotation);

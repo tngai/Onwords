@@ -27,7 +27,7 @@ var AnnotatorBody = React.createClass({
 
   render: function() {
     return (
-      <div id='annotator-body-container'>
+      <div className='annotator-body-container'>
         <AnnotationList annotations={this.state.annotations} />
       </div>
     );
