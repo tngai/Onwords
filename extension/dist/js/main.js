@@ -19984,6 +19984,10 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
         e.preventDefault();
         return;
       }
+      if ($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
+          e.preventDefault();
+          return;
+      }
       THIS.props.updateView('showAnnotatorButton');
     });
   },
