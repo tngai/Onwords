@@ -13062,7 +13062,7 @@ HttpStorage.prototype._urlFor = function (action, id) {
     if (typeof this.options.prefix !== 'undefined' &&
         this.options.prefix !== null) {
         url = this.options.prefix;
-    }
+    } 
 
     url += this.options.urls[action];
     // If there's an '{id}' in the URL, then fill in the ID.
