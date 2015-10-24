@@ -14825,8 +14825,8 @@ Highlighter.prototype.draw = function (annotation) {
         );
     }
 
-    annotation['offsetTop'] = annotation._local.highlights[0].offsetTop;
-    annotation['offsetLeft'] = annotation._local.highlights[0].offsetLeft;
+    annotation['offsetTop'] = $(annotation._local.highlights[0]).offset().top;
+    annotation['offsetLeft'] = $(annotation._local.highlights[0]).offset().left;
 
     // Save the annotation data on each highlighter element.
     $(annotation._local.highlights).data('annotation', annotation);
