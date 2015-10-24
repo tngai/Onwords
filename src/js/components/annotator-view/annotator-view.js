@@ -5,17 +5,25 @@ var HomeButton = require('./home-button');
 var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 
 var AnnotatorView = React.createClass({
-  // componentWillMount: function() {
-  //   var THIS = this;
-  //   console.log('AnnotatorView mounted');
-  //   $(document).on('click', 'body', function() {
-  //       THIS.props.updateView('showAnnotatorButton');
-  //   });
-  // },
-  // componentWillUnmount: function() {
-  //   console.log('AnnotatorView unmounted');
-  //   $(document).off();
-  // },
+  componentWillMount: function() {
+    var THIS = this;
+    console.log('AnnotatorView mounted');
+    $(document).on('click', 'body', function(e) {
+      if(getSelection().toString()) {
+        return;
+      }
+      if ($(e.target).attr('data-reactid')) {
+        e.preventDefault();
+        return;
+      }
+      THIS.props.updateView('showAnnotatorButton');
+    });
+  },
+  componentWillUnmount: function() {
+    console.log('AnnotatorView unmounted');
+    $(document).off();
+  },
+
   render: function() {
     return (
       <div className='annotator-view-container'>

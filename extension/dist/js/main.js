@@ -19973,17 +19973,25 @@ var HomeButton = require('./home-button');
 var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 
 var AnnotatorView = React.createClass({displayName: "AnnotatorView",
-  // componentWillMount: function() {
-  //   var THIS = this;
-  //   console.log('AnnotatorView mounted');
-  //   $(document).on('click', 'body', function() {
-  //       THIS.props.updateView('showAnnotatorButton');
-  //   });
-  // },
-  // componentWillUnmount: function() {
-  //   console.log('AnnotatorView unmounted');
-  //   $(document).off();
-  // },
+  componentWillMount: function() {
+    var THIS = this;
+    console.log('AnnotatorView mounted');
+    $(document).on('click', 'body', function(e) {
+      if(getSelection().toString()) {
+        return;
+      }
+      if ($(e.target).attr('data-reactid')) {
+        e.preventDefault();
+        return;
+      }
+      THIS.props.updateView('showAnnotatorButton');
+    });
+  },
+  componentWillUnmount: function() {
+    console.log('AnnotatorView unmounted');
+    $(document).off();
+  },
+
   render: function() {
     return (
       React.createElement("div", {className: "annotator-view-container"}, 
@@ -20093,17 +20101,22 @@ var Header = require('../header/header');
 var AnnotatorMixin = require('../mixins/annotatormixin');
 
 var FeedView = React.createClass({displayName: "FeedView",
-  // componentWillMount: function() {
-  //   var THIS = this;
-  //   console.log('FeedView mounted');
-  //   $(document).on('click', 'body', function() {
-  //       THIS.props.updateView('showAnnotatorButton');
-  //   });
-  // },
-  // componentWillUnmount: function() {
-  //   console.log('FeedView componentWillUnmount');
-  //   $(document).off();
-  // },
+  componentWillMount: function() {
+    var THIS = this;
+    console.log('FeedView mounted');
+    $(document).on('click', 'body', function(e) {
+        if($(e.target).attr('data-reactid')){
+            e.preventDefault();
+            return;
+        }
+        THIS.props.updateView('showAnnotatorButton');
+    });
+  },
+  componentWillUnmount: function() {
+    console.log('FeedView componentWillUnmount');
+    $(document).off();
+  },
+
   render: function() {
     return (
       React.createElement("div", {className: "feed-view-container"}, 
