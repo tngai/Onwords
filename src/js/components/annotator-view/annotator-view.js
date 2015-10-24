@@ -6,8 +6,8 @@ var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 
 var AnnotatorView = React.createClass({
   componentWillMount: function() {
-    var THIS = this;
     console.log('AnnotatorView mounted');
+    var THIS = this;
     $(document).on('click', 'body', function(e) {
         if($(e.target).attr('data-reactid')){
             e.preventDefault();

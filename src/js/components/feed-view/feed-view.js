@@ -5,8 +5,8 @@ var AnnotatorMixin = require('../mixins/annotatormixin');
 
 var FeedView = React.createClass({
   componentWillMount: function() {
-    var THIS = this;
     console.log('FeedView mounted');
+    var THIS = this;
     $(document).on('click', 'body', function(e) {
         if($(e.target).attr('data-reactid')){
             e.preventDefault();

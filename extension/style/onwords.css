@@ -5,22 +5,25 @@
   right: -580px; 
   background-color: black; 
   height: 100%; 
-  z-index: 10000; 
   background: rgba(0, 0, 31, 0);
-  overflow-y: scroll;
 }
-
 #scrollview {
   height: 1000px;
   color: black; 
 }
-
 /* React */
 
+/* Annotator View */
 .annotator-view-container {
   width: 300px;
   height: 1000px;
   background: rgba(249, 249, 249, 1);
+}
+
+.home-button-container {
+  float: left;
+  margin: 7px 0 0 7px;
+  /*display: inline-block;*/
 }
 
 .annotator-button {
@@ -28,34 +31,51 @@
   height: 25px;
   background: rgba(55, 54, 68, 0);
 }
-
 .annotator-minimize-button {
   width: 25px; 
   height: 25px;
   background: rgba(55, 54, 68, 0);
-  /*position: absolute;*/
-  display: block;
-  right: 0;
+  float: right;
+  margin: 7px 7px 0 0;
+  /*display: inline-block;*/
+  /*right: 0;*/
 }
 
+/* Header */
+.annotator-head-container {
+  margin: 0 auto;
+  height: 75px;
+  width: 75px;
+}
+
+.user-image-container {
+  /*margin: 0 auto;*/
+}
+
+.annotator-user-image {
+  margin-top: 25px; 
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 5px;
+  border-color: black;
+}
+
+/* Feed View */
 .home-button {
   width: 25px;
   height: 25px;
-  background: rgba(55, 54, 68, 0); 
 }
-
 .minimize-button {
   width: 25px;
   height: 25px;
-  background: rgba(55, 54, 68, 0);  
 }
-
 .feed-view-container {
   width: 600px;
   height: 1000px;
   background: rgba(249, 249, 249, 1);
 }
-
 .feed-container {
   width: 500px;
   height: 700px;
