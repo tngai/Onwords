@@ -55,7 +55,6 @@ function fetchFbProfile(accessToken) {
       profile.full_name = resp.name;
       profile.pic_url = resp.picture.data.url;
       profile.email = resp.email;
-      chrome.storage.sync.set({'facebook_id': resp.id});
       sendFbProfile(profile);
     }
   }
