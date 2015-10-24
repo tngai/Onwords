@@ -2,10 +2,6 @@ var React = require('react');
 var AnnotationList = require('./annotationList');
 
 var AnnotatorBody = React.createClass({
-  deleteAnn: function(ann) {
-    
-  },
-
   getInitialState: function() {
     return {
       annotations: []
@@ -32,7 +28,7 @@ var AnnotatorBody = React.createClass({
   render: function() {
     return (
       <div id='annotator-body-container'>
-        <AnnotationList annotations={this.state.annotations}/>
+        <AnnotationList annotations={this.state.annotations} />
       </div>
     );
   }

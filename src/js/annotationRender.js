@@ -1,12 +1,12 @@
 var renderAnnotations = function() {
   return {
-    annotationsLoaded: function(annotations) {
-      var uri = window.location.href.split("?")[0];
-      console.log("annotations loaded", annotations);
-      var obj = {};
-      obj[uri] = annotations;
-      chrome.storage.local.set(obj);
-    },
+    // annotationsLoaded: function(annotations) {
+    //   var uri = window.location.href.split("?")[0];
+    //   console.log("annotations loaded", annotations);
+    //   var obj = {};
+    //   obj[uri] = annotations;
+    //   chrome.storage.local.set(obj);
+    // },
     annotationCreated: function(annotation) {
       var uri = window.location.href.split("?")[0];
       console.log("annotation created:", annotation);
@@ -23,6 +23,8 @@ var renderAnnotations = function() {
       })
     },
     beforeAnnotationDeleted: function(annotation) {
+      var id = annotation.id;
+      $('[data-annotation-id=' + id + ']').contents().unwrap();
       var uri = window.location.href.split("?")[0];
       chrome.storage.local.get(uri, function(obj) {
         debugger;
