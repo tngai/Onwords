@@ -19934,7 +19934,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
 
   render: function() {
     return (
-      React.createElement("div", {id: "annotator-body-container"}, 
+      React.createElement("div", {className: "annotator-body-container"}, 
         React.createElement(AnnotationList, {annotations: this.state.annotations})
       )
     );
@@ -19988,9 +19988,10 @@ var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 
 var AnnotatorView = React.createClass({displayName: "AnnotatorView",
   componentWillMount: function() {
-    var THIS = this;
     console.log('AnnotatorView mounted');
+    var THIS = this;
     $(document).on('click', 'body', function(e) {
+      console.log('e is : ', e);
       if(getSelection().toString()) {
         return;
       }
@@ -20015,8 +20016,12 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
       React.createElement("div", {className: "annotator-view-container"}, 
         React.createElement(HomeButton, React.__spread({},  this.props)), 
         React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
-        React.createElement(AnnotatorHeader, React.__spread({},  this.props)), 
-        React.createElement(AnnotatorBody, React.__spread({},  this.props))
+        React.createElement("div", null, 
+          React.createElement(AnnotatorHeader, React.__spread({},  this.props))
+        ), 
+        React.createElement("div", null, 
+          React.createElement(AnnotatorBody, React.__spread({},  this.props))
+        )
       )
     );
   }
@@ -20033,7 +20038,7 @@ var HomeButton = React.createClass({displayName: "HomeButton",
   }, 
   render: function() {   
     return (
-      React.createElement("div", {onClick: this.handleClick}, 
+      React.createElement("div", {onClick: this.handleClick, className: "home-button-container"}, 
         React.createElement("img", {className: "home-button", src: "http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png"})
       )
     );
@@ -20081,7 +20086,7 @@ var App = React.createClass({displayName: "App",
             this.setState({showAnnotatorButton: true});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(580)}, duration);
+            $('.annotation-sidebar').animate({right: -(565)}, duration);
             break;
         case 'showAnnotatorView':
             this.setState({showAnnotatorButton: false});
@@ -20120,8 +20125,8 @@ var AnnotatorMixin = require('../mixins/annotatormixin');
 
 var FeedView = React.createClass({displayName: "FeedView",
   componentWillMount: function() {
-    var THIS = this;
     console.log('FeedView mounted');
+    var THIS = this;
     $(document).on('click', 'body', function(e) {
         if($(e.target).attr('data-reactid')){
             e.preventDefault();
@@ -20179,15 +20184,11 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
     return (
       React.createElement("div", {className: "annotator-head-container"}, 
         React.createElement("div", {className: "user-image-container"}, 
-          React.createElement("img", {src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg", className: "user-image"})
+          React.createElement("img", {src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg", className: "annotator-user-image"})
         ), 
         
-        React.createElement("div", {className: "user-info"}, 
-        "Jihoon Kim", 
-        React.createElement("br", null), 
-        "Hoonthegoon9000"
-        )
-        
+        React.createElement("span", null, "Jihoon Kim"), 
+        React.createElement("span", null, "Hoonthegoon9000")
       )
     );
   }

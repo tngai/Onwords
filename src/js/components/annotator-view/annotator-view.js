@@ -6,9 +6,10 @@ var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 
 var AnnotatorView = React.createClass({
   componentWillMount: function() {
-    var THIS = this;
     console.log('AnnotatorView mounted');
+    var THIS = this;
     $(document).on('click', 'body', function(e) {
+      console.log('e is : ', e);
       if(getSelection().toString()) {
         return;
       }
@@ -33,8 +34,12 @@ var AnnotatorView = React.createClass({
       <div className='annotator-view-container'>
         <HomeButton {...this.props} />
         <AnnotatorMinimizeButton {...this.props} />
-        <AnnotatorHeader {...this.props} />
-        <AnnotatorBody {...this.props} />
+        <div>
+          <AnnotatorHeader {...this.props} />
+        </div>
+        <div>
+          <AnnotatorBody {...this.props} />
+        </div>  
       </div>
     );
   }
