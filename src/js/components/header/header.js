@@ -8,13 +8,8 @@ var AnnotatorHead = React.createClass({
           <img src='http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg' className='annotator-user-image' />
         </div>
         
-        <div className='user-info'>
-        Jihoon Kim
-        <br />
-        Hoonthegoon9000
-        </div>
-        
-        <br />
+        <span>Jihoon Kim</span>
+        <span>Hoonthegoon9000</span>
       </div>
     );
   }

@@ -50,8 +50,12 @@
 /* Header */
 .annotator-head-container {
   margin: 0 auto;
-  height: 75px;
+  margin-bottom: 10px;
   width: 75px;
+}
+
+.user-info {
+  margin: 0 auto;
 }
 
 .user-image-container {
