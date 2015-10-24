@@ -11,11 +11,14 @@
 }
 
 #scrollview {
-  height: 1000px;
   color: black; 
 }
 
 /* React */
+
+.annotator-body-container {
+  height: 3000px;
+}
 
 .annotator-view-container {
   width: 300px;

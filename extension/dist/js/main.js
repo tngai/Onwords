@@ -19886,7 +19886,7 @@ var annotationList = React.createClass({displayName: "annotationList",
 
     var annotations = this.props.annotations.map(function(annotation, index) {
       
-      return React.createElement("li", {className: "annotation", key: index}, 
+      return React.createElement("li", {className: "annotation", id: index}, 
         React.createElement("p", null, annotation.quote), 
         React.createElement("p", null, annotation.text), 
         React.createElement("button", {"data-id": annotation, onClick: self.deleteAnn.bind(null, annotation)}, "Remove"), 
@@ -19934,7 +19934,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
 
   render: function() {
     return (
-      React.createElement("div", {id: "annotator-body-container"}, 
+      React.createElement("div", {className: "annotator-body-container"}, 
         React.createElement(AnnotationList, {annotations: this.state.annotations})
       )
     );

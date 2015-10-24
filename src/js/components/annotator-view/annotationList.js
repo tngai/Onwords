@@ -1,4 +1,5 @@
 var React = require('react');
+var annotationComment = ('./annotationComment');
 
 var annotationList = React.createClass({
   deleteAnn: function(annotation) {
@@ -14,10 +15,10 @@ var annotationList = React.createClass({
 
     var annotations = this.props.annotations.map(function(annotation, index) {
       
-      return <li className="annotation" key={index}>
+      return <li className="annotation" id="comment" + {index}>
         <p>{annotation.quote}</p>
         <p>{annotation.text}</p>
-        <button data-id={annotation} onClick={self.deleteAnn.bind(null, annotation)}>Remove</button> 
+        <button data-id={annotation} onClick={self.deleteAnn.bind(null, annotation)}>Remove</button>
         <button>Edit</button>
       </li>
     });
