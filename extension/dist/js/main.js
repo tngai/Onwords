@@ -19819,11 +19819,12 @@ var renderAnnotations = function() {
     //   obj[uri] = annotations;
     //   chrome.storage.local.set(obj);
     // },
+
     annotationCreated: function(annotation) {
       var uri = window.location.href.split("?")[0];
       console.log("annotation created:", annotation);
       chrome.storage.local.get(uri, function(obj) {
-        console.log('old values:', obj[uri])
+        console.log('values before CREATING:', obj[uri])
         if (!obj[uri]) {
           obj[uri] = [];
         }
@@ -19841,24 +19842,42 @@ var renderAnnotations = function() {
              }
           }
         })
-        console.log('new values:', obj[uri]);
+        console.log('values after CREATING:', obj[uri]);
         var newObj = {};
         newObj[uri] = obj[uri];
         chrome.storage.local.set(newObj);
       })
     },
+
     beforeAnnotationDeleted: function(annotation) {
       var id = annotation.id;
       $('[data-annotation-id=' + id + ']').contents().unwrap();
       var uri = window.location.href.split("?")[0];
       chrome.storage.local.get(uri, function(obj) {
         debugger;
-        console.log('old values:', obj[uri])
+        console.log('values before DELETING:', obj[uri]);
         for (var i = 0; i < obj[uri].length; i++) {
           if (obj[uri][i].id === annotation.id) {
             obj[uri].splice(i, 1);
             var newObj = {};
             newObj[uri] = obj[uri];
+            console.log('values after DELETING:', newObj[uri]);
+            chrome.storage.local.set(newObj);
+          }
+        }
+      })
+    },
+
+    beforeAnnotationUpdated: function(annotation) {
+      var uri = window.location.href.split('?')[0];
+      chrome.storage.local.get(uri, function(obj) {
+        console.log('values before UPDATING:', obj[uri]);
+        for (var i = 0; i < obj[uri].length; i++) {
+          if (obj[uri][i].id === annotation.id) {
+            obj[uri][i].text = annotation.text;
+            var newObj = {};
+            newObj[uri] = obj[uri];
+            console.log('values after UPDATING', newObj[uri]);
             chrome.storage.local.set(newObj);
           }
         }
@@ -19873,11 +19892,30 @@ module.exports = renderAnnotations;
 var React = require('react');
 
 var annotationComment = React.createClass({displayName: "annotationComment",
+  getInitialState: function() {
+    return {
+      shouldEditComment: false
+    }
+  },
 
   goToHighlight: function() {
     $('html, body').animate({
       scrollTop: this.props.annotation.offsetTop - 200
     }, 300)
+  },
+
+  editComment: function() {
+    this.setState({shouldEditComment: true});
+  },
+
+  submitChange: function(e) {
+    e.preventDefault();
+    var newText = $('textArea#annotationEdit').val();
+    console.log('new text:', newText)
+    this.props.annotation.text = newText;
+    var ev = new CustomEvent('updateAnnotation', {detail: {targetAnnotation: this.props.annotation}})
+    document.dispatchEvent(ev);
+    this.setState({shouldEditComment: false});
   },
 
   render: function() {
@@ -19890,9 +19928,16 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     return (
       React.createElement("div", null, 
         React.createElement("p", {onClick: this.goToHighlight}, annotation.quote), 
-        React.createElement("p", null, annotation.text), 
+        !this.state.shouldEditComment ? React.createElement("p", null, annotation.text) : 
+          React.createElement("form", null, 
+            React.createElement("textArea", {id: "annotationEdit", style: {height: 100+"px", width: 300+"px"}}, 
+              annotation.text
+            ), 
+            React.createElement("button", {onClick: this.submitChange}, "Submit")
+          ), 
+          
         React.createElement("button", {onClick: deleteAnn}, "Remove"), 
-        React.createElement("button", null, "Edit")
+        React.createElement("button", {onClick: this.editComment}, "Edit")
       )
     )
   }
