@@ -19999,11 +19999,14 @@ var React = require('react');
 var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimizeButton",
   handleClick: function() {
     this.props.updateView('showAnnotatorButton');
+
+    // image rendering from files
+    // src={chrome.extension.getURL('/assets/right-copy.png')} 
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, 
-        React.createElement("img", {className: "annotator-minimize-button", src: chrome.extension.getURL('/assets/right-copy.png')})
+      React.createElement("div", {onClick: this.handleClick, className: "annotator-my-view-button-container"}, 
+        React.createElement("img", {className: "annotator-my-view-button", src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg"})
       )
     );
   }
@@ -20046,14 +20049,13 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
   render: function() {
     return (
       React.createElement("div", {className: "annotator-view-container"}, 
-        React.createElement(HomeButton, React.__spread({},  this.props)), 
-        React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
-        React.createElement("div", null, 
-          React.createElement(AnnotatorHeader, React.__spread({},  this.props))
+        React.createElement("div", {className: "annotator-buttons-container"}, 
+          React.createElement(HomeButton, React.__spread({},  this.props)), 
+          React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props))
         ), 
-        React.createElement("div", null, 
-          React.createElement(AnnotatorBody, React.__spread({},  this.props))
-        )
+
+        React.createElement(AnnotatorHeader, React.__spread({},  this.props)), 
+        React.createElement(AnnotatorBody, React.__spread({},  this.props))
       )
     );
   }
@@ -20219,8 +20221,8 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
           React.createElement("img", {src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg", className: "annotator-user-image"})
         ), 
         
-        React.createElement("span", null, "Jihoon Kim"), 
-        React.createElement("span", null, "Hoonthegoon9000")
+        React.createElement("div", {className: "username-container"}, "Hoonthegoon9000")
+
       )
     );
   }

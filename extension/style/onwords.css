@@ -19,19 +19,6 @@
 
 }
 
-/* Annotator View */
-.annotator-view-container {
-  width: 300px;
-  height: 1000px;
-  background: rgba(249, 249, 249, 1);
-}
-
-.home-button-container {
-  float: left;
-  margin: 7px 0 0 7px;
-  /*display: inline-block;*/
-}
-
 .annotator-button-container {
   margin-top: 7px;
   width: 25px;
@@ -43,14 +30,43 @@
   height: 25px;
   background: rgba(55, 54, 68, 0);
 }
-.annotator-minimize-button {
+
+/* Annotator View */
+.annotator-view-container {
+  width: 300px;
+  height: 1000px;
+  background: rgba(249, 249, 249, 1);
+}
+
+.annotator-buttons-container {
+  width: 300px;
+  height: 30px;
+}
+
+.home-button {
+  width: 25px;
+  height: 25px;
+}
+
+.home-button-container {
+  float: left;
+  margin: 7px 0 0 7px;
+  /*display: inline-block;*/
+}
+
+.annotator-my-view-button-container {
+  float: right;
+  width: 25px; 
+  height: 25px;
+  margin: 7px 7px 0 0;
+  display: inline-block;
+} 
+
+.annotator-my-view-button {
   width: 25px; 
   height: 25px;
   background: rgba(55, 54, 68, 0);
-  float: right;
-  margin: 7px 7px 0 0;
-  /*display: inline-block;*/
-  /*right: 0;*/
+  border-radius: 50%;
 }
 
 /* Header */
@@ -64,23 +80,15 @@
   margin: 0 auto;
 }
 
-.user-image-container {
-  /*margin: 0 auto;*/
-}
-
-
 .annotator-user-image {
-  margin-top: 25px; 
-  width: 75px;
-  height: 75px;
+  margin-top: 15px; 
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
 }
 
+
 /* Feed View */
-.home-button {
-  width: 25px;
-  height: 25px;
-}
 .minimize-button {
   width: 25px;
   height: 25px;
