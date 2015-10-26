@@ -13365,6 +13365,7 @@ StorageAdapter.prototype._cycle = function (
     afterEvent
 ) {
     var self = this;
+
     return this.runHook(beforeEvent, [obj])
         .then(function () {
           debugger;
@@ -14825,8 +14826,12 @@ Highlighter.prototype.draw = function (annotation) {
         );
     }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
     annotation['offsetTop'] = $(annotation._local.highlights[0]).offset().top;
     annotation['offsetLeft'] = $(annotation._local.highlights[0]).offset().left;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Save the annotation data on each highlighter element.
     $(annotation._local.highlights).data('annotation', annotation);
@@ -15157,34 +15162,43 @@ function main(options) {
             }
         });
 
+//////////////////////////////////////////////////////////////////////////////////////////
+
         document.addEventListener('deleteAnnotation', function(e) {
-            console.log('delete this annotation:', e.detail.targetAnnotation)
-            app.annotations['delete'](e.detail.targetAnnotation);
+          console.log('delete this annotation:', e.detail.targetAnnotation);
+          app.annotations['delete'](e.detail.targetAnnotation);
         })
 
-        s.viewer = new viewer.Viewer({
-            onEdit: function (ann) {
-                // Copy the interaction point from the shown viewer:
-                s.interactionPoint = util.$(s.viewer.element)
-                                         .css(['top', 'left']);
+        document.addEventListener('updateAnnotation', function(e) {
+          console.log('update this annotation:', e.detail.targetAnnotation);
+          app.annotations['update'](e.detail.targetAnnotation);
+        })
 
-                app.annotations.update(ann);
-            },
-            onDelete: function (ann) {
-                app.annotations['delete'](ann);
-            },
-            permitEdit: function (ann) {
-                return authz.permits('update', ann, ident.who());
-            },
-            permitDelete: function (ann) {
-                return authz.permits('delete', ann, ident.who());
-            },
-            autoViewHighlights: options.element,
-            extensions: options.viewerExtensions
-        });
-        s.viewer.attach();
+//////////////////////////////////////////////////////////////////////////////////////////
 
-        injectDynamicStyle();
+        // s.viewer = new viewer.Viewer({
+        //     onEdit: function (ann) {
+        //         // Copy the interaction point from the shown viewer:
+        //         s.interactionPoint = util.$(s.viewer.element)
+        //                                  .css(['top', 'left']);
+
+        //         app.annotations.update(ann);
+        //     },
+        //     onDelete: function (ann) {
+        //         app.annotations['delete'](ann);
+        //     },
+        //     permitEdit: function (ann) {
+        //         return authz.permits('update', ann, ident.who());
+        //     },
+        //     permitDelete: function (ann) {
+        //         return authz.permits('delete', ann, ident.who());
+        //     },
+        //     autoViewHighlights: options.element,
+        //     extensions: options.viewerExtensions
+        // });
+        // s.viewer.attach();
+
+        // injectDynamicStyle();
     }
 
     return {
@@ -15210,11 +15224,11 @@ function main(options) {
             // here to "stall" the annotation process until the editing is
             // done.
             return s.editor.load(annotation, s.interactionPoint);
-        },
-
-        beforeAnnotationUpdated: function (annotation) {
-            return s.editor.load(annotation, s.interactionPoint);
         }
+
+        // beforeAnnotationUpdated: function (annotation) {
+        //     // return s.editor.load(annotation, s.interactionPoint);
+        // }
     };
 }
 
