@@ -7,11 +7,12 @@ var renderAnnotations = function() {
     //   obj[uri] = annotations;
     //   chrome.storage.local.set(obj);
     // },
+
     annotationCreated: function(annotation) {
       var uri = window.location.href.split("?")[0];
       console.log("annotation created:", annotation);
       chrome.storage.local.get(uri, function(obj) {
-        console.log('old values:', obj[uri])
+        console.log('values before CREATING:', obj[uri])
         if (!obj[uri]) {
           obj[uri] = [];
         }
@@ -29,24 +30,42 @@ var renderAnnotations = function() {
              }
           }
         })
-        console.log('new values:', obj[uri]);
+        console.log('values after CREATING:', obj[uri]);
         var newObj = {};
         newObj[uri] = obj[uri];
         chrome.storage.local.set(newObj);
       })
     },
+
     beforeAnnotationDeleted: function(annotation) {
       var id = annotation.id;
       $('[data-annotation-id=' + id + ']').contents().unwrap();
       var uri = window.location.href.split("?")[0];
       chrome.storage.local.get(uri, function(obj) {
         debugger;
-        console.log('old values:', obj[uri])
+        console.log('values before DELETING:', obj[uri]);
         for (var i = 0; i < obj[uri].length; i++) {
           if (obj[uri][i].id === annotation.id) {
             obj[uri].splice(i, 1);
             var newObj = {};
             newObj[uri] = obj[uri];
+            console.log('values after DELETING:', newObj[uri]);
+            chrome.storage.local.set(newObj);
+          }
+        }
+      })
+    },
+
+    beforeAnnotationUpdated: function(annotation) {
+      var uri = window.location.href.split('?')[0];
+      chrome.storage.local.get(uri, function(obj) {
+        console.log('values before UPDATING:', obj[uri]);
+        for (var i = 0; i < obj[uri].length; i++) {
+          if (obj[uri][i].id === annotation.id) {
+            obj[uri][i].text = annotation.text;
+            var newObj = {};
+            newObj[uri] = obj[uri];
+            console.log('values after UPDATING', newObj[uri]);
             chrome.storage.local.set(newObj);
           }
         }
