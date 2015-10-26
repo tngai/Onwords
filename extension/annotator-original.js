@@ -15176,29 +15176,29 @@ function main(options) {
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-        s.viewer = new viewer.Viewer({
-            onEdit: function (ann) {
-                // Copy the interaction point from the shown viewer:
-                s.interactionPoint = util.$(s.viewer.element)
-                                         .css(['top', 'left']);
+        // s.viewer = new viewer.Viewer({
+        //     onEdit: function (ann) {
+        //         // Copy the interaction point from the shown viewer:
+        //         s.interactionPoint = util.$(s.viewer.element)
+        //                                  .css(['top', 'left']);
 
-                app.annotations.update(ann);
-            },
-            onDelete: function (ann) {
-                app.annotations['delete'](ann);
-            },
-            permitEdit: function (ann) {
-                return authz.permits('update', ann, ident.who());
-            },
-            permitDelete: function (ann) {
-                return authz.permits('delete', ann, ident.who());
-            },
-            autoViewHighlights: options.element,
-            extensions: options.viewerExtensions
-        });
-        s.viewer.attach();
+        //         app.annotations.update(ann);
+        //     },
+        //     onDelete: function (ann) {
+        //         app.annotations['delete'](ann);
+        //     },
+        //     permitEdit: function (ann) {
+        //         return authz.permits('update', ann, ident.who());
+        //     },
+        //     permitDelete: function (ann) {
+        //         return authz.permits('delete', ann, ident.who());
+        //     },
+        //     autoViewHighlights: options.element,
+        //     extensions: options.viewerExtensions
+        // });
+        // s.viewer.attach();
 
-        injectDynamicStyle();
+        // injectDynamicStyle();
     }
 
     return {
