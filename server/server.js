@@ -93,6 +93,7 @@ app.delete('/api/annotations/:id',function(req,res){
     res.sendStatus(204)
   })
 });
+
 // Update endpoint 
 
 app.put('/api/annotations/:id',function(req,res){
