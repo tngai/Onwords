@@ -12977,9 +12977,15 @@ HttpStorage.prototype.setHeader = function (key, value) {
  * :rtype: jqXHR
  */
 HttpStorage.prototype._apiRequest = function (action, obj) {
+    debugger; // added 2015-10-26 16:57
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
+
+    var aiSIPi = annotator.identity.SimpleIdentityPolicy.identity;
+    console.log("annotator.identity.SimpleIdentityPolicy.identity:", aiSIPi);
+    var aiSIPpw = annotator.identity.SimpleIdentityPolicy.prototype.who();
+    console.log("annotator.identity.SimpleIdentityPolicy.prototype.who():", aiSIPpw);
 
     var request = $.ajax(url, options);
 
