@@ -20003,7 +20003,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
     })
     chrome.storage.onChanged.addListener(function(changes) {
       console.log('annotator body, storage updated', changes[uri]);
-      if (changes[uri].newValue) {
+      if (changes[uri] && changes[uri].newValue) {
         self.setState({annotations: changes[uri].newValue});
       }
     })
@@ -20320,23 +20320,22 @@ var renderComponents = function() {
   React.render(React.createElement(App, null), document.getElementById('scrollview'));
 }
 
-var tokenListener = function(changes) {
-  console.log("inside addlistener", changes);
-  if (changes.access_token.newValue) {
+var identityListener = function(changes) {
+  if (changes.facebook_id && changes.facebook_id.newValue) {
     renderComponents();
     test.annotate();
+    chrome.storage.onChanged.removeListener(identityListener);
   }
-  chrome.storage.onChanged.removeListener(tokenListener);
-}
+};
 
-chrome.storage.sync.get('access_token', function(obj) {
-  if (obj['access_token']) {
+chrome.storage.sync.get('facebook_id', function(obj) {
+  if (obj['facebook_id']) {
     renderComponents();
     test.annotate();
   } else {
-    chrome.storage.onChanged.addListener(tokenListener);
+    chrome.storage.onChanged.addListener(identityListener);
   }
-})
+});
 
 },{"./components/app":165,"./test":171,"react":156}],171:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
@@ -20366,13 +20365,18 @@ exports.annotate = function(event) {
      .include(pageUri)
      .include(renderAnnotations);
 
-  app.start()
-     .then(function() {
-        app.annotations.load({uri: window.location.href.split("?")[0]});
-     })
-
-
-
+  chrome.storage.sync.get('facebook_id', function(obj) {
+    if (!obj['facebook_id']) {
+      console.error('Unable to access facebook_id from chrome.storage');
+      return;
+    }
+    app.start()
+       .then(function() {
+         window.localStorage.setItem('facebook_id', obj.facebook_id);
+         console.log('facebook_id set in localStorage');
+         app.annotations.load({uri: window.location.href.split("?")[0]});
+       });
+  });
 }
 
 },{"./annotationRender":157}]},{},[170]);
