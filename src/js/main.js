@@ -10,20 +10,19 @@ var renderComponents = function() {
   React.render(<App />, document.getElementById('scrollview'));
 }
 
-var tokenListener = function(changes) {
-  console.log("inside addlistener", changes);
-  if (changes.access_token.newValue) {
+var identityListener = function(changes) {
+  if (changes.facebook_id && changes.facebook_id.newValue) {
     renderComponents();
     test.annotate();
+    chrome.storage.onChanged.removeListener(identityListener);
   }
-  chrome.storage.onChanged.removeListener(tokenListener);
-}
+};
 
-chrome.storage.sync.get('access_token', function(obj) {
-  if (obj['access_token']) {
+chrome.storage.sync.get('facebook_id', function(obj) {
+  if (obj['facebook_id']) {
     renderComponents();
     test.annotate();
   } else {
-    chrome.storage.onChanged.addListener(tokenListener);
+    chrome.storage.onChanged.addListener(identityListener);
   }
-})
+});
