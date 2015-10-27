@@ -1,12 +1,6 @@
 var React = require('react');
 
 var AnnotatorHead = React.createClass({
-  purgeHandler: function() {
-    console.log('about to purge chrome.storage');
-    chrome.storage.sync.clear()
-    console.log('chrome.storage purged');
-  }, 
-
   render: function() {
     return (
       <div className='annotator-head-container'>
@@ -14,9 +8,7 @@ var AnnotatorHead = React.createClass({
           <img src='http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg' className='annotator-user-image' />
         </div>
 
-        <div className='username-container'>Hoonthegoon9000<br />
-          <span onClick={this.purgeHandler}>Purge <code>chrome.storage</code></span>
-        </div>
+        <div className='username-container'>Hoonthegoon9000</div>
 
         <div className='profile-statistics-container'>
           <div className='posts-container'>
