@@ -3,13 +3,20 @@ var MinimizeButton = require('./minimize-button');
 var Header = require('../header/header');
 var AnnotatorMixin = require('../mixins/annotatormixin');
 var SettingsButton = require('./settings-button');
+var ReturnButton = require('./return-button');
+var Settings = require('./feed-settings');
+var MyAnnotations = require('./feed-my-annotations');
+var FriendsAnnotations = require('./feed-friends-annotations');
 
 var FeedView = React.createClass({
   getInitialState: function() {
     return {
       showSettingsPage: false,
-      showFriendsFeed: true, 
-      showMyAnnotations: false
+      showFriendsAnnotations: true, 
+      showMyAnnotations: false,
+      showSettingsButton: true,
+      showMinimizeButton: true,
+      ShowReturnButton: false
     };
   },
   componentWillMount: function() {
@@ -27,19 +34,53 @@ var FeedView = React.createClass({
     console.log('FeedView componentWillUnmount');
     $(document).off();
   },
+  updateBodyView: function(action){
+    switch(action) {
+      case 'showSettingsPage':
+        console.log('showSettingsPage');
+        this.setState({showSettingsPage: true});
+        this.setState({showFriendsAnnotations: false});
+        this.setState({showMyAnnotations: false});
+        this.setState({showSettingsButton: false});
+        this.setState({showMinimizeButton: false});
+        this.setState({ShowReturnButton: true});
+        break;
+      case 'showFriendsAnnotations':
+        console.log('showFriendsAnnotations');
+        this.setState({showSettingsPage: true});
+        this.setState({showFriendsAnnotations: false});
+        this.setState({showMyAnnotations: false});
+        this.setState({showSettingsButton: false});
+        this.setState({showMinimizeButton: false});
+        this.setState({ShowReturnButton: true});
+        break;
+      case 'showMyAnnotations':
+        console.log('showMyAnnotations');
+        this.setState({showSettingsPage: true});
+        this.setState({showFriendsAnnotations: false});
+        this.setState({showMyAnnotations: false});
+        this.setState({showSettingsButton: false});
+        this.setState({showMinimizeButton: false});
+        this.setState({ShowReturnButton: true});
+        break;
+      default:
+        console.log('nothing happened');
+    }
+  },
   render: function() {
     return (
       <div className='feed-view-container'>
         <div className='header-container'>
-          <MinimizeButton {...this.props} />
+          {this.state.showMinimizeButton ? <MinimizeButton {...this.props} /> : null}
+          {this.state.ShowReturnButton ? <ReturnButton {...this.props} updateBodyView={this.updateBodyView} /> : null}
           <div>Onwords</div>
-          <SettingsButton {...this.props} />
+          {this.state.showSettingsButton ? <SettingsButton {...this.props} updateBodyView={this.updateBodyView} /> : null}
         </div>
 
         <div className='body-container'>
-          <div>settings</div>
-          <div>showMyAnnotations</div>
-          <div>showFriendsFeed</div>
+          {this.state.showSettingsPage ? <Settings {...this.props}  updateBodyView={this.updateBodyView} /> : null}
+          {this.state.showMyAnnotations ? <MyAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
+          {this.state.showFriendsAnnotations ? <FriendsAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
         </div>
 
       </div>

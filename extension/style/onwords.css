@@ -132,6 +132,10 @@
   border-color: black;
   margin: 0 auto;
 }
+.minimize-button {
+  height: 25px;
+  width: 25px;
+}
 
 /*Settings*/
 
