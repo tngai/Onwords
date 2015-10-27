@@ -20003,7 +20003,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
     })
     chrome.storage.onChanged.addListener(function(changes) {
       console.log('annotator body, storage updated', changes[uri]);
-      if (changes[uri].newValue) {
+      if (changes[uri]) {
         self.setState({annotations: changes[uri].newValue});
       }
     })
@@ -20319,6 +20319,12 @@ chrome.storage.sync.get('access_token', function(obj) {
   } else {
     chrome.storage.onChanged.addListener(tokenListener);
   }
+});
+
+chrome.runtime.onMessage.addListener(function(request) {
+  if (request.message === 'tokenRemoved') {
+    $('.annotation-sidebar').remove();
+  }
 })
 
 },{"./components/app":165,"./test":171,"react":156}],171:[function(require,module,exports){
@@ -20337,24 +20343,28 @@ exports.annotate = function(event) {
 
   var app = new annotator.App();
   app.include(annotator.ui.main)
-     .include(annotator.storage.http, {
-        prefix: 'https://onwords-test-server.herokuapp.com',
-        urls: {
-          create: '/api/annotations',
-          update: '/api/annotations/{id}',
-          destroy: '/api/annotations/{id}',
-          search: '/api/search'
-        }
-      })
-     .include(pageUri)
-     .include(renderAnnotations);
+    .include(annotator.storage.http, {
+      prefix: 'https://onwords-test-server.herokuapp.com',
+      urls: {
+        create: '/api/annotations',
+        update: '/api/annotations/{id}',
+        destroy: '/api/annotations/{id}',
+        search: '/api/search'
+      }
+    })
+   .include(pageUri)
+   .include(renderAnnotations);
 
   app.start()
-     .then(function() {
-        app.annotations.load({uri: window.location.href.split("?")[0]});
-     })
+    .then(function() {
+      app.annotations.load({uri: window.location.href.split("?")[0]});
+    })
 
-
+    chrome.runtime.onMessage.addListener(function(request) {
+      if (request.message === 'tokenRemoved') {
+        app.destroy();
+      }
+    })
 
 }
 

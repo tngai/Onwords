@@ -26,4 +26,10 @@ chrome.storage.sync.get('access_token', function(obj) {
   } else {
     chrome.storage.onChanged.addListener(tokenListener);
   }
+});
+
+chrome.runtime.onMessage.addListener(function(request) {
+  if (request.message === 'tokenRemoved') {
+    $('.annotation-sidebar').remove();
+  }
 })
