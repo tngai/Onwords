@@ -6,6 +6,10 @@ exports.annotate = function(event) {
     return {
       beforeAnnotationCreated: function(ann) {
         ann.uri = window.location.href.split("?")[0];
+        ann.user = window.localStorage.getItem('facebook_id');
+        ann.title = document.querySelector('meta[name="twitter:title"]').getAttribute("content");
+        ann.description = document.querySelector('meta[name="twitter:description"]').getAttribute("content");
+        console.log('hello:', ann.user)
       }
     };
   };
