@@ -33,6 +33,7 @@ exports.annotate = function(event) {
     app.start()
        .then(function() {
          window.localStorage.setItem('facebook_id', obj.facebook_id);
+         console.log('facebook_id set in localStorage');
          app.annotations.load({uri: window.location.href.split("?")[0]});
        });
   });

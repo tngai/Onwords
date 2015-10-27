@@ -20334,7 +20334,7 @@ var tokenListener = function(changes) {
     test.annotate();
   }
   chrome.storage.onChanged.removeListener(tokenListener);
-}
+};
 
 chrome.storage.sync.get('access_token', function(obj) {
   if (obj['access_token']) {
@@ -20343,7 +20343,7 @@ chrome.storage.sync.get('access_token', function(obj) {
   } else {
     chrome.storage.onChanged.addListener(tokenListener);
   }
-})
+});
 
 var identityListener = function(changes) {
   if (changes.facebook_id && changes.facebook_id.newValue) {
@@ -20351,16 +20351,16 @@ var identityListener = function(changes) {
     test.annotate();
   }
   chrome.storage.onChanged.removeListener(identityListener);
-}
+};
 
 chrome.storage.sync.get('facebook_id', function(obj) {
-  if (obj['access_token']) {
+  if (obj['facebook_id']) {
     renderComponents();
     test.annotate();
   } else {
     chrome.storage.onChanged.addListener(identityListener);
   }
-})
+});
 
 },{"./components/app":165,"./test":171,"react":156}],171:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
@@ -20398,6 +20398,7 @@ exports.annotate = function(event) {
     app.start()
        .then(function() {
          window.localStorage.setItem('facebook_id', obj.facebook_id);
+         console.log('facebook_id set in localStorage');
          app.annotations.load({uri: window.location.href.split("?")[0]});
        });
   });

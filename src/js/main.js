@@ -16,7 +16,7 @@ var tokenListener = function(changes) {
     test.annotate();
   }
   chrome.storage.onChanged.removeListener(tokenListener);
-}
+};
 
 chrome.storage.sync.get('access_token', function(obj) {
   if (obj['access_token']) {
@@ -25,7 +25,7 @@ chrome.storage.sync.get('access_token', function(obj) {
   } else {
     chrome.storage.onChanged.addListener(tokenListener);
   }
-})
+});
 
 var identityListener = function(changes) {
   if (changes.facebook_id && changes.facebook_id.newValue) {
@@ -33,13 +33,13 @@ var identityListener = function(changes) {
     test.annotate();
   }
   chrome.storage.onChanged.removeListener(identityListener);
-}
+};
 
 chrome.storage.sync.get('facebook_id', function(obj) {
-  if (obj['access_token']) {
+  if (obj['facebook_id']) {
     renderComponents();
     test.annotate();
   } else {
     chrome.storage.onChanged.addListener(identityListener);
   }
-})
+});

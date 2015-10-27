@@ -13,7 +13,6 @@ function fetchToken() {
   }
 
   chrome.identity.launchWebAuthFlow(options, function(redirectUri) {
-
     if (chrome.runtime.lastError) {
       console.log(new Error(chrome.runtime.lastError));
       return;
@@ -59,7 +58,7 @@ function fetchFbProfile(accessToken) {
       profile.pic_url = resp.picture.data.url;
       profile.email = resp.email;
       chrome.storage.sync.set({'facebook_id': resp.id}, function() {
-        console.log('facebook_id set in storage');
+        console.log('facebook_id set in chrome.storage');
       });
       sendFbProfile(profile);
     }

@@ -13025,7 +13025,7 @@ HttpStorage.prototype._apiRequestOptions = function (action, obj) {
         opts = $.extend(opts, {data: obj});
         // sneak in the facebook_id to end of uri as search query
         var facebook_id = window.localStorage.getItem('facebook_id');
-        opts.data.uri += '?user=' + facebook_id;
+        // opts.data.uri += '?user=' + facebook_id;
         return opts;
     }
 
