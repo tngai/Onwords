@@ -20265,9 +20265,24 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
         React.createElement("div", {className: "user-image-container"}, 
           React.createElement("img", {src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg", className: "annotator-user-image"})
         ), 
-        
-        React.createElement("div", {className: "username-container"}, "Hoonthegoon9000")
 
+        React.createElement("div", {className: "username-container"}, "Hoonthegoon9000"), 
+
+        React.createElement("div", {className: "profile-statistics-container"}, 
+          React.createElement("div", {className: "posts-container"}, 
+            React.createElement("span", {className: "statistic"}, "3"), React.createElement("span", null, "posts")
+          ), 
+
+          React.createElement("div", {className: "followers-container"}, 
+            React.createElement("span", {className: "statistic"}, "87"), React.createElement("span", null, "followers")
+          ), 
+
+          React.createElement("div", {className: "following-container"}, 
+            React.createElement("span", {className: "statistic"}, "33"), React.createElement("span", null, "following")
+          )
+        ), 
+
+        React.createElement("div", {className: "description-container"}, "Hi guys, my name is hoon. Im a full time llama. I eat grass and annotate things on the web.")
       )
     );
   }
