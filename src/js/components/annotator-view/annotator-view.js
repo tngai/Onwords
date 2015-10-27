@@ -32,14 +32,13 @@ var AnnotatorView = React.createClass({
   render: function() {
     return (
       <div className='annotator-view-container'>
-        <HomeButton {...this.props} />
-        <AnnotatorMinimizeButton {...this.props} />
-        <div>
-          <AnnotatorHeader {...this.props} />
+        <div className='annotator-buttons-container'>
+          <HomeButton {...this.props} />
+          <AnnotatorMinimizeButton {...this.props} />
         </div>
-        <div>
-          <AnnotatorBody {...this.props} />
-        </div>  
+
+        <AnnotatorHeader {...this.props} />
+        <AnnotatorBody {...this.props} />
       </div>
     );
   }
