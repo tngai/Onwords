@@ -24,11 +24,17 @@ exports.annotate = function(event) {
      .include(pageUri)
      .include(renderAnnotations);
 
-  app.start()
-     .then(function() {
-      debugger;
-        app.ident.identity = 'bob';
-        app.annotations.load({uri: window.location.href.split("?")[0]});
-     })
+  chrome.storage.sync.get('facebook_id', function(obj) {
+    if (!obj['facebook_id']) {
+      console.error('Unable to access facebook_id from chrome.storage');
+      return;
+    }
+    app.start()
+       .then(function() {
+         window.localStorage.setItem('facebook_id', obj.facebook_id);
+         console.log('facebook_id set in localStorage');
+         app.annotations.load({uri: window.location.href.split("?")[0]});
+       });
+  });
 
 }

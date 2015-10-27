@@ -12327,7 +12327,7 @@ App.prototype.destroy = function () {
  * :rtype: Promise
  */
 App.prototype.runHook = function (name, args) {
-  debugger;
+  // debugger;
     var results = [];
     for (var i = 0, len = this.modules.length; i < len; i++) {
         var mod = this.modules[i];
@@ -12977,7 +12977,7 @@ HttpStorage.prototype.setHeader = function (key, value) {
  * :rtype: jqXHR
  */
 HttpStorage.prototype._apiRequest = function (action, obj) {
-    debugger;
+    // debugger; // added 2015-10-26 16:57
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
@@ -13023,6 +13023,9 @@ HttpStorage.prototype._apiRequestOptions = function (action, obj) {
     // Don't JSONify obj if making search request.
     if (action === "search") {
         opts = $.extend(opts, {data: obj});
+        // sneak in the facebook_id to end of uri as search query
+        var facebook_id = window.localStorage.getItem('facebook_id');
+        // opts.data.uri += '?user=' + facebook_id;
         return opts;
     }
 
@@ -13369,7 +13372,7 @@ StorageAdapter.prototype._cycle = function (
 
     return this.runHook(beforeEvent, [obj])
         .then(function () {
-          debugger;
+          // debugger;
             var safeCopy = $.extend(true, {}, obj);
             delete safeCopy._local;
 
@@ -13379,7 +13382,7 @@ StorageAdapter.prototype._cycle = function (
             return Promise.resolve(result);
         })
         .then(function (ret) {
-          debugger;
+          // debugger;
             // Empty obj without changing identity
             for (var k in obj) {
                 if (obj.hasOwnProperty(k)) {
@@ -14798,7 +14801,7 @@ Highlighter.prototype.drawAll = function (annotations) {
 //
 // Returns an Array of drawn highlight elements.
 Highlighter.prototype.draw = function (annotation) {
-  debugger;
+  // debugger;
     var normedRanges = [];
 
     for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
@@ -15709,7 +15712,7 @@ var Viewer = exports.Viewer = Widget.extend({
                 self._onEditClick(e);
             })
             .on("click." + NS, '.annotator-delete', function (e) {
-              debugger;
+              // debugger;
                 self._onDeleteClick(e);
             })
             .on("mouseenter." + NS, function () {
