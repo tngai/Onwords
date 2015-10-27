@@ -26,7 +26,8 @@ app.get('/',function(req,res){
 });
 
 
-// Create annotations 
+// Create Annotations
+
 app.post('/api/annotations', function(req,res){
   var ann = req.body;
   var text = req.body.text;
@@ -55,10 +56,31 @@ app.post('/api/annotations', function(req,res){
     res.end();
   });
 
-
-
-
 });
+
+// Create Users 
+app.post('/api/users', function(req,res){
+  var facebook_id = req.body.facebook_id;
+  var full_name = req.body.full_name;
+  var pic_url = req.body.pic_url;
+  var email = req.body.email;
+  
+  var user = {
+    facebook_id: facebook_id,
+    full_name: full_name,
+    pic_url: pic_url,
+    email: email
+  };
+
+  db.model('User').fetchByFacebookId(facebook_id).then(function(data){
+      
+  });
+
+  db.model('User').newUser(newUser).save().then(function(data){
+
+  })
+});
+
 
 
 
@@ -102,15 +124,19 @@ app.put('/api/annotations/:id',function(req,res){
 
 });
 
-// Search endpoint(Read)
+// Search Uri annotations endpoint(Read)
 app.get('/api/search',function(req,res){
   var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
   db.model('Annotation').fetchByUri(uri).then(function(data){
-    
-    if(data.models.length !== 0) {
-    var resultsArray = data.models.map(function(e){
+      
+    var resultsArray = data.models.filter(function(e){
+      return (e.attributes.uri === uri);
+    });
+      
+    var returnArray = resultsArray.map(function(e){
       var resObj = {
         id: e.attributes.id,
+        uri: e.attributes.uri,
         text: e.attributes.text,
         quote: e.attributes.quote,
         ranges: [
@@ -123,23 +149,15 @@ app.get('/api/search',function(req,res){
         ]
        };
        return resObj;   
-    });
-
+    })
     var returnObj = {};
-    returnObj.rows = resultsArray;
+    returnObj.rows = returnArray;   
       res.set('Content-Type', 'application/JSON');
       res.json(returnObj);
       res.end();
-    }else{
-      var empty = {rows:[]}
-      res.set('Content-Type', 'application/JSON');
-      res.json(empty);
-      res.end(); 
-    }
-
+    });
   })
 
-})
 
 
 app.listen(process.env.PORT || 8000);

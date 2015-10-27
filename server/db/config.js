@@ -43,8 +43,10 @@ var buildTable = function(name, callback) {
 
 var users = buildTable('users', function(table){
   table.increments('id').primary();
-  table.string('username').unique();
-  table.string('google_id').unique();
+  table.string('facebook_id').unique();
+  table.string('full_name');
+  table.string('pic_url');
+  table.string('email');
 });
 
 var annotations = buildTable('annotations', function(table){

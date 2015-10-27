@@ -107,6 +107,7 @@ app.get('/api/search',function(req,res){
         id: e.attributes.id,
         text: e.attributes.text,
         quote: e.attributes.quote,
+        uri: e.attributes.uri,
         ranges: [
           {
             start: e.attributes.start,

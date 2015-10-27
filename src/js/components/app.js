@@ -11,7 +11,22 @@ var App = React.createClass({
       showFeedView: false
     };
   },
-
+  componentWillMount: function() {
+    console.log('App componentWillMount');
+    
+    var THIS = this;
+    $(document).on('click', '.annotator-hl', function() {
+      THIS.updateView('showAnnotatorView');
+    });
+  },
+  componentDidUpdate: function() {
+    console.log('App componentDidUpdate');
+    
+    var THIS = this;
+    $(document).on('click', '.annotator-hl', function() {
+      THIS.updateView('showAnnotatorView');
+    });
+  },
   updateView: function(action){
     var duration = 200;
 
@@ -21,13 +36,13 @@ var App = React.createClass({
             this.setState({showAnnotatorButton: true});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(580)}, duration);
+            $('.annotation-sidebar').animate({right: -(565)}, duration);
             break;
         case 'showAnnotatorView':
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: true});
             this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(300)}, duration);
+            $('.annotation-sidebar').animate({right: -(300)}, 50);
             break;
         case 'showFeedView':
             this.setState({showAnnotatorButton: false});
@@ -39,7 +54,6 @@ var App = React.createClass({
             console.log('nothing happened')
     }
   },
-
   render: function() {
     return (
       <div className='app-container'>      

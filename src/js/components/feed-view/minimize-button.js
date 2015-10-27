@@ -7,7 +7,7 @@ var MinimizeButton = React.createClass({
   render: function() {
     return (
       <div onClick={this.handleClick}>
-        MinimizeButton!
+        <img className='minimize-button' src={chrome.extension.getURL('/assets/right-copy.png')} />
       </div>
     );
   }

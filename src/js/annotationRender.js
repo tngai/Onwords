@@ -1,11 +1,75 @@
-var React = require('React');
-
 var renderAnnotations = function() {
   return {
-    annotationsLoaded: function(ann) {
-      console.log('annotation loaded', ann)
-      // React.render(<App />, document.getElementById('scrollview'));
-      $('.annotator-body-container').append("<div>"+ ann[0].quote + "</div>")
+    // annotationsLoaded: function(annotations) {
+    //   var uri = window.location.href.split("?")[0];
+    //   console.log("annotations loaded", annotations);
+    //   var obj = {};
+    //   obj[uri] = annotations;
+    //   chrome.storage.local.set(obj);
+    // },
+
+    annotationCreated: function(annotation) {
+      var uri = window.location.href.split("?")[0];
+      console.log("annotation created:", annotation);
+      chrome.storage.local.get(uri, function(obj) {
+        console.log('values before CREATING:', obj[uri])
+        if (!obj[uri]) {
+          obj[uri] = [];
+        }
+        obj[uri].push(annotation);
+        obj[uri].sort(function(a,b) {
+          if (a.offsetTop < b.offsetTop) {
+           return -1;
+          } else if (a.offsetTop > b.offsetTop){
+           return 1;
+          } else {
+             if (a.offsetLeft < b.offsetLeft) { 
+              return -1;
+             } else if (a.offsetLeft > b.offsetLeft){
+              return 1;
+             }
+          }
+        })
+        console.log('values after CREATING:', obj[uri]);
+        var newObj = {};
+        newObj[uri] = obj[uri];
+        chrome.storage.local.set(newObj);
+      })
+    },
+
+    beforeAnnotationDeleted: function(annotation) {
+      var id = annotation.id;
+      $('[data-annotation-id=' + id + ']').contents().unwrap();
+      var uri = window.location.href.split("?")[0];
+      chrome.storage.local.get(uri, function(obj) {
+        debugger;
+        console.log('values before DELETING:', obj[uri]);
+        for (var i = 0; i < obj[uri].length; i++) {
+          if (obj[uri][i].id === annotation.id) {
+            obj[uri].splice(i, 1);
+            var newObj = {};
+            newObj[uri] = obj[uri];
+            console.log('values after DELETING:', newObj[uri]);
+            chrome.storage.local.set(newObj);
+          }
+        }
+      })
+    },
+
+    beforeAnnotationUpdated: function(annotation) {
+      var uri = window.location.href.split('?')[0];
+      chrome.storage.local.get(uri, function(obj) {
+        console.log('values before UPDATING:', obj[uri]);
+        for (var i = 0; i < obj[uri].length; i++) {
+          if (obj[uri][i].id === annotation.id) {
+            obj[uri][i].text = annotation.text;
+            var newObj = {};
+            newObj[uri] = obj[uri];
+            console.log('values after UPDATING', newObj[uri]);
+            chrome.storage.local.set(newObj);
+          }
+        }
+      })
     }
   }
 }
