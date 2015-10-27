@@ -35,11 +35,8 @@ function fetchToken() {
 chrome.storage.sync.clear();
 
 chrome.browserAction.onClicked.addListener(function() {
-  console.log('browserAction clicked');
   chrome.storage.sync.get('access_token', function(obj) {
-    console.log('browserAction clicked, inside callback to get, obj:', obj);
     if (!obj['access_token']) {
-      console.log('browserAction clicked, inside callback to get, access_token not found, fetchToken to be called');
       fetchToken();
     }
   });
@@ -57,9 +54,7 @@ function fetchFbProfile(accessToken) {
       profile.full_name = resp.name;
       profile.pic_url = resp.picture.data.url;
       profile.email = resp.email;
-      chrome.storage.sync.set({'facebook_id': resp.id}, function() {
-        console.log('facebook_id set in chrome.storage');
-      });
+      chrome.storage.sync.set({'facebook_id': resp.id});
       sendFbProfile(profile);
     }
   }
