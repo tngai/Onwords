@@ -122,27 +122,35 @@
   width: 600px;
   height: 1000px;
   background: rgba(249, 249, 249, 1);
-}
-.feed-container {
-  width: 500px;
-  height: 700px;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  margin: 0 auto;
+  text-align: center;
 }
 .header-container {
   margin-bottom: 10px;
   width: 600px;
   text-align: center;
 }
+.minimize-button-container {
+  float: left;
+  height: 25px;
+  width: 25px;
+}
 .minimize-button {
   height: 25px;
   width: 25px;
 }
-
+.body-container {
+  display: inline-block;
+  height: 800px;
+  width: 595px;
+  border: 1px solid black;
+}
 /*ButtonContainer*/
-
+.button-container {
+  height: 85px;
+  width: 25px;
+  border: 1px solid red;
+  float: right;
+}
 /*Settings*/
 
 /*MyAnnotations*/

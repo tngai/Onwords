@@ -6,7 +6,7 @@ var FeedHomeButton = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={this.handleClick} >H-btn</div>
+      <div onClick={this.handleClick} >H</div>
     );
   }
 });

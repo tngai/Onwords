@@ -6,7 +6,7 @@ var FeedFriendsButton = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={this.handleClick}>F-btn</div>
+      <div onClick={this.handleClick}>F</div>
     );
   }
 });

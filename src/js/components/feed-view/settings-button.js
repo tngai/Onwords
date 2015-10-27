@@ -7,7 +7,7 @@ var SettingsButton = React.createClass({
   render: function() {
     return (
       <div onClick={this.handleClick}>
-        ST-btn
+        ST
       </div>
     );
   }

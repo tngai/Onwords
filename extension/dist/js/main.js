@@ -20217,7 +20217,7 @@ var FeedFriendsButton = React.createClass({displayName: "FeedFriendsButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "F-btn")
+      React.createElement("div", {onClick: this.handleClick}, "F")
     );
   }
 });
@@ -20233,7 +20233,7 @@ var FeedHomeButton = React.createClass({displayName: "FeedHomeButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "H-btn")
+      React.createElement("div", {onClick: this.handleClick}, "H")
     );
   }
 });
@@ -20262,7 +20262,7 @@ var FeedSearchButton = React.createClass({displayName: "FeedSearchButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "S-btn")
+      React.createElement("div", {onClick: this.handleClick}, "S")
     );
   }
 });
@@ -20405,7 +20405,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
   }, 
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, 
+      React.createElement("div", {onClick: this.handleClick, className: "minimize-button-container"}, 
         React.createElement("img", {className: "minimize-button", src: chrome.extension.getURL('/assets/right-copy.png')})
       )
     );
@@ -20424,7 +20424,7 @@ var SettingsButton = React.createClass({displayName: "SettingsButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick}, 
-        "ST-btn"
+        "ST"
       )
     );
   }

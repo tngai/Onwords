@@ -6,7 +6,7 @@ var FeedSearchButton = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={this.handleClick} >S-btn</div>
+      <div onClick={this.handleClick} >S</div>
     );
   }
 });
