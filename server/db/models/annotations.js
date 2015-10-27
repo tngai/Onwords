@@ -31,6 +31,9 @@ var Annotation = db.Model.extend({
   },
   updateById: function(options) {
     return new this(options).save();
+  },
+  fetchByUserId: function(userId) {
+    return new this({user_id: userId}).fetchAll;
   }
 });
 

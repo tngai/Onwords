@@ -161,6 +161,21 @@ app.get('/api/search',function(req,res){
 
 
 
+ // Search endpoint for Uri Annotations by UserId
+
+  app.get('/api/search/user_uri', function(req,res) {
+    userId = req.query.user
+    db.model('Annotation').fetchByUserId(userId).then(function(data){
+      returnObj = {};     
+      res.set('Content-Type', 'application/JSON');
+      res.json(returnObj);
+      res.end();
+    }); 
+  });
+
+
+
+
 
 
 // // Search Uri annotations endpoint(Read)
