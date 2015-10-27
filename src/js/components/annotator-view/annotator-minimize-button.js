@@ -3,7 +3,6 @@ var React = require('react');
 var AnnotatorMinimizeButton = React.createClass({
   handleClick: function() {
     this.props.updateView('showAnnotatorButton');
-
     // image rendering from files
     // src={chrome.extension.getURL('/assets/right-copy.png')} 
   },
