@@ -10,6 +10,7 @@ var AnnotatorView = React.createClass({
     var THIS = this;
     $(document).on('click', 'body', function(e) {
       console.log('e is : ', e);
+      // highlighter click check
       if(getSelection().toString()) {
         return;
       }
@@ -28,7 +29,6 @@ var AnnotatorView = React.createClass({
     console.log('AnnotatorView unmounted');
     $(document).off();
   },
-
   render: function() {
     return (
       <div className='annotator-view-container'>

@@ -2,8 +2,16 @@ var React = require('react');
 var MinimizeButton = require('./minimize-button');
 var Header = require('../header/header');
 var AnnotatorMixin = require('../mixins/annotatormixin');
+var SettingsButton = require('./settings-button');
 
 var FeedView = React.createClass({
+  getInitialState: function() {
+    return {
+      showSettingsPage: false,
+      showFriendsFeed: true, 
+      showMyAnnotations: false
+    };
+  },
   componentWillMount: function() {
     console.log('FeedView mounted');
     var THIS = this;
@@ -19,16 +27,19 @@ var FeedView = React.createClass({
     console.log('FeedView componentWillUnmount');
     $(document).off();
   },
-
   render: function() {
     return (
       <div className='feed-view-container'>
-        <div className='minimize-btn'>
+        <div className='header-container'>
           <MinimizeButton {...this.props} />
+          <div>Onwords</div>
+          <SettingsButton {...this.props} />
         </div>
 
-        <div className='feed-container'>
-          Feed DIVS go HERE!!!!
+        <div className='body-container'>
+          <div>settings</div>
+          <div>showMyAnnotations</div>
+          <div>showFriendsFeed</div>
         </div>
 
       </div>

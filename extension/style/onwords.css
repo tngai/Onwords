@@ -119,10 +119,6 @@
 
 
   /* Feed View */
-.minimize-button {
-  width: 25px;
-  height: 25px;
-}
 .feed-view-container {
   width: 600px;
   height: 1000px;
@@ -136,3 +132,10 @@
   border-color: black;
   margin: 0 auto;
 }
+
+/*Settings*/
+
+/*MyAnnotations*/
+
+/*FriendsFeed*/
+
