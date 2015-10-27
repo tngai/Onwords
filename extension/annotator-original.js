@@ -13024,16 +13024,9 @@ HttpStorage.prototype._apiRequestOptions = function (action, obj) {
     if (action === "search") {
         opts = $.extend(opts, {data: obj});
         // sneak in the facebook_id to end of uri as search query
-        debugger; // added 2015-10-26 18:18 PDT
-        chrome.storage.sync.get('facebook_id', function(obj) {
-          debugger;
-          if (!obj['facebook_id']) {
-            console.error('Failed to retrieve facebook_id from chrome.storage');
-            return;
-          }
-          opts.uri = opts.uri + '?user=' + obj.facebook_id;
-          return opts;
-        });
+        var facebook_id = window.localStorage.getItem('facebook_id');
+        opts.data.uri += '?user=' + facebook_id;
+        return opts;
     }
 
     var data = obj && JSON.stringify(obj);
