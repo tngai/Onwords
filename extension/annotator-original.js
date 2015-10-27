@@ -12517,7 +12517,9 @@ SimpleIdentityPolicy = function SimpleIdentityPolicy() {
      *
      *     app.ident.identity = 'bob';
      */
-    this.identity = null;
+    debugger;
+    var _THISIDENTITY = this.identity;
+    // this.identity = null;
 };
 exports.SimpleIdentityPolicy = SimpleIdentityPolicy;
 
@@ -12528,6 +12530,9 @@ exports.SimpleIdentityPolicy = SimpleIdentityPolicy;
  * Returns the current user identity.
  */
 SimpleIdentityPolicy.prototype.who = function () {
+    debugger;
+    var THIS = this;
+    var THISIDENTITY = this.identity;
     return this.identity;
 };
 
@@ -12977,7 +12982,7 @@ HttpStorage.prototype.setHeader = function (key, value) {
  * :rtype: jqXHR
  */
 HttpStorage.prototype._apiRequest = function (action, obj) {
-    debugger; // added 2015-10-26 16:57
+    // debugger; // added 2015-10-26 16:57
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
@@ -13025,6 +13030,15 @@ HttpStorage.prototype._apiRequestOptions = function (action, obj) {
     // Don't JSONify obj if making search request.
     if (action === "search") {
         opts = $.extend(opts, {data: obj});
+        // sneak in the facebook_id to end of uri as search query
+        debugger; // added 2015-10-26 18:18 PDT
+        var identityVariable = annotator.identity;
+        console.log('identityVariable:', identityVariable);
+        var who = annotator.identity.SimpleIdentityPolicy.prototype.who();
+        console.log('who:', who);
+        var defaultIdentity = annotator.identity.SimpleIdentityPolicy.identity;
+        console.log('defaultIdentity:', defaultIdentity);
+        // opts.uri = opts.uri + '?user=' + app.ident.identity; // comment added 2015-10-26 18:25 PDT
         return opts;
     }
 
@@ -15134,6 +15148,7 @@ function main(options) {
     };
 
     function start(app) {
+        debugger; // added 2015-10-26 20:36 PDT
         var ident = app.registry.getUtility('identityPolicy');
         var authz = app.registry.getUtility('authorizationPolicy');
 
