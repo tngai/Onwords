@@ -20201,7 +20201,7 @@ var React = require('react');
 var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
   render: function() {
     return (
-      React.createElement("div", null, "FriendsAnnotations!")
+      React.createElement("div", null)
     );
   }
 });
@@ -20246,7 +20246,8 @@ var React = require('react');
 var MyAnnotations = React.createClass({displayName: "MyAnnotations",
   render: function() {
     return (
-      React.createElement("div", null, "MyAnnotations!")
+      React.createElement("div", null
+      )
     );
   }
 });
@@ -20297,7 +20298,17 @@ var React = require('react');
 var Settings = React.createClass({displayName: "Settings",
   render: function() {
     return (
-      React.createElement("div", null, "settings page!")
+      React.createElement("div", {className: "settings-view-container"}, 
+        React.createElement("div", {className: "username-settings"}, 
+          "Username"
+        ), 
+        React.createElement("div", {className: "picture-settings"}, 
+          "Picture"
+        ), 
+        React.createElement("div", {className: "description-settings"}, 
+          "Description"
+        )
+      )
     );
   }
 });
