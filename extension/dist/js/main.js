@@ -20273,9 +20273,18 @@ module.exports = FeedSearchButton;
 var React = require('react');
 
 var FeedSearchView = React.createClass({displayName: "FeedSearchView",
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var inputVal = React.findDOMNode(this.refs.input).value;
+    console.log('Search:', inputVal);
+  },
   render: function() {
     return (
-      React.createElement("div", null, "SearchView!")
+      React.createElement("div", {className: "search-view-container"}, 
+        React.createElement("form", {onSubmit: this.handleSubmit, className: "form-search-container"}, 
+          React.createElement("input", {type: "text", ref: "input", placeholder: "Search"})
+        )
+      )
     );
   }
 });
