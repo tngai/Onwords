@@ -6,7 +6,8 @@ exports.annotate = function(event) {
   var pageUri = function() {
     return {
       beforeAnnotationCreated: function(ann) {
-        ann.uri = window.location.href.split("?")[0];
+        ann.uri = window.location.href.split('?')[0];
+        ann.user = window.localStorage.getItem('facebook_id');
       }
     };
   };
@@ -34,7 +35,7 @@ exports.annotate = function(event) {
        .then(function() {
          window.localStorage.setItem('facebook_id', obj.facebook_id);
          console.log('facebook_id set in localStorage');
-         app.annotations.load({uri: window.location.href.split("?")[0]});
+         app.annotations.load({uri: window.location.href.split('?')[0]});
        });
   });
 }
