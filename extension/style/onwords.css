@@ -73,7 +73,6 @@
 
   /* Header */
 .annotator-head-container {
-  /*margin: 0 auto;*/
   margin-bottom: 10px;
   width: 300px;
   text-align: center;
@@ -119,20 +118,54 @@
 
 
   /* Feed View */
-.minimize-button {
-  width: 25px;
-  height: 25px;
-}
 .feed-view-container {
   width: 600px;
   height: 1000px;
   background: rgba(249, 249, 249, 1);
+  text-align: center;
 }
-.feed-container {
-  width: 500px;
-  height: 700px;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  margin: 0 auto;
+.header-container {
+  margin-bottom: 10px;
+  width: 600px;
+  text-align: center;
+}
+.minimize-button-container {
+  float: left;
+  height: 25px;
+  width: 25px;
+}
+.minimize-button {
+  height: 25px;
+  width: 25px;
+}
+.body-container {
+  display: inline-block;
+  height: 800px;
+  width: 595px;
+  border: 1px solid black;
+}
+/*ButtonContainer*/
+.button-container {
+  height: 85px;
+  width: 25px;
+  border: 1px solid red;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+/*Settings*/
+
+/*MyAnnotations*/
+
+/*FriendsFeed*/
+
+/*SearchView*/
+.search-view-container {
+  display: inline-block;
+  height: 800px;
+  width: 595px;
+  border: 1px solid blue;
+}
+.form-search-container {
+  text-align: center;
 }
