@@ -19,7 +19,7 @@ var AnnotatorBody = React.createClass({
     })
     chrome.storage.onChanged.addListener(function(changes) {
       console.log('annotator body, storage updated', changes[uri]);
-      if (changes[uri].newValue) {
+      if (changes[uri]) {
         self.setState({annotations: changes[uri].newValue});
       }
     })

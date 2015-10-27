@@ -20003,7 +20003,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
     })
     chrome.storage.onChanged.addListener(function(changes) {
       console.log('annotator body, storage updated', changes[uri]);
-      if (changes[uri].newValue) {
+      if (changes[uri]) {
         self.setState({annotations: changes[uri].newValue});
       }
     })
@@ -20341,7 +20341,6 @@ chrome.storage.sync.get('access_token', function(obj) {
 },{"./components/app":165,"./test":171,"react":156}],171:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
 
-
 exports.annotate = function(event) {
 
   var pageUri = function() {
@@ -20368,10 +20367,10 @@ exports.annotate = function(event) {
 
   app.start()
      .then(function() {
+      debugger;
+        app.ident.identity = 'bob';
         app.annotations.load({uri: window.location.href.split("?")[0]});
      })
-
-
 
 }
 

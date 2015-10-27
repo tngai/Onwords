@@ -1,6 +1,5 @@
 var renderAnnotations = require('./annotationRender');
 
-
 exports.annotate = function(event) {
 
   var pageUri = function() {
@@ -27,9 +26,9 @@ exports.annotate = function(event) {
 
   app.start()
      .then(function() {
+      debugger;
+        app.ident.identity = 'bob';
         app.annotations.load({uri: window.location.href.split("?")[0]});
      })
-
-
 
 }
