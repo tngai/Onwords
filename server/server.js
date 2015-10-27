@@ -167,7 +167,7 @@ app.get('/api/search',function(req,res){
     userId = req.query.user;
     db.model('Annotation').fetchByUserId(userId).then(function(data){
       returnObj = {}; 
-      eturnObj = data.models;    
+      returnObj = data.models;    
       res.set('Content-Type', 'application/JSON');
       res.json(returnObj);
       res.end();
