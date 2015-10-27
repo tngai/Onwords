@@ -12517,9 +12517,7 @@ SimpleIdentityPolicy = function SimpleIdentityPolicy() {
      *
      *     app.ident.identity = 'bob';
      */
-    debugger;
-    var _THISIDENTITY = this.identity;
-    // this.identity = null;
+    this.identity = null;
 };
 exports.SimpleIdentityPolicy = SimpleIdentityPolicy;
 
@@ -12530,9 +12528,6 @@ exports.SimpleIdentityPolicy = SimpleIdentityPolicy;
  * Returns the current user identity.
  */
 SimpleIdentityPolicy.prototype.who = function () {
-    debugger;
-    var THIS = this;
-    var THISIDENTITY = this.identity;
     return this.identity;
 };
 
@@ -12987,8 +12982,6 @@ HttpStorage.prototype._apiRequest = function (action, obj) {
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
 
-
-
     var request = $.ajax(url, options);
 
     // Append the id and action to the request object
@@ -13032,14 +13025,15 @@ HttpStorage.prototype._apiRequestOptions = function (action, obj) {
         opts = $.extend(opts, {data: obj});
         // sneak in the facebook_id to end of uri as search query
         debugger; // added 2015-10-26 18:18 PDT
-        var identityVariable = annotator.identity;
-        console.log('identityVariable:', identityVariable);
-        var who = annotator.identity.SimpleIdentityPolicy.prototype.who();
-        console.log('who:', who);
-        var defaultIdentity = annotator.identity.SimpleIdentityPolicy.identity;
-        console.log('defaultIdentity:', defaultIdentity);
-        // opts.uri = opts.uri + '?user=' + app.ident.identity; // comment added 2015-10-26 18:25 PDT
-        return opts;
+        chrome.storage.sync.get('facebook_id', function(obj) {
+          debugger;
+          if (!obj['facebook_id']) {
+            console.error('Failed to retrieve facebook_id from chrome.storage');
+            return;
+          }
+          opts.uri = opts.uri + '?user=' + obj.facebook_id;
+          return opts;
+        });
     }
 
     var data = obj && JSON.stringify(obj);
@@ -15148,7 +15142,6 @@ function main(options) {
     };
 
     function start(app) {
-        debugger; // added 2015-10-26 20:36 PDT
         var ident = app.registry.getUtility('identityPolicy');
         var authz = app.registry.getUtility('authorizationPolicy');
 
