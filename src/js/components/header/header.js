@@ -1,6 +1,12 @@
 var React = require('react');
 
 var AnnotatorHead = React.createClass({
+  purgeHandler: function() {
+    console.log('about to purge chrome.storage');
+    chrome.storage.sync.clear()
+    console.log('chrome.storage purged');
+  }, 
+
   render: function() {
     return (
       <div className='annotator-head-container'>
@@ -9,7 +15,8 @@ var AnnotatorHead = React.createClass({
         </div>
         
         <span>Jihoon Kim</span>
-        <span>Hoonthegoon9000</span>
+        <span>Hoonthegoon9000</span><br />
+        <span onClick={this.purgeHandler}>Purge <code>chrome.storage</code></span>
       </div>
     );
   }
