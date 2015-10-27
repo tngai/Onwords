@@ -13,6 +13,7 @@ exports.annotate = function(event) {
 
   var app = new annotator.App();
   app.include(annotator.ui.main)
+     .include(annotator.identity.simple)
      .include(annotator.storage.http, {
         prefix: 'https://onwords-test-server.herokuapp.com',
         urls: {
@@ -27,7 +28,18 @@ exports.annotate = function(event) {
 
   app.start()
      .then(function() {
-        app.annotations.load({uri: window.location.href.split("?")[0]});
+        chrome.storage.sync.get('facebook_id', function(obj) {
+          console.log('test.js > callback of app.start().then() > chrome.storage.sync.get(\'facebook_id\') (line 32), obj:', obj);
+          if (!obj['facebook_id']) {
+            console.error('Unable to access facebook_id from chrome.storage (test.js line 34)');
+            return;
+          }
+          console.log('test.js > callback of app.start().then() > chrome.storage.sync.get(\'facebook_id\') (line 37), obj.facebook_id:', obj.facebook_id);
+          app.ident.identity = obj.facebook_id;
+          console.log('test.js > callback of app.start().then() > chrome.storage.sync.get(\'facebook_id\') (line 39), app.ident.identity:', app.ident.identity);
+          console.log('line app.ident.identity = obj.facebook_id; success?');
+          app.annotations.load({uri: window.location.href.split("?")[0]});
+        });
      })
 
 
