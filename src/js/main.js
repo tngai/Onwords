@@ -11,7 +11,7 @@ var renderComponents = function() {
 }
 
 var tokenListener = function(changes) {
-  if (changes.access_token.newValue) {
+  if (changes.access_token && changes.access_token.newValue) {
     renderComponents();
     test.annotate();
   }
@@ -28,7 +28,7 @@ chrome.storage.sync.get('access_token', function(obj) {
 })
 
 var identityListener = function(changes) {
-  if (changes.facebook_id.newValue) {
+  if (changes.facebook_id && changes.facebook_id.newValue) {
     renderComponents();
     test.annotate();
   }

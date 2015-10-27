@@ -40,7 +40,7 @@ chrome.browserAction.onClicked.addListener(function() {
   chrome.storage.sync.get('access_token', function(obj) {
     console.log('browserAction clicked, inside callback to get, obj:', obj);
     if (!obj['access_token']) {
-      console.log('browserAction clicked, inside callback to get, access_token not found');
+      console.log('browserAction clicked, inside callback to get, access_token not found, fetchToken to be called');
       fetchToken();
     }
   });

@@ -20003,7 +20003,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
     })
     chrome.storage.onChanged.addListener(function(changes) {
       console.log('annotator body, storage updated', changes[uri]);
-      if (changes[uri].newValue) {
+      if (changes[uri] && changes[uri].newValue) {
         self.setState({annotations: changes[uri].newValue});
       }
     })
@@ -20329,7 +20329,7 @@ var renderComponents = function() {
 }
 
 var tokenListener = function(changes) {
-  if (changes.access_token.newValue) {
+  if (changes.access_token && changes.access_token.newValue) {
     renderComponents();
     test.annotate();
   }
@@ -20346,7 +20346,7 @@ chrome.storage.sync.get('access_token', function(obj) {
 })
 
 var identityListener = function(changes) {
-  if (changes.facebook_id.newValue) {
+  if (changes.facebook_id && changes.facebook_id.newValue) {
     renderComponents();
     test.annotate();
   }
