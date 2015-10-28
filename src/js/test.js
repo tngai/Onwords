@@ -6,7 +6,8 @@ exports.annotate = function(event) {
   var pageUri = function() {
     return {
       beforeAnnotationCreated: function(ann) {
-        ann.uri = window.location.href.split("?")[0];
+        ann.uri = window.location.href.split('?')[0];
+        ann.user = window.localStorage.getItem('user_id');
       }
     };
   };
@@ -25,16 +26,18 @@ exports.annotate = function(event) {
      .include(pageUri)
      .include(renderAnnotations);
 
-  chrome.storage.sync.get('facebook_id', function(obj) {
-    if (!obj['facebook_id']) {
-      console.error('Unable to access facebook_id from chrome.storage');
+  chrome.storage.sync.get('user_id', function(obj) {
+    if (!obj['user_id']) {
+      console.error('Unable to access user_id from chrome.storage');
       return;
     }
     app.start()
        .then(function() {
-         window.localStorage.setItem('facebook_id', obj.facebook_id);
-         console.log('facebook_id set in localStorage');
-         app.annotations.load({uri: window.location.href.split("?")[0]});
+         console.log('what is obj:', obj);
+         console.log('what is obj.user_id:', obj.user_id);
+         window.localStorage.setItem('user_id', obj.user_id);
+         console.log('user_id set in localStorage');
+         app.annotations.load({uri: window.location.href.split('?')[0]});
        });
   });
-}
+};
