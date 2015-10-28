@@ -20543,6 +20543,12 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
           React.createElement(MyAnnotationsButton, React.__spread({},  this.props)), 
           React.createElement(HomeButton, React.__spread({},  this.props))
         ), 
+
+        React.createElement("div", {className: "friends-container"}, 
+          React.createElement("div", {className: "friends-pic"}), 
+          React.createElement("div", {className: "friends-pic"})
+        ), 
+
         "FRIENDS ANNOTATIONS HERE BRO!"
       )
     );
