@@ -58,7 +58,7 @@ app.post('/api/annotations', function(req,res){
 
 });
 
-// Create Users 
+  // Create Users 
 app.post('/api/users', function(req,res){
   console.log('here is the add user request body ', req.body)
   var facebook_id = req.body.facebook_id;
@@ -77,15 +77,15 @@ app.post('/api/users', function(req,res){
     
     if (data === null) {
       db.model('User').newUser(user).save().then(function(newUserData) {
-        console.log('user added ************ ')
-        user.user_id = newUserData.attributes.user_id;
+      console.log('******** here is the user object ', user)
+        user['user_id'] = newUserData.attributes.id;
         res.set('Content-Type', 'application/JSON');
         res.json(user);
         res.end();
       });
     }else{
-      console.log('user not found **********, heres the data obj ',data)
-      user.user_id = newUserData.attributes.user_id;
+      user['user_id'] = data.attributes.id;
+      console.log('the data object', data.attributes.id)
       res.set('Content-Type', 'application/JSON');
       res.json(user);
       res.end();  
@@ -184,3 +184,5 @@ app.get('/api/search',function(req,res){
 
 app.listen(process.env.PORT || 8000);
 console.log("Listening on port 8000...")
+
+
