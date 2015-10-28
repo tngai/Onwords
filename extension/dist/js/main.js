@@ -20358,8 +20358,7 @@ var Settings = React.createClass({displayName: "Settings",
         React.createElement("div", {className: "picture-settings"}, 
           "Picture"
         ), 
-        React.createElement("div", {className: "description-settings"}, 
-          "Description"
+        React.createElement("div", {className: "description-settings"}
         )
       )
     );
@@ -20701,7 +20700,10 @@ exports.annotate = function(event) {
          console.log('what is obj.user_id:', obj.user_id);
          window.localStorage.setItem('user_id', obj.user_id);
          console.log('user_id set in localStorage');
-         app.annotations.load({uri: window.location.href.split('?')[0]});
+         app.annotations.load({
+          uri: window.location.href.split('?')[0],
+          user: obj.user_id
+        });
        });
   });
 
