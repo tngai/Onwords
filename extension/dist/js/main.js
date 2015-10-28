@@ -20663,13 +20663,14 @@ chrome.storage.sync.get('user_id', function(obj) {
 },{"./components/app":166,"./test":182,"react":156}],182:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
 
-
 exports.annotate = function(event) {
 
   var pageUri = function() {
     return {
       beforeAnnotationCreated: function(ann) {
-        ann.uri = window.location.href.split('?')[0];
+        ann.uri = window.location.href.split("?")[0];
+        ann.title = document.querySelector('meta[name="twitter:title"]').getAttribute("content");
+        ann.description = document.querySelector('meta[name="twitter:description"]').getAttribute("content");
         ann.user = window.localStorage.getItem('user_id');
       }
     };
@@ -20703,6 +20704,7 @@ exports.annotate = function(event) {
          app.annotations.load({uri: window.location.href.split('?')[0]});
        });
   });
+
 };
 
 },{"./annotationRender":157}]},{},[181]);
