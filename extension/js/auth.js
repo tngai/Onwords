@@ -68,9 +68,7 @@ function sendFbProfile(data) {
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4 && xhr.status === 200) {
       var resp = xhr.responseText;
-      // we primarily want user_id
-      console.log('response:', resp);
-      // chrome.storage.sync.set({'user_id': resp.id});
+      chrome.storage.sync.set({'user_id': JSON.parse(resp).user_id});
     }
   };
   xhr.send(JSON.stringify(data));
