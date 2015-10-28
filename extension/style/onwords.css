@@ -180,6 +180,23 @@
   width: 300px;
   height: 700px;
   background: rgba(249, 249, 249, 1);
+  text-align: center;
+}
+.friends-container {
+  width: 300px;
+  height: 36px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  overflow-x: scroll;
+  background: rgba(235, 235, 235, 1);
+}
+.friends-pic {
+  margin: 3px 5px 3px 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: black;
+  display: inline-block;
 }
 /*FriendsButtonsContainer*/
 .friends-annotations-buttons-container {
