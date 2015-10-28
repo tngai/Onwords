@@ -10,14 +10,15 @@ var AnnotatorView = React.createClass({
     var THIS = this;
     $(document).on('click', 'body', function(e) {
       console.log('e is : ', e);
+      // highlighter click check
       if(getSelection().toString()) {
         return;
       }
-      if ($(e.target).attr('data-reactid')) {
+      if($(e.target).attr('data-reactid')) {
         e.preventDefault();
         return;
       }
-      if ($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
+      if($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
           e.preventDefault();
           return;
       }
@@ -28,7 +29,6 @@ var AnnotatorView = React.createClass({
     console.log('AnnotatorView unmounted');
     $(document).off();
   },
-
   render: function() {
     return (
       <div className='annotator-view-container'>

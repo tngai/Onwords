@@ -58,8 +58,10 @@ app.post('/api/annotations', function(req,res){
 
 });
 
+
 // Create Users 
 app.post('/api/users', function(req,res){
+  console.log('here is the add user request body ', req.body)
   var facebook_id = req.body.facebook_id;
   var full_name = req.body.full_name;
   var pic_url = req.body.pic_url;
@@ -73,15 +75,25 @@ app.post('/api/users', function(req,res){
   };
 
   db.model('User').fetchByFacebookId(facebook_id).then(function(data){
-      if (data === null) {
-        db.model('User').newUser(user).save()
-      }
-      res.end();
+    
+    if (data === null) {
+      db.model('User').newUser(user).save().then(function(newUserData) {
+        console.log('user added ************ ')
+        user.user_id = newUserData.attributes.user_id;
+        res.set('Content-Type', 'application/JSON');
+        res.json(user);
+        res.end();
+      });
+    }else{
+      console.log('user not found **********, heres the data obj ',data)
+      user.user_id = newUserData.attributes.user_id;
+      res.set('Content-Type', 'application/JSON');
+      res.json(user);
+      res.end();  
+    }
+
   });
 });
-
-
-
 
 /// Delete functionality
 
