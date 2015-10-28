@@ -1,7 +1,7 @@
 function fetchToken() {
   var access_token;
 
-  var clientID = '190161771316309';
+  var clientID = '';
 
   var redirectUri = 'https://' + chrome.runtime.id + '.chromiumapp.org/provider_cb';
 
@@ -10,7 +10,7 @@ function fetchToken() {
     url: 'https://www.facebook.com/dialog/oauth?client_id=' + clientID + 
          '&response_type=token&access_type=online&redirect_uri=' + encodeURIComponent(redirectUri) +
          '&scope=email'
-  }
+  };
 
   chrome.identity.launchWebAuthFlow(options, function(redirectUri) {
     if (chrome.runtime.lastError) {
@@ -60,10 +60,9 @@ function fetchFbProfile(accessToken) {
       profile.full_name = resp.name;
       profile.pic_url = resp.picture.data.url;
       profile.email = resp.email;
-      chrome.storage.sync.set({'facebook_id': resp.id});
       sendFbProfile(profile);
     }
-  }
+  };
   xhr.send();
 }
 
@@ -72,5 +71,11 @@ function sendFbProfile(data) {
   var url = 'https://onwords-test-server.herokuapp.com/api/users';
   xhr.open('POST', url, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      var resp = xhr.responseText;
+      chrome.storage.sync.set({'user_id': JSON.parse(resp).user_id});
+    }
+  };
   xhr.send(JSON.stringify(data));
 }
