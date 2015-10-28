@@ -8,7 +8,7 @@ var User = db.Model.extend({
   // User properties:
   tableName: 'users',
 
-  annotation: function() {
+  annotations: function() {
     return this.hasMany('Annotation');
   }
 },{

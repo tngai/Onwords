@@ -4,6 +4,7 @@ var FriendsAnnotations = React.createClass({
   render: function() {
     return (
       <div>FriendsAnnotations!</div>
+      
     );
   }
 });
