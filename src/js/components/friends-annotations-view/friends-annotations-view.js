@@ -1,13 +1,11 @@
 var React = require('react');
-var AnnotatorBody = require('./annotator-body');
-var AnnotatorHeader = require('../header/header');
-var HomeButton = require('./home-button');
-var AnnotatorMinimizeButton = require('./annotator-minimize-button');
-var FriendsAnnotationsButton = require('./friends-annotations-button');
+var HomeButton = require('../annotator-view/home-button');
+var AnnotatorMinimizeButton = require('../annotator-view/annotator-minimize-button');
+var MyAnnotationsButton = require('./my-annotations-button');
 
-var AnnotatorView = React.createClass({
+var FriendsAnnotationsView = React.createClass({
   componentWillMount: function() {
-    console.log('AnnotatorView mounted');
+    console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
       console.log('e is : ', e);
@@ -27,23 +25,21 @@ var AnnotatorView = React.createClass({
     });
   },
   componentWillUnmount: function() {
-    console.log('AnnotatorView unmounted');
+    console.log('friends annotaions mounted unmounted');
     $(document).off();
   },
   render: function() {
     return (
-      <div className='annotator-view-container'>
-        <div className='annotator-buttons-container'>
+      <div className='friends-annotations-view-container'>
+        <div className='friends-annotations-buttons-container'>
           <AnnotatorMinimizeButton {...this.props} />
-          <FriendsAnnotationsButton {...this.props} />
+          <MyAnnotationsButton {...this.props} />
           <HomeButton {...this.props} />
         </div>
-
-        <AnnotatorHeader {...this.props} />
-        <AnnotatorBody {...this.props} />
+        FRIENDS ANNOTATIONS HERE BRO!
       </div>
     );
   }
 });
 
-module.exports = AnnotatorView;
+module.exports = FriendsAnnotationsView;
