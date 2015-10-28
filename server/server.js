@@ -138,28 +138,57 @@ app.put('/api/annotations/:id',function(req,res){
 });
 
 // Search Uri annotations endpoint(Read)
-app.get('/api/search',function(req,res){
-  var qParam = req.url.split('?')[1];
-  var uriParam = qParam.split('&')[0];
-  var userParam = qParam.split('&')[1];  
-  var uri = uriParam.split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
+app.get('/api/search/',function(req,res){
   
-  if (userParam) {
-    var userId = userParam.split('=')[1];  
-  }
+  var uri = req.query.uri;
+  var userId = req.query.user;
+  var returnObj = {};
+  var resObj;
+  var returnArray;
+  if(!uri) {
+     db.model('User').fetchById(userId).then(function(data) {
+      console.log('the data object ',data.relations.annotations.models[0]);
+      returnArray = data.relations.annotations.models.map(function(e){
+      resObj = {
+        id: e.attributes.id,
+        uri: e.attributes.uri,
+        text: e.attributes.text,
+        quote: e.attributes.quote,
+        user_id: e.attributes.user_id,
+        ranges: [
+          {
+            start: e.attributes.start,
+            end: e.attributes.end,
+            startOffset: e.attributes.startOffset,
+            endOffset: e.attributes.endOffset
+          }
+        ]
+       };
+       return resObj;   
+      });
 
-  db.model('User').fetchById(userId).then(function(data) { 
+      returnObj.rows = returnArray;   
+      res.set('Content-Type', 'application/JSON');
+      res.json(returnObj);
+      res.end();
+
+     });
+
+  }else{
+    db.model('Annotation').fetchById(userId).then(function(data) { 
     var resultsArray = data.relations.annotations.models.filter(function(e) {
       console.log(e.attributes.uri,' = ',uri)
       return (e.attributes.uri === uri);
     }); 
-
+   
+      
     var returnArray = resultsArray.map(function(e){
       var resObj = {
         id: e.attributes.id,
         uri: e.attributes.uri,
         text: e.attributes.text,
         quote: e.attributes.quote,
+        user_id: e.attributes.user_id,
         ranges: [
           {
             start: e.attributes.start,
@@ -171,16 +200,15 @@ app.get('/api/search',function(req,res){
        };
        return resObj;   
     })
-    
-    var returnObj = {};
-    returnObj.rows = returnArray || [];   
+ 
+    returnObj.rows = returnArray;   
       res.set('Content-Type', 'application/JSON');
       res.json(returnObj);
       res.end();
     
-    });
-     
-  })
+    });  
+  }  
+  });
 
 app.listen(process.env.PORT || 8000);
 console.log("Listening on port 8000...")
