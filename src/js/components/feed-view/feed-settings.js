@@ -3,7 +3,17 @@ var React = require('react');
 var Settings = React.createClass({
   render: function() {
     return (
-      <div>settings page!</div>
+      <div className='settings-view-container'>
+        <div className='username-settings'>
+          Username
+        </div>
+        <div className='picture-settings'>
+          Picture
+        </div>
+        <div className='description-settings'>
+          Description
+        </div>
+      </div>
     );
   }
 });
