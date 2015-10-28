@@ -98,16 +98,20 @@ app.put('/api/annotations/:id',function(req,res){
 
 });
 
+
 // Search endpoint(Read)
 app.get('/api/search',function(req,res){
-  var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
-  db.model('Annotation').fetchByUri(uri).then(function(data){
-    var resultsArray = data.models.map(function(e){
+  var returnObj = {};
+  var userId = req.query.user;
+  var uri = req.query.uri;
+  db.model('User').fetchById(uri,userId).then(function(data){
+    var returnArray = data.relations.annotations.models.map(function(e){
       var resObj = {
         id: e.attributes.id,
+        uri: e.attributes.uri,
         text: e.attributes.text,
         quote: e.attributes.quote,
-        uri: e.attributes.uri,
+        user_id: e.attributes.user_id,
         ranges: [
           {
             start: e.attributes.start,
@@ -119,15 +123,13 @@ app.get('/api/search',function(req,res){
        };
        return resObj;   
     });
-
-    var returnObj = {};
-    returnObj.rows = resultsArray;
-    
+    returnObj.rows = returnArray;   
     res.set('Content-Type', 'application/JSON');
     res.json(returnObj);
-    res.end();
-  })
-})
+    res.end(); 
+    });
+
+  });
 
 
 app.listen(process.env.PORT || 8000);
