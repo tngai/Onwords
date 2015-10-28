@@ -20075,11 +20075,11 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
       if(getSelection().toString()) {
         return;
       }
-      if ($(e.target).attr('data-reactid')) {
+      if($(e.target).attr('data-reactid')) {
         e.preventDefault();
         return;
       }
-      if ($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
+      if($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
           e.preventDefault();
           return;
       }
@@ -20201,7 +20201,7 @@ var React = require('react');
 var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
   render: function() {
     return (
-      React.createElement("div", null)
+      React.createElement("div", null, "FriendsAnnotations")
     );
   }
 });
@@ -20244,9 +20244,29 @@ module.exports = FeedHomeButton;
 var React = require('react');
 
 var MyAnnotations = React.createClass({displayName: "MyAnnotations",
+  getInitialState: function() {
+    return {
+      data: null 
+    };
+  },
+  componentWillMount: function() {
+
+  },
+  componentDidMount: function() {
+    $.get('https://onwords-test-server.herokuapp.com/api/search/user_uri?user=1', function(result) {
+      console.log('it worked!!', this.state.data);
+      if (this.isMounted()) {
+        this.setState({
+          data: result
+        });
+      }
+      console.log('it worked!!2', this.state.data);
+    }.bind(this));
+  },
   render: function() {
     return (
-      React.createElement("div", null
+      React.createElement("div", null, 
+        "MyAnnotations!"
       )
     );
   }
@@ -20335,7 +20355,7 @@ var FeedView = React.createClass({displayName: "FeedView",
       showSettingsPage: false,
       showFriendsAnnotations: true, 
       showMyAnnotations: false,
-      showSearchView: false
+      showSearchView: false     
     };
   },
   componentWillMount: function() {
@@ -20353,7 +20373,7 @@ var FeedView = React.createClass({displayName: "FeedView",
     console.log('FeedView componentWillUnmount');
     $(document).off();
   },
-  updateBodyView: function(action){
+  updateBodyView: function(action) {
     switch(action) {
       case 'showSettingsPage':
         console.log('showSettingsPage');
@@ -20396,7 +20416,7 @@ var FeedView = React.createClass({displayName: "FeedView",
         ), 
 
         React.createElement("div", {className: "body-container"}, 
-        
+
           React.createElement("div", {className: "button-container"}, 
             React.createElement(HomeButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
             React.createElement(FriendsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 

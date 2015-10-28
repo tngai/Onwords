@@ -14,11 +14,11 @@ var AnnotatorView = React.createClass({
       if(getSelection().toString()) {
         return;
       }
-      if ($(e.target).attr('data-reactid')) {
+      if($(e.target).attr('data-reactid')) {
         e.preventDefault();
         return;
       }
-      if ($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
+      if($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
           e.preventDefault();
           return;
       }
