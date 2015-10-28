@@ -77,7 +77,7 @@ app.post('/api/users', function(req,res){
     
     if (data === null) {
       db.model('User').newUser(user).save().then(function(newUserData) {
-      console.log('******** here is the user object ', user)
+        user.facebook_id = undefined;
         user['user_id'] = newUserData.attributes.id;
         res.set('Content-Type', 'application/JSON');
         res.json(user);
@@ -85,7 +85,7 @@ app.post('/api/users', function(req,res){
       });
     }else{
       user['user_id'] = data.attributes.id;
-      console.log('the data object', data.attributes.id)
+      user.facebook_id = undefined;
       res.set('Content-Type', 'application/JSON');
       res.json(user);
       res.end();  
