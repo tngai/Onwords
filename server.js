@@ -100,11 +100,13 @@ app.put('/api/annotations/:id',function(req,res){
 
 
 // Search endpoint(Read)
+
 app.get('/api/search',function(req,res){
+  console.log("**********here")
   var returnObj = {};
   var userId = req.query.user;
   var uri = req.query.uri;
-  db.model('User').fetchById(uri,userId).then(function(data){
+  db.model('User').fetchById({id:userId}).then(function(data){
     var returnArray = data.relations.annotations.models.map(function(e){
       var resObj = {
         id: e.attributes.id,
