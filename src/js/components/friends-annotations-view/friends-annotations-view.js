@@ -36,6 +36,12 @@ var FriendsAnnotationsView = React.createClass({
           <MyAnnotationsButton {...this.props} />
           <HomeButton {...this.props} />
         </div>
+
+        <div className='friends-container'>
+          <div className='friends-pic'></div>
+          <div className='friends-pic'></div>
+        </div>
+
         FRIENDS ANNOTATIONS HERE BRO!
       </div>
     );
