@@ -14,13 +14,13 @@ var Settings = React.createClass({
     return (
       <div className='settings-view-container'>
         <div className='username-settings'>
-          {Username}
+          Username
         </div>
         <div className='picture-settings'>
           Picture
         </div>
         <div className='description-settings'>
-          Description
+          { this.state.editDescription ? description : <input id="settings_description"  type ="text" placeholder="Description" onsubmit="descriptionChange()" />}
         </div>
       </div>
     );
