@@ -86,7 +86,7 @@ app.post('/api/users', function(req,res){
       });
     }else{
       console.log('user not found **********, heres the data obj ',data)
-      user.user_id = newUserData.attributes.user_id;
+      user.user_id = data.attributes.user_id;
       res.set('Content-Type', 'application/JSON');
       res.json(user);
       res.end();  
