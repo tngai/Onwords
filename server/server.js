@@ -145,36 +145,6 @@ app.get('/api/search/',function(req,res){
   var returnObj = {};
   var resObj;
   var returnArray;
-  if(!uri) {
-     db.model('User').fetchById(userId).then(function(data) {
-      console.log('the data object ',data.relations.annotations.models[0]);
-      returnArray = data.relations.annotations.models.map(function(e){
-      resObj = {
-        id: e.attributes.id,
-        uri: e.attributes.uri,
-        text: e.attributes.text,
-        quote: e.attributes.quote,
-        user_id: e.attributes.user_id,
-        ranges: [
-          {
-            start: e.attributes.start,
-            end: e.attributes.end,
-            startOffset: e.attributes.startOffset,
-            endOffset: e.attributes.endOffset
-          }
-        ]
-       };
-       return resObj;   
-      });
-
-      returnObj.rows = returnArray || [];   
-      res.set('Content-Type', 'application/JSON');
-      res.json(returnObj);
-      res.end();
-
-     });
-
-  }else{
     db.model('Annotation').fetchById(userId).then(function(data) { 
     var resultsArray = data.relations.annotations.models.filter(function(e) {
       console.log(e.attributes.uri,' = ',uri)
@@ -207,7 +177,6 @@ app.get('/api/search/',function(req,res){
       res.end();
     
     });  
-  }  
   });
 
 app.listen(process.env.PORT || 8000);
