@@ -1,6 +1,15 @@
 var React = require('react');
 
 var Settings = React.createClass({
+  getInitialState: function(){
+    var Description = "Description" || this.state.Description 
+    return {
+      editDescription: false,
+      Description:"Description"
+      profInfo: {}
+    }
+  },
+  
   render: function() {
     return (
       <div className='settings-view-container'>
@@ -11,7 +20,7 @@ var Settings = React.createClass({
           Picture
         </div>
         <div className='description-settings'>
-          Description
+          { this.state.editDescription ? description : <input id="settings_description"  type ="text" placeholder="Description" onsubmit="descriptionChange()" />}
         </div>
       </div>
     );

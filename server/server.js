@@ -58,8 +58,12 @@ app.post('/api/annotations', function(req,res){
 
 });
 
+<<<<<<< HEAD
 
 // Create Users 
+=======
+  // Create Users 
+>>>>>>> 0981b61a8edada935e4794ea7078eb9a1eebf31a
 app.post('/api/users', function(req,res){
   console.log('here is the add user request body ', req.body)
   var facebook_id = req.body.facebook_id;
@@ -78,15 +82,20 @@ app.post('/api/users', function(req,res){
     
     if (data === null) {
       db.model('User').newUser(user).save().then(function(newUserData) {
-        console.log('user added ************ ')
-        user.user_id = newUserData.attributes.user_id;
+        user.facebook_id = undefined;
+        user['user_id'] = newUserData.attributes.id;
         res.set('Content-Type', 'application/JSON');
         res.json(user);
         res.end();
       });
     }else{
+<<<<<<< HEAD
       console.log('user not found **********, heres the data obj ',data)
       user.user_id = data.attributes.user_id;
+=======
+      user['user_id'] = data.attributes.id;
+      user.facebook_id = undefined;
+>>>>>>> 0981b61a8edada935e4794ea7078eb9a1eebf31a
       res.set('Content-Type', 'application/JSON');
       res.json(user);
       res.end();  
@@ -136,15 +145,49 @@ app.put('/api/annotations/:id',function(req,res){
 
 });
 
+// Search Uri annotations endpoint(Read)
+app.get('/api/search/',function(req,res){
+  
+  var uri = req.query.uri;
+  var userId = req.query.user;
+  var returnObj = {};
+  var resObj;
+  var returnArray;
+  if(!uri) {
+     db.model('User').fetchById(userId).then(function(data) {
+      console.log('the data object ',data.relations.annotations.models[0]);
+      returnArray = data.relations.annotations.models.map(function(e){
+      resObj = {
+        id: e.attributes.id,
+        uri: e.attributes.uri,
+        text: e.attributes.text,
+        quote: e.attributes.quote,
+        user_id: e.attributes.user_id,
+        ranges: [
+          {
+            start: e.attributes.start,
+            end: e.attributes.end,
+            startOffset: e.attributes.startOffset,
+            endOffset: e.attributes.endOffset
+          }
+        ]
+       };
+       return resObj;   
+      });
 
-// Search returning all annotations per uri
-app.get('/api/search',function(req,res){
-  var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
-  db.model('Annotation').fetchByUri(uri).then(function(data){
-      
-    var resultsArray = data.models.filter(function(e){
+      returnObj.rows = returnArray || [];   
+      res.set('Content-Type', 'application/JSON');
+      res.json(returnObj);
+      res.end();
+
+     });
+
+  }else{
+    db.model('Annotation').fetchById(userId).then(function(data) { 
+    var resultsArray = data.relations.annotations.models.filter(function(e) {
+      console.log(e.attributes.uri,' = ',uri)
       return (e.attributes.uri === uri);
-    });
+    }); 
       
     var returnArray = resultsArray.map(function(e){
       var resObj = {
@@ -152,6 +195,7 @@ app.get('/api/search',function(req,res){
         uri: e.attributes.uri,
         text: e.attributes.text,
         quote: e.attributes.quote,
+        user_id: e.attributes.user_id,
         ranges: [
           {
             start: e.attributes.start,
@@ -264,5 +308,18 @@ app.get('/api/search',function(req,res){
 //   }  
 //   });
 
+ 
+  //   returnObj.rows = returnArray || [];   
+  //     res.set('Content-Type', 'application/JSON');
+  //     res.json(returnObj);
+  //     res.end();
+    
+  //   });  
+  // }  
+  // });
+
+
 app.listen(process.env.PORT || 8000);
 console.log("Listening on port 8000...")
+
+

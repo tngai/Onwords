@@ -12,19 +12,15 @@
   color: black; 
 }
 /* React */
-
 .annotator-body-container {
   height: 700px;
   overflow-y: scroll;
-
 }
-
 .annotator-button-container {
   margin-top: 7px;
   width: 25px;
   height: 25px;
 }
-
 .annotator-button {
   width: 25px;
   height: 25px;
@@ -40,28 +36,34 @@
 
 .annotator-buttons-container {
   width: 300px;
-  height: 30px;
+  height: 38px;
 }
-
+.friends-annoataions-button-container {
+  float: right;
+  width: 25px; 
+  height: 25px;
+  margin: 7px 0 0 7px;
+}
+.friends-annotations-button {
+  width: 25px; 
+  height: 25px;
+}
 .home-button {
   width: 25px;
   height: 25px;
 }
-
 .home-button-container {
-  float: left;
+  float: right;
   margin: 7px 0 0 7px;
   /*display: inline-block;*/
 }
-
 .annotator-my-view-button-container {
-  float: right;
+  float: left;
   width: 25px; 
   height: 25px;
-  margin: 7px 7px 0 0;
+  margin: 7px 0 0 7px;
   display: inline-block;
 } 
-
 .annotator-my-view-button {
   width: 25px; 
   height: 25px;
@@ -115,6 +117,7 @@
   border-bottom: 1px solid black;
   padding: 0px 20px 5px 20px;
 }
+  
 
 
   /* Feed View */
@@ -168,4 +171,46 @@
 }
 .form-search-container {
   text-align: center;
+}
+
+
+
+  /*FriendsAnnotationsView*/
+.friends-annotations-view-container {
+  width: 300px;
+  height: 700px;
+  background: rgba(249, 249, 249, 1);
+  text-align: center;
+}
+.friends-container {
+  width: 300px;
+  height: 36px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  overflow-x: scroll;
+  background: rgba(235, 235, 235, 1);
+}
+.friends-pic {
+  margin: 3px 5px 3px 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: black;
+  display: inline-block;
+}
+/*FriendsButtonsContainer*/
+.friends-annotations-buttons-container {
+  width: 300px;
+  height: 38px;
+}
+.my-annoataions-button-container {
+  float: right;
+  height: 25px;
+  width: 25px;
+  margin: 7px 0 0 7px;
+}
+.my-annotations-button {
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
 }
