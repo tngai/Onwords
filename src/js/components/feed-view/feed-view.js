@@ -17,7 +17,7 @@ var FeedView = React.createClass({
       showSettingsPage: false,
       showFriendsAnnotations: true, 
       showMyAnnotations: false,
-      showSearchView: false
+      showSearchView: false     
     };
   },
   componentWillMount: function() {
@@ -35,7 +35,7 @@ var FeedView = React.createClass({
     console.log('FeedView componentWillUnmount');
     $(document).off();
   },
-  updateBodyView: function(action){
+  updateBodyView: function(action) {
     switch(action) {
       case 'showSettingsPage':
         console.log('showSettingsPage');
@@ -78,7 +78,7 @@ var FeedView = React.createClass({
         </div>
 
         <div className='body-container'>
-        
+
           <div className='button-container'>
             <HomeButton {...this.props} updateBodyView={this.updateBodyView} />
             <FriendsButton {...this.props} updateBodyView={this.updateBodyView} />
