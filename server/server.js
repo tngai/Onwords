@@ -262,7 +262,7 @@ app.get('/api/search/uri',function(req,res){
   });
 
 
-  // Search Users 
+  // Search  returning user profile by full name search 
 
   app.get('/api/users', function(req,res){
     var returnObj = {};

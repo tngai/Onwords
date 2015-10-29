@@ -3,37 +3,38 @@ var React = require('react');
 var Settings = React.createClass({
   getInitialState: function(){
     return {
-      pic_url: 'https://scontent.xx.fbcdn.net/hprofile-xaf1/v/t1.0-1/c0.2.513.513/s50x50/393351_10150551323017788_1633889618_n.jpg?oh=f79bffa4fb43d421dabd131fdf587068&oe=56879D58',
-      description: 'Just In Time',
-      username: 'Justin Hong'
+      description: "Onwords!",
+      editPicUrl:false
     }
   },
   componentWillMount: function(){
-    chrome.storage.sync.get('user_id',function(data){
-      var pic_url = data.pic_url || 'https://scontent.xx.fbcdn.net/hprofile-xaf1/v/t1.0-1/c0.2.513.513/s50x50/393351_10150551323017788_1633889618_n.jpg?oh=f79bffa4fb43d421dabd131fdf587068&oe=56879D58'
-      var description = data.description || 'Just In Time'
-      var username = data.username || 'Justin Hong'
-
-      console.log('this is the user id', data);
+    chrome.storage.sync.get('user',function(data){
+      console.log('*** here is the data ', data)
       this.setState({
-        pic_url: pic_url,
-        description: description,
-        username: username
+        pic_url: data.user.picUrl,
+        username: data.user.fullName
       });  
       
     }.bind(this));
   },
+  editToggle: function(settingIndex){
+    switch(settingIndex)
+      case 1:
+        this.setState(editPicUrl:true)
+  },
   render: function() {
+
     return (
       <div className='settings-view-container'>
         <div className='picture-settings'>
-          <div id="profile-pic-container" >Picture <img id="" src={this.state.pic_url} /> <img id="settings-profile-edit-icon" src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"/></div>
+          Picture <img id="" src={this.state.pic_url} /> <img className="settings-profile-edit-icon" src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png" onclick="editToggle(1)" /> {this.state.editPicUrl ? <input type="text" placeholder={this.state.pic_url}> : null}
+
         </div>
         <div className='username-settings'>
-          Username: {this.state.username}
+          Username: {this.state.username} <img className="settings-profile-edit-icon" src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png" onclick="editToggle(2)"/>
         </div>
         <div className='description-settings'>
-          Description: {this.state.description}
+          Description: {this.state.description} <img className="settings-profile-edit-icon" src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png" onclick="editToggle(3)"/>
         </div>
       </div>
     );
