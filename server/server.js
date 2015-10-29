@@ -155,7 +155,10 @@ app.get('/api/search',function(req,res){
   db.model('Annotation').fetchByUri(uri).then(function(data){
     console.log(' !!!!!!!! ***  heres the data ', data.models[0].attributes.uri)
     var uriFilter = data.models.filter(function(e){
-      return ( (e.attributes.uri === uri) && (e.attributes.user_id == userId));
+      if(e.attributes.uri === uri){
+        console.log('e.attr ', e.attributes.uri, 'uri ', uri);
+      }
+      return ( (e.attributes.uri == uri) && (e.attributes.user_id == userId));
     });
     console.log('******** uri filter', uriFilter);
 
