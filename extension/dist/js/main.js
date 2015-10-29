@@ -20359,13 +20359,12 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
     };
   },
   componentWillMount: function() {
-    
+
   },
   componentDidMount: function() {
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
-    var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users=?user_id=' + user;
-
+    var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users?user_id=' + user;
     $.get(completeUri, function(result) {
       if (this.isMounted()) {
         this.setState({
@@ -20376,6 +20375,10 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
     }.bind(this));
   },
   render: function() {
+    var annotations = this.state.data;
+    var myAnnotationsList = annotations.map(function(currentAnnotation, index) {
+      console.log(currentAnnotation, index);
+    });
     return (
       React.createElement("div", {className: "feed-my-annotations-container"}, 
         "MyAnnotations!"
