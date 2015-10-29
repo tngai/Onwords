@@ -14781,6 +14781,11 @@ Highlighter.prototype.drawAll = function (annotations) {
             
             debugger;
             var uri = window.location.href.split("?")[0];
+            if (uri.substring(uri.length-11) === 'onwords1991') {
+              uri = uri.substring(0, uri.length-13);
+            } else {
+              uri = uri;
+            }
             chrome.storage.local.get(uri, function(obj) {
               if (obj[uri] && now.length > 0) {
                 debugger;

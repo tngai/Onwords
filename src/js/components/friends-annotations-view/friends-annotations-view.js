@@ -8,7 +8,7 @@ var FriendsAnnotationsView = React.createClass({
   getInitialState: function() {
     return {
       annotations: [],
-      friends: {1: {shown: false}, 2: {shown: false}}
+      friends: {}
     }
   },
   componentWillMount: function() {
@@ -41,13 +41,13 @@ var FriendsAnnotationsView = React.createClass({
     console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friends;
 
-    if (!friends[id].shown) {
+    if (!friends[id]) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      friends[id].shown = true;
+      friends[id] = true;
       console.log(friends[id], ' stored in chrome now')
     } else {
-      friends[id].shown = false;
+      friends[id] = false;
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
         console.log(this.state.annotations[i]);
@@ -93,20 +93,45 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   componentDidMount: function() {
+    debugger;
     console.log('friend annotations view mounted');
     var self = this;
     var uri = window.location.href.split("?")[0];
-    chrome.storage.local.get(uri, function(obj) {
-      if (obj[uri]) {
-        self.setState({annotations: obj[uri]})
-      } else {
-        chrome.storage.onChanged.addListener(function(changes) {
-          console.log('chrome storage changed mothafucka')
-          debugger;
-          var uri = window.location.href.split('?')[0];
-            self.setState({annotations: changes[uri].newValue});
+    if (uri.substring(uri.length-11) === 'onwords1991') {
+      uri = uri.substring(0, uri.length-13);
+      user = code.substring(0, code.length - 11);
+    } else {
+      uri = uri;
+      user = window.localStorage.getItem('user_id');
+    }
+    $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: targetUri})
+      .done(function(data) {
+        debugger;
+        var friends = {};
+        for (var i = 0; i < data.rows.length; i++) {
+          if (data.rows[i].user_id) {
+              if (data.rows[i].user_id === user) {
+                friends[data.rows[i].user_id] = true;
+              } else {
+                friends[data.rows[i].user_id] = false;
+              }
+          }
+        }
+        var ownId = window.localStorage.getItem('user_id');
+        friends[ownId] = true;
+        chrome.storage.local.get(uri, function(obj) {
+          if (obj[uri]) {
+            self.setState({annotations: obj[uri], friends: friends});
+          } else {
+            self.setState({friends: friends});
+          }
         })
-      }
+      })
+
+
+    chrome.storage.onChanged.addListener(function(changes) {
+      console.log('chrome storage changed mothafucka')
+        self.setState({annotations: changes[uri].newValue});
     })
   }
 });
