@@ -6,8 +6,8 @@ exports.annotate = function(event) {
     return {
       beforeAnnotationCreated: function(ann) {
         ann.uri = window.location.href.split("?")[0];
-        ann.title = document.querySelector('meta[name="twitter:title"]').getAttribute("content");
-        ann.description = document.querySelector('meta[name="twitter:description"]').getAttribute("content");
+        ann.title = document.getElementsByTagName('title')[0].innerHTML || document.querySelector('meta[name="twitter:title"]').getAttribute("content");
+        // ann.description = document.querySelector('meta[name="twitter:description"]').getAttribute("content");
         ann.user_id = window.localStorage.getItem('user_id');
       }
     };

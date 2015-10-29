@@ -20004,6 +20004,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
   },
 
   componentDidMount: function() {
+    var self = this;
     chrome.storage.onChanged.addListener(function(changes) {
       var uri = window.location.href.split("?")[0];
       console.log('annotator body, storage updated', changes[uri]);
@@ -20295,17 +20296,18 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
   componentDidMount: function() {
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
-    // var completeUri = '?uri=' + 
-    console.log('USER!!!',user, uri);
-    // $.get('https://onwords-test-server.herokuapp.com/api/search?uri=http://alistapart.com/topic/javascript&user=1', function(result) {
-    //   console.log('it worked!!', this.state.data);
-    //   if (this.isMounted()) {
-    //     this.setState({
-    //       data: result
-    //     });
-    //   }
-    //   console.log('it worked!!2', this.state.data);
-    // }.bind(this));
+    var completeUri = 'https://onwords-test-server.herokuapp.com/api/search?uri=' + uri + '&user=' + user;
+
+    console.log('USER!!!', completeUri);
+    $.get(completeUri, function(result) {
+      console.log('it worked!!', this.state.data);
+      if (this.isMounted()) {
+        this.setState({
+          data: result
+        });
+      }
+      console.log('it worked!!2', this.state.data);
+    }.bind(this));
   },
   render: function() {
     return (
@@ -20792,8 +20794,8 @@ exports.annotate = function(event) {
     return {
       beforeAnnotationCreated: function(ann) {
         ann.uri = window.location.href.split("?")[0];
-        ann.title = document.querySelector('meta[name="twitter:title"]').getAttribute("content");
-        ann.description = document.querySelector('meta[name="twitter:description"]').getAttribute("content");
+        ann.title = document.getElementsByTagName('title')[0].innerHTML || document.querySelector('meta[name="twitter:title"]').getAttribute("content");
+        // ann.description = document.querySelector('meta[name="twitter:description"]').getAttribute("content");
         ann.user_id = window.localStorage.getItem('user_id');
       }
     };
