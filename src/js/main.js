@@ -20,6 +20,7 @@ var identityListener = function(changes) {
 };
 
 chrome.storage.sync.get('user_id', function(obj) {
+  console.log('inside chrome.storage.get for user_id');
   if (obj['user_id']) {
     console.log('user_id in main.js get:', obj['user']);
     renderComponents();

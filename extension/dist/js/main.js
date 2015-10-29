@@ -20324,19 +20324,29 @@ module.exports = FeedSearchButton;
 
 },{"react":156}],172:[function(require,module,exports){
 var React = require('react');
+// var FeedSearchList = require('./feed-search-list');
 
 var FeedSearchView = React.createClass({displayName: "FeedSearchView",
+  getInitialState: function() {
+    return {
+      text: ''
+    };
+  },
+
   handleSubmit: function(e) {
     e.preventDefault();
     var inputVal = React.findDOMNode(this.refs.input).value;
-    console.log('Search:', inputVal);
+    if (inputVal === '') { return; }
+    this.setState({text: inputVal});
   },
+
   render: function() {
     return (
       React.createElement("div", {className: "search-view-container"}, 
         React.createElement("form", {onSubmit: this.handleSubmit, className: "form-search-container"}, 
-          React.createElement("input", {type: "text", ref: "input", placeholder: "Search"})
+          React.createElement("input", {type: "text", ref: "input", placeholder: "Find people to follow..."})
         )
+      /*<FeedSearchList searchUrl={this.state.text} />*/
       )
     );
   }
@@ -20650,6 +20660,7 @@ var identityListener = function(changes) {
 };
 
 chrome.storage.sync.get('user_id', function(obj) {
+  console.log('inside chrome.storage.get for user_id');
   if (obj['user_id']) {
     console.log('user_id in main.js get:', obj['user']);
     renderComponents();
@@ -20700,7 +20711,10 @@ exports.annotate = function(event) {
          console.log('what is obj.user_id:', obj.user_id);
          window.localStorage.setItem('user_id', obj.user_id);
          console.log('user_id set in localStorage');
-         app.annotations.load({uri: window.location.href.split('?')[0]});
+         app.annotations.load({
+          uri: window.location.href.split('?')[0],
+          user: obj.user_id
+        });
        });
   });
 
