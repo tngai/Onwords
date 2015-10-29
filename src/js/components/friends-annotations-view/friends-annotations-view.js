@@ -2,13 +2,13 @@ var React = require('react');
 var HomeButton = require('../annotator-view/home-button');
 var AnnotatorMinimizeButton = require('../annotator-view/annotator-minimize-button');
 var MyAnnotationsButton = require('./my-annotations-button');
-var friendAnnotationList = require('./friends-annotationList');
+var FriendAnnotationList = require('./friends-annotationList');
 
 var FriendsAnnotationsView = React.createClass({
   getInitialState: function() {
     return {
       annotations: [],
-      friends: {1: {shown: false, stored: false}, 2: {shown: false, stored: false}}
+      friends: {}
     }
   },
   componentWillMount: function() {
@@ -38,30 +38,43 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   toggleFriendAnnotations: function(id) {
+    debugger;
+    console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friends;
 
-    if (!friends[id].shown) {
-      if (friends[id].stored) {
-        friends[id].shown = true;
-      } else {
-        var ev = new CustomEvent('showFriendAnnotations', {detail: {userId: id}});
-        document.dispatchEvent(ev);
-        friends[id].stored = true;
-      }
+    if (!friends[id]) {
+      var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
+      document.dispatchEvent(ev);
+      friends[id] = true;
+      console.log(friends[id], ' stored in chrome now')
     } else {
-      hiddenFriends[id].shown = false;
+      friends[id] = false;
+      var targetAnnotations = [];
+      for (var i = 0; i < this.state.annotations.length; i++) {
+        console.log(this.state.annotations[i]);
+        if (this.state.annotations[i].user_id.toString() === id) {
+          targetAnnotations.push(this.state.annotations[i]);
+        }
+      }
+      var ev = new CustomEvent('deleteRender', {detail: {
+        targetAnnotations: targetAnnotations
+      }});
+      document.dispatchEvent(ev);
     }
-
-
-    //send custom event
-      //load annotations in annotator
-        //load highlights (annotationloaded)
-    //listener in didmount for chrome storage change
-      //set 'annotationsLoaded' state to true for specific friend
-      //set annotations state
   },
 
   render: function() {
+    var friendsArray = Object.keys(this.state.friends);
+    var self = this;
+
+    var friendCarousel = friendsArray.map(function(friend, index) {
+      return (
+        <div className='friends-pic' data-id={friend} onClick={self.toggleFriendAnnotations.bind(null, friend)}></div>
+      )
+    })
+
+    console.log('inside-friendsview, annotations:', this.state.annotations)
+
     return (
       <div className='friends-annotations-view-container'>
         <div className='friends-annotations-buttons-container'>
@@ -71,22 +84,54 @@ var FriendsAnnotationsView = React.createClass({
         </div>
 
         <div className='friends-container'>
-          <div data-id={id} onClick={this.toggleFriendAnnotations.bind(null, id)}></div>
+          {friendCarousel}
         </div>
-        {this.state.annotations.length > 0 ? <friendAnnotationList friends={this.state.friends} annotations={this.state.annotations}/> : null}
+        <div className='friends-annotations-list'>
+          {this.state.annotations.length > 0 ? <FriendAnnotationList friends={this.state.friends} annotations={this.state.annotations}/> : null}
+        </div>
       </div>
     );
   },
 
   componentDidMount: function() {
+    debugger;
+    console.log('friend annotations view mounted');
+    var self = this;
+    var uri = window.location.href.split("?")[0];
+    if (uri.substring(uri.length-11) === 'onwords1991') {
+      user = uri.substring(uri.indexOf('#')+1, uri.length - 11);
+      uri = uri.substring(0, uri.length-13);
+    } else {
+      uri = uri;
+      user = window.localStorage.getItem('user_id');
+    }
+    $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: targetUri})
+      .done(function(data) {
+        debugger;
+        var friends = {};
+        for (var i = 0; i < data.rows.length; i++) {
+          if (data.rows[i].user_id) {
+              if (data.rows[i].user_id.toString() === user) {
+                friends[data.rows[i].user_id] = true;
+              } else {
+                friends[data.rows[i].user_id] = false;
+              }
+          }
+        }
+        var ownId = window.localStorage.getItem('user_id');
+        friends[ownId] = false;
+        chrome.storage.local.get(uri, function(obj) {
+          if (obj[uri]) {
+            self.setState({annotations: obj[uri], friends: friends});
+          } else {
+            self.setState({friends: friends});
+          }
+        })
+      })
+
+
     chrome.storage.onChanged.addListener(function(changes) {
-      var uri = window.location.href.split('?')[0];
-      
-      // if(changes[uri] && changes[uri].newValue) {
-      //   for (var i = 0; i < changes[uri].newValue.length; i++) {
-      //     var friend = changes[uri].newValue[i].user;
-      //     friends[friend].stored = true;
-      //   }
+      console.log('chrome storage changed mothafucka')
         self.setState({annotations: changes[uri].newValue});
     })
   }

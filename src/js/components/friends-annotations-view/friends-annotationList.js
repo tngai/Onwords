@@ -12,22 +12,27 @@ var friendsAnnotationList = React.createClass({
   },
 
   render: function() {
+    console.log('hellloooooo, friendsAnnotationList:', this.props.friends);
+    debugger;
     var ownId = window.localStorage.getItem('user_id');
     var friends = this.props.friends;
+    var annotations = this.props.annotations;
     var self = this;
 
-    var annotationList = this.props.annotation.map(function(annotation, index) {
-      var user = annotation.user;
-      if (friends[user].shown) {
+    var annotationList = annotations.map(function(annotation, index) {
+      var user = annotation.user_id;
+      console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
         return (
-          <li className="annotation">
-            {annotations[i].user_id === ownId ? 
-              <AnnotationComment user={annotation[i].user} annotation={annotation} deleteAnn={self.deleteAnn} />
-            : <FriendAnnotationComment user={annotation[i].user} annotation={annotation}/>
-            }
-          </li>
+          <div>
+            <li className="annotation">
+              {user.toString() === ownId ? 
+                <AnnotationComment user={annotation.user_id} annotation={annotation} deleteAnn={self.deleteAnn} />
+              : <FriendAnnotationComment user={annotation.user} annotation={annotation}/>
+              }
+            </li>
+            <br></br>
+          </div>
         )
-      }
     });
 
     return (
