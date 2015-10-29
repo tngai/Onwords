@@ -108,7 +108,8 @@ app.get('/api/search',function(req,res){
   var uri = req.query.uri;
 
   db.model('User').fetchById({id:userId}).then(function(data){
-    var returnArray = data.relations.annotations.models.map(function(e){
+    if(data){
+      var returnArray = data.relations.annotations.models.map(function(e){
       var resObj = {
         id: e.attributes.id,
         uri: e.attributes.uri,
@@ -126,7 +127,10 @@ app.get('/api/search',function(req,res){
        };
        return resObj;   
     });
-    returnObj.rows = returnArray;   
+
+    }
+    
+    returnObj.rows = returnArray || [];   
     res.set('Content-Type', 'application/JSON');
     res.json(returnObj);
     res.end(); 
