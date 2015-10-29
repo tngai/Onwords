@@ -48,9 +48,9 @@ var App = React.createClass({
             $('.annotation-sidebar').animate({right: -(300)}, 50);
             break;
         case 'showAnnotatorView':
-            this.setState({showFriendsAnnotations: false});
+            this.setState({showFriendsAnnotations: true});
             this.setState({showAnnotatorButton: false});
-            this.setState({showAnnotatorView: true});
+            this.setState({showAnnotatorView: false});
             this.setState({showFeedView: false});
             $('.annotation-sidebar').animate({right: -(300)}, 50);
             break;
