@@ -145,7 +145,7 @@ app.put('/api/annotations/:id',function(req,res){
 });
 
 
-// Search endpoint(Read)
+// Search endpoint(Read)  returns all annotations per user per uri
 
 app.get('/api/search',function(req,res){
 
@@ -262,6 +262,30 @@ app.get('/api/search/uri',function(req,res){
   });
 
 
+  // Search Users 
+
+  app.get('/api/users', function(req,res){
+    var returnObj = {};
+    var user_full_name = req.query.full_name;
+    db.model('User').fetchByFullName({full_name:user_full_name}).then(function(data) {
+      var fnFilter = data.models.filter(function(e){
+        return (e.attributes.full_name === user_full_name);
+      });
+
+      var returnArray = fnFilter.map(function(e){
+        var resObj = {
+          full_name: e.attributes.full_name,
+          pic_url: e.attributes.pic_url,
+          email: e.attributes.email
+        };
+         return resObj;   
+      });
+      returnObj.rows = returnArray;   
+      res.set('Content-Type', 'application/JSON');
+      res.json(returnObj);
+      res.end(); 
+    });
+  });
 
 
 
