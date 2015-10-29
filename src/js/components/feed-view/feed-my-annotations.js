@@ -7,7 +7,7 @@ var MyAnnotations = React.createClass({
     };
   },
   componentWillMount: function() {
-
+    
   },
   componentDidMount: function() {
     var user = window.localStorage.user_id;
