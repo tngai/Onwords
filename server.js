@@ -107,9 +107,10 @@ app.get('/api/search',function(req,res){
   var userId = req.query.user;
   var uri = req.query.uri;
   var returnArray;
-  
+
   db.model('User').fetchById({id:userId}).then(function(data){
-    if(data){
+      console.log('************ the data being returned ', data)
+
       returnArray = data.relations.annotations.models.map(function(e){
       var resObj = {
         id: e.attributes.id,
@@ -129,7 +130,6 @@ app.get('/api/search',function(req,res){
        return resObj;   
     });
 
-    }
     
     returnObj.rows = returnArray || [];   
     res.set('Content-Type', 'application/JSON');
