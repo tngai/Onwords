@@ -6,7 +6,9 @@ var FeedFriendsButton = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={this.handleClick}>F</div>
+      <div onClick={this.handleClick} className='feed-button'>
+        <img className='feed-button' src='http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png' />
+      </div>
     );
   }
 });
