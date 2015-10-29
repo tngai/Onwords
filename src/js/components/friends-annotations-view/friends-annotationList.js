@@ -21,7 +21,7 @@ var friendsAnnotationList = React.createClass({
       if (friends[user].shown) {
         return (
           <li className="annotation">
-            {annotations[i].user === ownId ? 
+            {annotations[i].user_id === ownId ? 
               <AnnotationComment user={annotation[i].user} annotation={annotation} deleteAnn={self.deleteAnn} />
             : <FriendAnnotationComment user={annotation[i].user} annotation={annotation}/>
             }

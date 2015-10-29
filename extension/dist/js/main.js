@@ -20004,6 +20004,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
   },
 
   componentDidMount: function() {
+    var self = this;
     chrome.storage.onChanged.addListener(function(changes) {
       var uri = window.location.href.split("?")[0];
       console.log('annotator body, storage updated', changes[uri]);
@@ -20561,7 +20562,7 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
       if (friends[user].shown) {
         return (
           React.createElement("li", {className: "annotation"}, 
-            annotations[i].user === ownId ? 
+            annotations[i].user_id === ownId ? 
               React.createElement(AnnotationComment, {user: annotation[i].user, annotation: annotation, deleteAnn: self.deleteAnn})
             : React.createElement(FriendAnnotationComment, {user: annotation[i].user, annotation: annotation})
             
@@ -20788,8 +20789,8 @@ exports.annotate = function(event) {
     return {
       beforeAnnotationCreated: function(ann) {
         ann.uri = window.location.href.split("?")[0];
-        ann.title = document.querySelector('meta[name="twitter:title"]').getAttribute("content");
-        ann.description = document.querySelector('meta[name="twitter:description"]').getAttribute("content");
+        ann.title = document.getElementsByTagName('title')[0].innerHTML || document.querySelector('meta[name="twitter:title"]').getAttribute("content");
+        // ann.description = null || document.querySelector('meta[name="twitter:description"]').getAttribute("content");
         ann.user_id = window.localStorage.getItem('user_id');
       }
     };
