@@ -109,7 +109,7 @@ app.get('/api/search',function(req,res){
   var returnArray;
 
   db.model('User').fetchById({id:userId}).then(function(data){
-      console.log('************ the data being returned ', data)
+      console.log('************ the data being returned ', data.relations.annotations.models)
 
     //   returnArray = data.relations.annotations.models.map(function(e){
     //   var resObj = {
