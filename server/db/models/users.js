@@ -30,6 +30,9 @@ var User = db.Model.extend({
   },
   newUser: function(options) {
     return new this(options);
+  },
+  fetchByUserId: function(user_id) {
+    return new this({"user_id":user_id}).fetchAll();
   }
 });
 

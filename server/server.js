@@ -188,6 +188,42 @@ app.get('/api/search',function(req,res){
     });
   })
 
+app.get('/api/search/users',function(req,res){
+  var returnObj = {};
+  var user_id = parseInt(req.query.user_id);
+  db.model('Annotation').fetchByUserId(user_id).then(function(data){
+    var idFilter = data.models.filter(function(e){
+      return (e.attributes.user_id == user_id);
+    });
+
+    var returnArray = idFilter.map(function(e){
+      var resObj = {
+        id: e.attributes.id,
+        uri: e.attributes.uri,
+        text: e.attributes.text,
+        quote: e.attributes.quote,
+        user_id: e.attributes.user_id,
+        ranges: [
+          {
+            start: e.attributes.start,
+            end: e.attributes.end,
+            startOffset: e.attributes.startOffset,
+            endOffset: e.attributes.endOffset
+          }
+        ]
+       };
+       return resObj;   
+    });
+    returnObj.rows = returnArray;   
+    res.set('Content-Type', 'application/JSON');
+    res.json(returnObj);
+    res.end();
+  })
+
+
+
+});  
+
 
 app.listen(process.env.PORT || 8000);
 console.log("Listening on port 8000...")
