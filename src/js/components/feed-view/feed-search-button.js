@@ -6,8 +6,8 @@ var FeedSearchButton = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={this.handleClick} className='feed-search-button-container'>
-        <img className='feed-search-button' src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Feedbin-Icon-home-search.svg/2000px-Feedbin-Icon-home-search.svg.png' />
+      <div onClick={this.handleClick} className='feed-button'>
+        <img className='feed-button' src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Feedbin-Icon-home-search.svg/2000px-Feedbin-Icon-home-search.svg.png' />
       </div>
     );
   }
