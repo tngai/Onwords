@@ -9,7 +9,7 @@ var FriendsAnnotationLink = React.createClass({
       <div>
         <img className='friends-pic' src={info.profPic}/>
         <p>{info.name}</p>
-        <a href={redirectUri} target='blank' className='redirectLink'>{info.title}</a>
+        <a href={redirectUri} className='redirectLink'>{info.title}</a>
       </div>
     )
   },
