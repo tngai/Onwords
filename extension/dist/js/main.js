@@ -20253,7 +20253,9 @@ var FeedFriendsButton = React.createClass({displayName: "FeedFriendsButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "F")
+      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
+        React.createElement("img", {className: "feed-button", src: "http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png"})
+      )
     );
   }
 });
@@ -20269,7 +20271,9 @@ var FeedHomeButton = React.createClass({displayName: "FeedHomeButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "H")
+      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
+        React.createElement("img", {className: "feed-button", src: "https://cdn3.iconfinder.com/data/icons/black-easy/512/535106-user_512x512.png"})
+      )
     );
   }
 });
@@ -20301,7 +20305,7 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
   },
   render: function() {
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {className: "feed-my-annotations-container"}, 
         "MyAnnotations!"
       )
     );
@@ -20319,7 +20323,9 @@ var FeedSearchButton = React.createClass({displayName: "FeedSearchButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "S")
+      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
+        React.createElement("img", {className: "feed-button", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Feedbin-Icon-home-search.svg/2000px-Feedbin-Icon-home-search.svg.png"})
+      )
     );
   }
 });
@@ -20499,8 +20505,8 @@ var SettingsButton = React.createClass({displayName: "SettingsButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, 
-        "ST"
+      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
+        React.createElement("img", {className: "feed-button", src: "https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_settings_48px-128.png"})
       )
     );
   }
@@ -20547,17 +20553,21 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
 
   render: function() {
     var ownId = window.localStorage.getItem('user_id');
+    var friends = this.props.friends;
     var self = this;
 
     var annotationList = this.props.annotation.map(function(annotation, index) {
-      return (
-        React.createElement("li", {className: "annotation"}, 
-          annotations[i].user === ownId ? 
-            React.createElement(AnnotationComment, {user: annotation[i].user, annotation: annotation, deleteAnn: self.deleteAnn})
-          : React.createElement(FriendAnnotationComment, {user: annotation[i].user, annotation: annotation})
-          
+      var user = annotation.user;
+      if (friends[user].shown) {
+        return (
+          React.createElement("li", {className: "annotation"}, 
+            annotations[i].user === ownId ? 
+              React.createElement(AnnotationComment, {user: annotation[i].user, annotation: annotation, deleteAnn: self.deleteAnn})
+            : React.createElement(FriendAnnotationComment, {user: annotation[i].user, annotation: annotation})
+            
+          )
         )
-      )
+      }
     });
 
     return (
@@ -20613,17 +20623,16 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   toggleFriendAnnotations: function(id) {
     var friends = this.state.friends;
 
-    if (friends[id].shown) {
+    if (!friends[id].shown) {
       if (friends[id].stored) {
-        friends[id].shown = false;
-        // CSS show
+        friends[id].shown = true;
       } else {
         var ev = new CustomEvent('showFriendAnnotations', {detail: {userId: id}});
         document.dispatchEvent(ev);
+        friends[id].stored = true;
       }
     } else {
-      hiddenFriends[id].shown = true;
-      // CSS hide
+      hiddenFriends[id].shown = false;
     }
 
 
@@ -20656,13 +20665,12 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     chrome.storage.onChanged.addListener(function(changes) {
       var uri = window.location.href.split('?')[0];
       
-      if(changes[uri] && changes[uri].newValue) {
-        for (var i = 0; i < changes[uri].newValue.length; i++) {
-          var friend = changes[uri].newValue[i].user;
-          friends[friend].shown = true;
-        }
+      // if(changes[uri] && changes[uri].newValue) {
+      //   for (var i = 0; i < changes[uri].newValue.length; i++) {
+      //     var friend = changes[uri].newValue[i].user;
+      //     friends[friend].stored = true;
+      //   }
         self.setState({annotations: changes[uri].newValue});
-      }
     })
   }
 });
@@ -20782,7 +20790,7 @@ exports.annotate = function(event) {
         ann.uri = window.location.href.split("?")[0];
         ann.title = document.querySelector('meta[name="twitter:title"]').getAttribute("content");
         ann.description = document.querySelector('meta[name="twitter:description"]').getAttribute("content");
-        ann.user = window.localStorage.getItem('user_id');
+        ann.user_id = window.localStorage.getItem('user_id');
       }
     };
   };
@@ -20814,12 +20822,12 @@ exports.annotate = function(event) {
          console.log('user_id set in localStorage');
          app.annotations.load({
           uri: window.location.href.split('?')[0],
-          user: obj.user_id
+          user: window.localStorage.getItem('user_id')
         });
       });
   });
 
-  document.addEventlistener('showFriendAnnotations', function(e) {
+  document.addEventListener('showFriendAnnotations', function(e) {
     console.log("show this dude's annotation:", e.detail.userId);
     app.annotations.load({
       uri: window.location.href.split('?')[0],

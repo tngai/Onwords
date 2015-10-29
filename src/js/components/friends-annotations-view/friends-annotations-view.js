@@ -73,7 +73,7 @@ var FriendsAnnotationsView = React.createClass({
         <div className='friends-container'>
           <div data-id={id} onClick={this.toggleFriendAnnotations.bind(null, id)}></div>
         </div>
-        {this.state.annotations.length > 0 ? <friendAnnotationList friends = {this.state.friends} annotations={this.state.annotations}/> : null}
+        {this.state.annotations.length > 0 ? <friendAnnotationList friends={this.state.friends} annotations={this.state.annotations}/> : null}
       </div>
     );
   },
@@ -88,7 +88,6 @@ var FriendsAnnotationsView = React.createClass({
       //     friends[friend].stored = true;
       //   }
         self.setState({annotations: changes[uri].newValue});
-      }
     })
   }
 });
