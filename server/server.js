@@ -35,13 +35,12 @@ app.post('/api/annotations', function(req,res){
   var end = req.body.ranges[0].end;
   var startOffset = req.body.ranges[0].startOffset;
   var endOffset = req.body.ranges[0].endOffset;
-  var user_id = 1;
+
  
   db.model('Annotation').newAnnotation({
     text: text,
     quote: quote,
     uri: uri,
-    user_id: user_id,
     start: start,
     end: end,
     startOffset: startOffset,
