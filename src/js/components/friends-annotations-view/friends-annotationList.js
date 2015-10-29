@@ -21,10 +21,11 @@ var friendsAnnotationList = React.createClass({
 
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
+      console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
         return (
           <div>
             <li className="annotation">
-              {annotation.user_id === ownId ? 
+              {user.toString() === ownId ? 
                 <AnnotationComment user={annotation.user_id} annotation={annotation} deleteAnn={self.deleteAnn} />
               : <FriendAnnotationComment user={annotation.user} annotation={annotation}/>
               }
