@@ -59,6 +59,48 @@ app.post('/api/annotations', function(req,res){
 
 });
 
+// Create Users 
+
+app.post('/api/users', function(req,res){
+  console.log('here is the add user request body ', req.body)
+  var facebook_id = req.body.facebook_id;
+  var full_name = req.body.full_name;
+  var pic_url = req.body.pic_url;
+  var email = req.body.email;
+  
+  var user = {
+    facebook_id: facebook_id,
+    full_name: full_name,
+    pic_url: pic_url,
+    email: email
+  };
+
+  db.model('User').fetchByFacebookId(facebook_id).then(function(data){
+    
+    if (data === null) {
+      db.model('User').newUser(user).save().then(function(newUserData) {
+      console.log('******** here is the user object ', user)
+        user['user_id'] = newUserData.attributes.id;
+        user.facebook_id = undefined;
+        res.set('Content-Type', 'application/JSON');
+        res.json(user);
+        res.end();
+      });
+    }else{
+      user['user_id'] = data.attributes.id;
+      user.facebook_id = undefined;
+      console.log('the data object', data.attributes.id)
+      res.set('Content-Type', 'application/JSON');
+      res.json(user);
+      res.end();  
+    }
+
+  });
+});
+
+
+
+
 
 
 /// Delete functionality
