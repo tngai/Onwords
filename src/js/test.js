@@ -35,7 +35,7 @@ exports.annotate = function(event) {
     app.start()
       .then(function() {
          window.localStorage.setItem('user_id', obj.user.id);
-         console.log('user_id of' + obj.user.id + ' set in localStorage');
+         console.log('user_id of ' + obj.user.id + ' set in localStorage');
          app.annotations.load({
           uri: window.location.href.split('?')[0],
           user: window.localStorage.getItem('user_id')
