@@ -22,7 +22,7 @@ var MyAnnotations = React.createClass({
   },
   render: function() {
     return (
-      <div>
+      <div className='feed-my-annotations-container'>
         MyAnnotations!
       </div>
     );
