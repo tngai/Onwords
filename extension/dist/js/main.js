@@ -20685,10 +20685,11 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
 
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
+      console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
         return (
           React.createElement("div", null, 
             React.createElement("li", {className: "annotation"}, 
-              annotation.user_id === ownId ? 
+              user.toString() === ownId ? 
                 React.createElement(AnnotationComment, {user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
               : React.createElement(FriendAnnotationComment, {user: annotation.user, annotation: annotation})
               
@@ -20749,6 +20750,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   },
 
   toggleFriendAnnotations: function(id) {
+    debugger;
     console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friends;
 
@@ -20809,8 +20811,8 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     var self = this;
     var uri = window.location.href.split("?")[0];
     if (uri.substring(uri.length-11) === 'onwords1991') {
+      user = uri.substring(uri.indexOf('#')+1, uri.length - 11);
       uri = uri.substring(0, uri.length-13);
-      user = code.substring(0, code.length - 11);
     } else {
       uri = uri;
       user = window.localStorage.getItem('user_id');
@@ -20821,7 +20823,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         var friends = {};
         for (var i = 0; i < data.rows.length; i++) {
           if (data.rows[i].user_id) {
-              if (data.rows[i].user_id === user) {
+              if (data.rows[i].user_id.toString() === user) {
                 friends[data.rows[i].user_id] = true;
               } else {
                 friends[data.rows[i].user_id] = false;
@@ -20829,7 +20831,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
           }
         }
         var ownId = window.localStorage.getItem('user_id');
-        friends[ownId] = true;
+        friends[ownId] = false;
         chrome.storage.local.get(uri, function(obj) {
           if (obj[uri]) {
             self.setState({annotations: obj[uri], friends: friends});

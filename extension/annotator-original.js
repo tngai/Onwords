@@ -14793,7 +14793,7 @@ Highlighter.prototype.drawAll = function (annotations) {
                 var unique = {};
                 var uniqueArr = [];
                 combined.forEach(function(item) {
-                  if (!unique[item.text]) {
+                  if (!unique[item.id]) {
                     uniqueArr.push(item);
                     unique[item.text] = item;
                   }
