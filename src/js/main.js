@@ -11,18 +11,15 @@ var renderComponents = function() {
 };
 
 var identityListener = function(changes) {
-  console.log(changes);
-  if (changes.user_id && changes.user_id.newValue) {
+  if (changes.user && changes.user.newValue) {
     renderComponents();
     test.annotate();
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
 
-chrome.storage.sync.get('user_id', function(obj) {
-  console.log('inside chrome.storage.get for user_id');
-  if (obj['user_id']) {
-    console.log('user_id in main.js get:', obj['user']);
+chrome.storage.sync.get('user', function(obj) {
+  if (obj['user']) {
     renderComponents();
     test.annotate();
   } else {

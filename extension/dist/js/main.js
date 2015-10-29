@@ -20772,18 +20772,15 @@ var renderComponents = function() {
 };
 
 var identityListener = function(changes) {
-  console.log(changes);
-  if (changes.user_id && changes.user_id.newValue) {
+  if (changes.user && changes.user.newValue) {
     renderComponents();
     test.annotate();
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
 
-chrome.storage.sync.get('user_id', function(obj) {
-  console.log('inside chrome.storage.get for user_id');
-  if (obj['user_id']) {
-    console.log('user_id in main.js get:', obj['user']);
+chrome.storage.sync.get('user', function(obj) {
+  if (obj['user']) {
     renderComponents();
     test.annotate();
   } else {
@@ -20821,17 +20818,15 @@ exports.annotate = function(event) {
      .include(pageUri)
      .include(renderAnnotations);
 
-  chrome.storage.sync.get('user_id', function(obj) {
-    if (!obj['user_id']) {
+  chrome.storage.sync.get('user', function(obj) {
+    if (!obj['user']) {
       console.error('Unable to access user_id from chrome.storage');
       return;
     }
     app.start()
       .then(function() {
-         console.log('what is obj:', obj);
-         console.log('what is obj.user_id:', obj.user_id);
-         window.localStorage.setItem('user_id', obj.user_id);
-         console.log('user_id set in localStorage');
+         window.localStorage.setItem('user_id', obj.user.id);
+         console.log('user_id of' + obj.user.id + ' set in localStorage');
          app.annotations.load({
           uri: window.location.href.split('?')[0],
           user: window.localStorage.getItem('user_id')
@@ -20844,8 +20839,8 @@ exports.annotate = function(event) {
     app.annotations.load({
       uri: window.location.href.split('?')[0],
       user: e.detail.userId
-    })
-  })
+    });
+  });
 };
 
 },{"./annotationRender":157}]},{},[183]);
