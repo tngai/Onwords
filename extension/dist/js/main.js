@@ -20294,7 +20294,12 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
 
   },
   componentDidMount: function() {
-    $.get('https://onwords-test-server.herokuapp.com/api/search/user_uri?user=1', function(result) {
+    var user = window.localStorage.user_id;
+    var uri = window.location.href.split("?")[0];
+    var completeUri = 'https://onwords-test-server.herokuapp.com/api/search?uri=' + uri + '&user=' + user;
+
+    console.log('USER!!!', completeUri);
+    $.get(completeUri, function(result) {
       console.log('it worked!!', this.state.data);
       if (this.isMounted()) {
         this.setState({
