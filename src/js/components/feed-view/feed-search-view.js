@@ -21,7 +21,7 @@ var FeedSearchView = React.createClass({
         <form onSubmit={this.handleSubmit} className='form-search-container'>
           <input type='text' ref='input' placeholder='Find people to follow...' />
         </form>
-      {/*<FeedSearchList searchUrl={this.state.text} />*/}
+      {/*<FeedSearchList fullName={this.state.text} />*/}
       </div>
     );
   }
