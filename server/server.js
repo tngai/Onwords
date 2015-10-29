@@ -164,7 +164,7 @@ app.get('/api/search',function(req,res){
         uri: e.attributes.uri,
         text: e.attributes.text,
         quote: e.attributes.quote,
-        user_id: parseInt(e.attributes.user_id),
+        user_id: e.attributes.user_id.toString(),
         ranges: [
           {
             start: e.attributes.start,
