@@ -35,7 +35,7 @@ function fetchToken() {
 chrome.storage.sync.clear();
 
 chrome.browserAction.onClicked.addListener(function() {
-  chrome.storage.sync.get('access_token', function(obj) {
+  chrome.storage.local.get('access_token', function(obj) {
     if (!obj['access_token']) {
       fetchToken();
     }
