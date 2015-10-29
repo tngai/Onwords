@@ -22,7 +22,7 @@ var friendsAnnotationList = React.createClass({
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
       console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
-        // if (friends[user]) {
+        if (friends[user]) {
           return (
             <div>
               <li className="annotation">
@@ -34,7 +34,7 @@ var friendsAnnotationList = React.createClass({
               <br></br>
             </div>
           )
-        // }
+        }
     });
 
     return (
