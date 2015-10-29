@@ -14797,7 +14797,7 @@ Highlighter.prototype.drawAll = function (annotations) {
                     unique[item.text] = item;
                   }
                 })
-                var sorted = sortAnnotations(combined);
+                var sorted = sortAnnotations(uniqueArr);
                 console.log(sorted);
                 var newObj = {};
                 newObj[uri] = sorted;
