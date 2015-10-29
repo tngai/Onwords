@@ -26,11 +26,11 @@ var Settings = React.createClass({
   render: function() {
     return (
       <div className='settings-view-container'>
+        <div className='picture-settings'>
+          <div id="profile-pic-container" >Picture <img id="" src={this.state.pic_url} /> <img id="settings-profile-edit-icon" src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"/></div>
+        </div>
         <div className='username-settings'>
           Username: {this.state.username}
-        </div>
-        <div className='picture-settings'>
-          <span>Picture <img src={this.state.pic_url} /> <img src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"></span>
         </div>
         <div className='description-settings'>
           Description: {this.state.description}
