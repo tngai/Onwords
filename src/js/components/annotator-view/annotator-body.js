@@ -20,6 +20,7 @@ var AnnotatorBody = React.createClass({
   },
 
   componentDidMount: function() {
+    var self = this;
     chrome.storage.onChanged.addListener(function(changes) {
       var uri = window.location.href.split("?")[0];
       console.log('annotator body, storage updated', changes[uri]);
