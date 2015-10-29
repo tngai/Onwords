@@ -12327,7 +12327,7 @@ App.prototype.destroy = function () {
  * :rtype: Promise
  */
 App.prototype.runHook = function (name, args) {
-  // debugger;
+  debugger;
     var results = [];
     for (var i = 0, len = this.modules.length; i < len; i++) {
         var mod = this.modules[i];
@@ -12977,7 +12977,7 @@ HttpStorage.prototype.setHeader = function (key, value) {
  * :rtype: jqXHR
  */
 HttpStorage.prototype._apiRequest = function (action, obj) {
-    // debugger; // added 2015-10-26 16:57
+    //debugger;
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
@@ -13257,6 +13257,11 @@ StorageAdapter.prototype.create = function (obj) {
     );
 };
 
+StorageAdapter.prototype.deleteRender = function(arr) {
+  console.log(arr);
+  this.runHook('beforeRenderDeleted', [arr]);
+}
+
 /**
  * function:: StorageAdapter.prototype.update(obj)
  *
@@ -13356,6 +13361,10 @@ StorageAdapter.prototype.load = function (query) {
             self.runHook('annotationsLoaded', [data.results]);
         });
 };
+
+StorageAdapter.prototype.loadRender = function(arr) {
+  this.runHook('annotationsLoaded', [arr]);
+}
 
 // Cycle a store event, keeping track of the annotation object and updating it
 // as necessary.
@@ -14753,25 +14762,52 @@ Highlighter.prototype.drawAll = function (annotations) {
             
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            now.sort(function(a,b) {
-              if (a.offsetTop < b.offsetTop) {
-               return -1;
-              } else if (a.offsetTop > b.offsetTop){
-               return 1;
+            var sortAnnotations = function(arr) {
+              arr.sort(function(a,b) {
+                  if (a.offsetTop < b.offsetTop) {
+                   return -1;
+                  } else if (a.offsetTop > b.offsetTop){
+                   return 1;
+                  } else {
+                     if (a.offsetLeft < b.offsetLeft) { 
+                      return -1;
+                     } else if (a.offsetLeft > b.offsetLeft){
+                      return 1;
+                     }
+                  }
+                })
+              return arr;
+            }
+            
+            debugger;
+            var uri = window.location.href.split("?")[0];
+            chrome.storage.local.get(uri, function(obj) {
+              if (obj[uri] && now.length > 0) {
+                debugger;
+                var combined = obj[uri].concat(now);
+                var unique = {};
+                var uniqueArr = [];
+                combined.forEach(function(item) {
+                  if (!unique[item.text]) {
+                    uniqueArr.push(item);
+                    unique[item.text] = item;
+                  }
+                })
+                var sorted = sortAnnotations(uniqueArr);
+                console.log(sorted);
+                var newObj = {};
+                newObj[uri] = sorted;
+                chrome.storage.local.set(newObj);
+                console.log("annotations loaded", newObj[uri]);
               } else {
-                 if (a.offsetLeft < b.offsetLeft) { 
-                  return -1;
-                 } else if (a.offsetLeft > b.offsetLeft){
-                  return 1;
-                 }
+                debugger;
+                var sorted = sortAnnotations(now);
+                var newObj = {};
+                newObj[uri] = sorted;
+                chrome.storage.local.set(newObj);
+                console.log("annotations loaded", newObj[uri]);
               }
             })
-
-            var uri = window.location.href.split("?")[0];
-            console.log("annotations loaded", now);
-            var obj = {};
-            obj[uri] = now;
-            chrome.storage.local.set(obj);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15173,6 +15209,11 @@ function main(options) {
         document.addEventListener('updateAnnotation', function(e) {
           console.log('update this annotation:', e.detail.targetAnnotation);
           app.annotations['update'](e.detail.targetAnnotation);
+        })
+
+        document.addEventListener('deleteRender', function(e) {
+          console.log('get rid of these renders:', e.detail.targetAnnotations);
+          app.annotations.deleteRender(e.detail.targetAnnotations);
         })
 
 //////////////////////////////////////////////////////////////////////////////////////////

@@ -27,23 +27,40 @@ exports.annotate = function(event) {
      .include(pageUri)
      .include(renderAnnotations);
 
-  chrome.storage.sync.get('user', function(obj) {
-    if (!obj['user']) {
-      console.error('Unable to access user_id from chrome.storage');
-      return;
-    }
+
+  var code = window.location.hash.substring(1);
+  debugger;
+  if (code.substring(code.length-11)) {
+    var user = code.substring(0, code.length - 11);
     app.start()
       .then(function() {
-         window.localStorage.setItem('user_id', obj.user.id);
-         console.log('user_id of ' + obj.user.id + ' set in localStorage');
-         app.annotations.load({
+        app.annotations.load({
           uri: window.location.href.split('?')[0],
-          user: window.localStorage.getItem('user_id')
+          user: user
+        })
+      })
+  } else {
+    chrome.storage.sync.get('user', function(obj) {
+      if (!obj['user']) {
+        console.error('Unable to access user_id from chrome.storage');
+        return;
+      }
+      app.start()
+        .then(function() {
+           window.localStorage.setItem('user_id', obj.user.id);
+           app.annotations.load({
+            uri: window.location.href.split('?')[0],
+            user: window.localStorage.getItem('user_id')
+          });
         });
-      });
-  });
+    });
+  }
 
-  document.addEventListener('showFriendAnnotations', function(e) {
+
+
+
+
+  document.addEventListener('getFriendAnnotations', function(e) {
     console.log("show this dude's annotation:", e.detail.userId);
     app.annotations.load({
       uri: window.location.href.split('?')[0],
