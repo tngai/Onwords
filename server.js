@@ -111,24 +111,24 @@ app.get('/api/search',function(req,res){
   db.model('User').fetchById({id:userId}).then(function(data){
       console.log('************ the data being returned ', data)
 
-      returnArray = data.relations.annotations.models.map(function(e){
-      var resObj = {
-        id: e.attributes.id,
-        uri: e.attributes.uri,
-        text: e.attributes.text,
-        quote: e.attributes.quote,
-        user_id: e.attributes.user_id,
-        ranges: [
-          {
-            start: e.attributes.start,
-            end: e.attributes.end,
-            startOffset: e.attributes.startOffset,
-            endOffset: e.attributes.endOffset
-          }
-        ]
-       };
-       return resObj;   
-    });
+    //   returnArray = data.relations.annotations.models.map(function(e){
+    //   var resObj = {
+    //     id: e.attributes.id,
+    //     uri: e.attributes.uri,
+    //     text: e.attributes.text,
+    //     quote: e.attributes.quote,
+    //     user_id: e.attributes.user_id,
+    //     ranges: [
+    //       {
+    //         start: e.attributes.start,
+    //         end: e.attributes.end,
+    //         startOffset: e.attributes.startOffset,
+    //         endOffset: e.attributes.endOffset
+    //       }
+    //     ]
+    //    };
+    //    return resObj;   
+    // });
 
     
     returnObj.rows = returnArray || [];   
