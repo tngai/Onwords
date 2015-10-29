@@ -25,9 +25,7 @@ app.get('/',function(req,res){
   res.send('connected')
 });
 
-
-// Create Annotations
-
+// Create annotations 
 app.post('/api/annotations', function(req,res){
   var ann = req.body;
   var text = req.body.text;
@@ -37,7 +35,8 @@ app.post('/api/annotations', function(req,res){
   var end = req.body.ranges[0].end;
   var startOffset = req.body.ranges[0].startOffset;
   var endOffset = req.body.ranges[0].endOffset;
-  var user_id = req.body.user;
+  var user_id = req.body.user_id;
+
  
   db.model('Annotation').newAnnotation({
     text: text,
@@ -56,11 +55,15 @@ app.post('/api/annotations', function(req,res){
     res.end();
   });
 
+
+
+
 });
 
-  // Create Users 
+// Create Users 
+
 app.post('/api/users', function(req,res){
-  console.log('here is the add user request body ', req.body)
+  console.log('here is the add user request  body ', req.body)
   var facebook_id = req.body.facebook_id;
   var full_name = req.body.full_name;
   var pic_url = req.body.pic_url;
@@ -77,8 +80,9 @@ app.post('/api/users', function(req,res){
     
     if (data === null) {
       db.model('User').newUser(user).save().then(function(newUserData) {
-        user.facebook_id = undefined;
+      console.log('******** here is the user object ', user)
         user['user_id'] = newUserData.attributes.id;
+        user.facebook_id = undefined;
         res.set('Content-Type', 'application/JSON');
         res.json(user);
         res.end();
@@ -86,6 +90,7 @@ app.post('/api/users', function(req,res){
     }else{
       user['user_id'] = data.attributes.id;
       user.facebook_id = undefined;
+      console.log('the data object', data.attributes.id)
       res.set('Content-Type', 'application/JSON');
       res.json(user);
       res.end();  
@@ -93,6 +98,8 @@ app.post('/api/users', function(req,res){
 
   });
 });
+
+
 
 
 
@@ -138,34 +145,25 @@ app.put('/api/annotations/:id',function(req,res){
 });
 
 
-app.get('/api/search/user_uri', function(req,res) {
-  userId = req.query.user;
-  db.model('Annotation').fetchByUserId(userId).then(function(data){
-    returnObj = {}; 
-    returnObj = data.models;    
-    res.set('Content-Type', 'application/JSON');
-    res.json(returnObj);
-    res.end();
-  }); 
-});
+// Search endpoint(Read)
 
+app.get('/api/search',function(req,res){
 
-// Search Uri annotations endpoint(Read)
-app.get('/api/search/',function(req,res){
-  
-  var uri = req.query.uri;
-  var userId = req.query.user;
   var returnObj = {};
-  var resObj;
-  var returnArray;
-    db.model('Annotation').fetchById(userId).then(function(data) { 
-    var resultsArray = data.relations.annotations.models.filter(function(e) {
-      console.log(e.attributes.uri,' = ',uri)
-      return (e.attributes.uri === uri);
-    }); 
-   
-      
-    var returnArray = resultsArray.map(function(e){
+  var userId = req.query.user;
+  var uri = req.query.uri;
+
+  db.model('Annotation').fetchByUri(uri).then(function(data){
+    console.log(' !!!!!!!! ***  heres the data ', data.models[0].attributes.uri)
+    var uriFilter = data.models.filter(function(e){
+      if(e.attributes.uri === uri){
+        console.log('e.attr ', e.attributes.uri,'userid ', e.attributes.user_id, 'uri ', uri);
+      }
+      return ( (e.attributes.uri == uri) && (e.attributes.user_id == userId));
+    });
+    console.log('******** uri filter', uriFilter);
+
+    var returnArray = uriFilter.map(function(e){
       var resObj = {
         id: e.attributes.id,
         uri: e.attributes.uri,
@@ -182,17 +180,50 @@ app.get('/api/search/',function(req,res){
         ]
        };
        return resObj;   
-    })
- 
-    returnObj.rows = returnArray || [];   
-      res.set('Content-Type', 'application/JSON');
-      res.json(returnObj);
-      res.end();
-    
-    });  
-  });
+    });
+    returnObj.rows = returnArray;   
+    res.set('Content-Type', 'application/JSON');
+    res.json(returnObj);
+    res.end(); 
+    });
+  })
+
+app.get('/api/search/users',function(req,res){
+  var returnObj = {};
+  var user_id = parseInt(req.query.user_id);
+  db.model('Annotation').fetchByUserId(user_id).then(function(data){
+    var idFilter = data.models.filter(function(e){
+      return (e.attributes.user_id == user_id);
+    });
+
+    var returnArray = idFilter.map(function(e){
+      var resObj = {
+        id: e.attributes.id,
+        uri: e.attributes.uri,
+        text: e.attributes.text,
+        quote: e.attributes.quote,
+        user_id: e.attributes.user_id,
+        ranges: [
+          {
+            start: e.attributes.start,
+            end: e.attributes.end,
+            startOffset: e.attributes.startOffset,
+            endOffset: e.attributes.endOffset
+          }
+        ]
+       };
+       return resObj;   
+    });
+    returnObj.rows = returnArray;   
+    res.set('Content-Type', 'application/JSON');
+    res.json(returnObj);
+    res.end();
+  })
+
+
+
+});  
+
 
 app.listen(process.env.PORT || 8000);
 console.log("Listening on port 8000...")
-
-
