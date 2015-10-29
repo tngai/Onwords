@@ -209,6 +209,10 @@
   display: inline-block;
 }
 
+.redirectLink {
+  z-index: 1000;
+}
+
 /*FriendsButtonsContainer*/
 .friends-annotations-buttons-container {
   width: 300px;

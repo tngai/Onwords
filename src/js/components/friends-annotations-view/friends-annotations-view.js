@@ -95,11 +95,18 @@ var FriendsAnnotationsView = React.createClass({
   componentDidMount: function() {
     console.log('friend annotations view mounted');
     var self = this;
-    chrome.storage.onChanged.addListener(function(changes) {
-      console.log('chrome storage changed mothafucka')
-      debugger;
-      var uri = window.location.href.split('?')[0];
-        self.setState({annotations: changes[uri].newValue});
+    var uri = window.location.href.split("?")[0];
+    chrome.storage.local.get(uri, function(obj) {
+      if (obj[uri]) {
+        self.setState({annotations: obj[uri]})
+      } else {
+        chrome.storage.onChanged.addListener(function(changes) {
+          console.log('chrome storage changed mothafucka')
+          debugger;
+          var uri = window.location.href.split('?')[0];
+            self.setState({annotations: changes[uri].newValue});
+        })
+      }
     })
   }
 });
