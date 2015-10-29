@@ -156,7 +156,7 @@ app.get('/api/search',function(req,res){
     console.log(' !!!!!!!! ***  heres the data ', data.models[0].attributes.uri)
     var uriFilter = data.models.filter(function(e){
       if(e.attributes.uri === uri){
-        console.log('e.attr ', e.attributes.uri, 'uri ', uri);
+        console.log('e.attr ', e.attributes.uri,'userid ', e.attributes.user_id, 'uri ', uri);
       }
       return ( (e.attributes.uri == uri) && (e.attributes.user_id == userId));
     });
