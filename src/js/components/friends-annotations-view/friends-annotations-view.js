@@ -38,6 +38,7 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   toggleFriendAnnotations: function(id) {
+    debugger;
     console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friends;
 
@@ -98,8 +99,8 @@ var FriendsAnnotationsView = React.createClass({
     var self = this;
     var uri = window.location.href.split("?")[0];
     if (uri.substring(uri.length-11) === 'onwords1991') {
+      user = uri.substring(uri.indexOf('#')+1, uri.length - 11);
       uri = uri.substring(0, uri.length-13);
-      user = code.substring(0, code.length - 11);
     } else {
       uri = uri;
       user = window.localStorage.getItem('user_id');
@@ -110,7 +111,7 @@ var FriendsAnnotationsView = React.createClass({
         var friends = {};
         for (var i = 0; i < data.rows.length; i++) {
           if (data.rows[i].user_id) {
-              if (data.rows[i].user_id === user) {
+              if (data.rows[i].user_id.toString() === user) {
                 friends[data.rows[i].user_id] = true;
               } else {
                 friends[data.rows[i].user_id] = false;
@@ -118,7 +119,7 @@ var FriendsAnnotationsView = React.createClass({
           }
         }
         var ownId = window.localStorage.getItem('user_id');
-        friends[ownId] = true;
+        friends[ownId] = false;
         chrome.storage.local.get(uri, function(obj) {
           if (obj[uri]) {
             self.setState({annotations: obj[uri], friends: friends});
