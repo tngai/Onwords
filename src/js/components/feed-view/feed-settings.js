@@ -30,7 +30,7 @@ var Settings = React.createClass({
           Username: {this.state.username}
         </div>
         <div className='picture-settings'>
-          Picture <img src={this.state.pic_url} />
+          <span>Picture <img src={this.state.pic_url} /> <img src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"></span>
         </div>
         <div className='description-settings'>
           Description: {this.state.description}

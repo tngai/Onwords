@@ -188,6 +188,8 @@ app.get('/api/search',function(req,res){
     });
   })
 
+//Returns all annotations from user
+
 app.get('/api/search/users',function(req,res){
   var returnObj = {};
   var user_id = parseInt(req.query.user_id);
