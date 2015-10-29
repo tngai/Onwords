@@ -219,8 +219,9 @@ app.get('/api/search/users',function(req,res){
     res.json(returnObj);
     res.end();
   })
+});  
 
-  // Search  all annotations per uri (Read)
+// Search  all annotations per uri (Read)
 app.get('/api/search/uri',function(req,res){
 
   var returnObj = {};
@@ -255,7 +256,10 @@ app.get('/api/search/uri',function(req,res){
     res.json(returnObj);
     res.end(); 
     });
-  })
+  });
+
+
+
 
 
 
