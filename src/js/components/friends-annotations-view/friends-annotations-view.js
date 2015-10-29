@@ -8,7 +8,7 @@ var FriendsAnnotationsView = React.createClass({
   getInitialState: function() {
     return {
       annotations: [],
-      friends: {1: {shown: false}, 2: {shown: false}}
+      friends: {}
     }
   },
   componentWillMount: function() {
@@ -41,13 +41,13 @@ var FriendsAnnotationsView = React.createClass({
     console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friends;
 
-    if (!friends[id].shown) {
+    if (!friends[id]) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      friends[id].shown = true;
+      friends[id] = true;
       console.log(friends[id], ' stored in chrome now')
     } else {
-      friends[id].shown = false;
+      friends[id] = false;
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
         console.log(this.state.annotations[i]);
@@ -96,17 +96,26 @@ var FriendsAnnotationsView = React.createClass({
     console.log('friend annotations view mounted');
     var self = this;
     var uri = window.location.href.split("?")[0];
+    //ajax call
     chrome.storage.local.get(uri, function(obj) {
       if (obj[uri]) {
-        self.setState({annotations: obj[uri]})
-      } else {
-        chrome.storage.onChanged.addListener(function(changes) {
-          console.log('chrome storage changed mothafucka')
-          debugger;
-          var uri = window.location.href.split('?')[0];
-            self.setState({annotations: changes[uri].newValue});
-        })
+        var friends = {};
+        for (var i = 0; i < obj[uri].length; i++) {
+          friends[obj[uri][i].user_id] = true;
+        }
+        self.setState({annotations: obj[uri], friends: friends});
+      } 
+    })
+
+    chrome.storage.onChanged.addListener(function(changes) {
+      console.log('chrome storage changed mothafucka')
+      debugger;
+      var friends = {};
+      var uri = window.location.href.split('?')[0];
+      for (var i = 0; i < changes[uri].newValue.length; i++) {
+        friends[changes[uri].newValue[i].user_id] = true;
       }
+        self.setState({annotations: changes[uri].newValue, friends: friends});
     })
   }
 });
