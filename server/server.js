@@ -102,36 +102,36 @@ app.put('/api/annotations/:id',function(req,res){
 // Search endpoint(Read)
 
 app.get('/api/search',function(req,res){
-
+  console.log("**********here")
   var returnObj = {};
   var userId = req.query.user;
   var uri = req.query.uri;
-  var returnArray;
+
 
   db.model('User').fetchById({id:userId}).then(function(data){
-      console.log('************ the data being returned ', data.relations.models)
+    var uriFilter = data.relations.annotations.models.filter(function(e){
+      return (e.attributes.uri === uri);
+    });
 
-    //   returnArray = data.relations.annotations.models.map(function(e){
-    //   var resObj = {
-    //     id: e.attributes.id,
-    //     uri: e.attributes.uri,
-    //     text: e.attributes.text,
-    //     quote: e.attributes.quote,
-    //     user_id: e.attributes.user_id,
-    //     ranges: [
-    //       {
-    //         start: e.attributes.start,
-    //         end: e.attributes.end,
-    //         startOffset: e.attributes.startOffset,
-    //         endOffset: e.attributes.endOffset
-    //       }
-    //     ]
-    //    };
-    //    return resObj;   
-    // });
-
-    
-    returnObj.rows = returnArray || [];   
+    var returnArray = uriFilter.map(function(e){
+      var resObj = {
+        id: e.attributes.id,
+        uri: e.attributes.uri,
+        text: e.attributes.text,
+        quote: e.attributes.quote,
+        user_id: e.attributes.user_id,
+        ranges: [
+          {
+            start: e.attributes.start,
+            end: e.attributes.end,
+            startOffset: e.attributes.startOffset,
+            endOffset: e.attributes.endOffset
+          }
+        ]
+       };
+       return resObj;   
+    });
+    returnObj.rows = returnArray;   
     res.set('Content-Type', 'application/JSON');
     res.json(returnObj);
     res.end(); 
