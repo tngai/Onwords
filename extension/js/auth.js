@@ -45,7 +45,10 @@ chrome.browserAction.onClicked.addListener(function() {
 
 function fetchFbProfile(accessToken) {
   var xhr = new XMLHttpRequest();
-  var url = 'https://graph.facebook.com/v2.5/me/?fields=id,name,picture,email&access_token=' + accessToken;
+  var urlPrefix = 'https://graph.facebook.com/v2.5/me';
+  var urlFields = '?fields=id,name,email,picture.width(100).height(100)';
+  var urlSignature = '&access_token=' + accessToken;
+  var url = urlPrefix + urlFields + urlSignature;
   xhr.open('GET', url, true);
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
@@ -54,6 +57,7 @@ function fetchFbProfile(accessToken) {
       profile.facebook_id = resp.id;
       profile.full_name = resp.name;
       profile.pic_url = resp.picture.data.url;
+      console.log('profile.pic_url:', profile.pic_url);
       profile.email = resp.email;
       sendFbProfile(profile);
     }
