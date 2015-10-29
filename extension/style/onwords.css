@@ -149,12 +149,28 @@
 }
 /*ButtonContainer*/
 .button-container {
-  height: 85px;
+  height: 100px;
   width: 25px;
   border: 1px solid red;
   position: absolute;
   top: 0;
   right: 0;
+}
+.feed-home-button-container {
+  height: 25px;
+  width: 25px;
+}
+.feed-home-button {
+  height: 25px;
+  width: 25px;
+}
+.feed-search-button-container {
+  height: 25px;
+  width: 25px;
+}
+.feed-search-button {
+  height: 25px;
+  width: 25px;
 }
 /*Settings*/
 

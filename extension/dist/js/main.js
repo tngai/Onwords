@@ -20317,7 +20317,9 @@ var FeedSearchButton = React.createClass({displayName: "FeedSearchButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "S")
+      React.createElement("div", {onClick: this.handleClick, className: "feed-search-button-container"}, 
+        React.createElement("img", {className: "feed-search-button", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Feedbin-Icon-home-search.svg/2000px-Feedbin-Icon-home-search.svg.png"})
+      )
     );
   }
 });
