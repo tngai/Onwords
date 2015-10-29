@@ -22,7 +22,6 @@ var Settings = React.createClass({
       });  
       
     }.bind(this));
-      });
   },
   render: function() {
     return (

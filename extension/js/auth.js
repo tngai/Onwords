@@ -35,7 +35,8 @@ function fetchToken() {
 chrome.storage.sync.clear();
 
 chrome.browserAction.onClicked.addListener(function() {
-  chrome.storage.local.get('access_token', function(obj) {
+  console.log('browserAction clicked');
+  chrome.storage.sync.get('access_token', function(obj) {
     if (!obj['access_token']) {
       fetchToken();
     }
@@ -67,8 +68,15 @@ function sendFbProfile(data) {
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4 && xhr.status === 200) {
-      var resp = xhr.responseText;
-      chrome.storage.sync.set({'user_id': JSON.parse(resp).user_id});
+      var resp = JSON.parse(xhr.responseText);
+      var user = {
+        id: resp.user_id,
+        fullName: resp.full_name,
+        email: resp.email,
+        picUrl: resp.pic_url/*,
+        desc: resp.description*/
+      };
+      chrome.storage.sync.set({'user': user});
     }
   };
   xhr.send(JSON.stringify(data));
