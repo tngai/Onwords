@@ -227,7 +227,7 @@ app.get('/api/search/uri',function(req,res){
   var returnObj = {};
   var uri = req.query.uri;
 
-  db.model('Annotation').fetchById(uri).then(function(data){
+  db.model('Annotation').fetchByUri(uri).then(function(data){
     console.log('here is what is returned ', data.models);
     var uriFilter = data.models.filter(function(e){
       return ( (e.attributes.uri === uri) );
