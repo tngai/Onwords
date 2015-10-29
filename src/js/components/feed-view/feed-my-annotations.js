@@ -1,9 +1,10 @@
 var React = require('react');
+var MyAnnotationsLink = require('./feed-my-annotations-link');
 
 var MyAnnotations = React.createClass({
   getInitialState: function() {
     return {
-      data: null 
+      info: []
     };
   },
   componentWillMount: function() {
@@ -13,23 +14,21 @@ var MyAnnotations = React.createClass({
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
     var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users?user_id=' + user;
+    console.log('1!!!!!!!!');
     $.get(completeUri, function(result) {
       if (this.isMounted()) {
+        console.log('info!', result.rows);
         this.setState({
-          data: result
+          info: result.rows
         });
       }
-      console.log('it worked!!2', this.state.data);
+      console.log('it worked!!2', this.state.info);
     }.bind(this));
   },
   render: function() {
-    var annotations = this.state.data;
-    var myAnnotationsList = annotations.map(function(currentAnnotation, index) {
-      console.log(currentAnnotation, index);
-    });
     return (
       <div className='feed-my-annotations-container'>
-        MyAnnotations!
+        <MyAnnotationsLink info={this.state.info} />
       </div>
     );
   }
