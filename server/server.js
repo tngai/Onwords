@@ -21,6 +21,9 @@ app.use(function(req, res, next) {
 });
 
 
+app.get('/',function(req,res){
+  res.send('connected')
+});
 
 // Create annotations 
 app.post('/api/annotations', function(req,res){
@@ -102,7 +105,7 @@ app.put('/api/annotations/:id',function(req,res){
 // Search endpoint(Read)
 
 app.get('/api/search',function(req,res){
-  console.log("**********here")
+
   var returnObj = {};
   var userId = req.query.user;
   var uri = req.query.uri;
@@ -112,7 +115,7 @@ app.get('/api/search',function(req,res){
     var uriFilter = data.relations.annotations.models.filter(function(e){
       return (e.attributes.uri === uri);
     });
-
+    console.log('********* uriFilter ',uriFilter);
     var returnArray = uriFilter.map(function(e){
       var resObj = {
         id: e.attributes.id,
