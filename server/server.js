@@ -113,6 +113,7 @@ app.get('/api/search',function(req,res){
 
   db.model('User').fetchById({id:userId}).then(function(data){
     var uriFilter = data.relations.annotations.models.filter(function(e){
+      console.log('****** e.attributes ', e.attributes.uri, '  **uri  ',uri);
       return (e.attributes.uri === uri);
     });
     console.log('********* uriFilter ',uriFilter);
