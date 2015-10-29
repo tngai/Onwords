@@ -220,7 +220,42 @@ app.get('/api/search/users',function(req,res){
     res.end();
   })
 
+  // Search  all annotations per uri (Read)
+app.get('/api/search/uri',function(req,res){
 
+  var returnObj = {};
+  var uri = req.query.uri;
+
+  db.model('Annotation').fetchById(uri).then(function(data){
+    console.log('here is what is returned ', data.models);
+    var uriFilter = data.models.filter(function(e){
+      return ( (e.attributes.uri === uri) );
+    });
+
+    var returnArray = uriFilter.map(function(e){
+      var resObj = {
+        id: e.attributes.id,
+        uri: e.attributes.uri,
+        text: e.attributes.text,
+        quote: e.attributes.quote,
+        user_id: e.attributes.user_id,
+        ranges: [
+          {
+            start: e.attributes.start,
+            end: e.attributes.end,
+            startOffset: e.attributes.startOffset,
+            endOffset: e.attributes.endOffset
+          }
+        ]
+       };
+       return resObj;   
+    });
+    returnObj.rows = returnArray;   
+    res.set('Content-Type', 'application/JSON');
+    res.json(returnObj);
+    res.end(); 
+    });
+  })
 
 });  
 
