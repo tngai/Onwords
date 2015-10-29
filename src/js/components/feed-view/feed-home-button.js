@@ -6,7 +6,9 @@ var FeedHomeButton = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={this.handleClick} >H</div>
+      <div onClick={this.handleClick} className='feed-home-button-container'>
+        <img className='feed-home-button' src='http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png' />
+      </div>
     );
   }
 });

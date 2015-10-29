@@ -20265,7 +20265,9 @@ var FeedHomeButton = React.createClass({displayName: "FeedHomeButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "H")
+      React.createElement("div", {onClick: this.handleClick, className: "feed-home-button-container"}, 
+        React.createElement("img", {className: "feed-home-button", src: "http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png"})
+      )
     );
   }
 });
@@ -20297,7 +20299,7 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
   },
   render: function() {
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {className: "feed-my-annotations-container"}, 
         "MyAnnotations!"
       )
     );
@@ -20700,7 +20702,10 @@ exports.annotate = function(event) {
          console.log('what is obj.user_id:', obj.user_id);
          window.localStorage.setItem('user_id', obj.user_id);
          console.log('user_id set in localStorage');
-         app.annotations.load({uri: window.location.href.split('?')[0]});
+         app.annotations.load({
+          uri: window.location.href.split('?')[0],
+          user: obj.user_id
+        });
        });
   });
 
