@@ -153,12 +153,12 @@ app.get('/api/search',function(req,res){
   var uri = req.query.uri;
 
   db.model('Annotation').fetchByUri(uri).then(function(data){
- 
+    console.log('heres the data ', data)
     var uriFilter = data.models.filter(function(e){
       return ( (e.attributes.uri === uri) && (e.attributes.user_id == userId));
     });
     console.log('******** uri filter', uriFilter);
-    
+
     var returnArray = uriFilter.map(function(e){
       var resObj = {
         id: e.attributes.id,
