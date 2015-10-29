@@ -20810,8 +20810,10 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     var uri = window.location.href.split("?")[0];
     if (uri.substring(uri.length-11) === 'onwords1991') {
       uri = uri.substring(0, uri.length-13);
+      user = code.substring(0, code.length - 11);
     } else {
       uri = uri;
+      user = window.localStorage.getItem('user_id');
     }
     $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: targetUri})
       .done(function(data) {
@@ -20819,7 +20821,11 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         var friends = {};
         for (var i = 0; i < data.rows.length; i++) {
           if (data.rows[i].user_id) {
-            friends[data.rows[i].user_id] = true;
+              if (data.rows[i].user_id === user) {
+                friends[data.rows[i].user_id] = true;
+              } else {
+                friends[data.rows[i].user_id] = false;
+              }
           }
         }
         var ownId = window.localStorage.getItem('user_id');
