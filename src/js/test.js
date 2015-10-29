@@ -34,10 +34,7 @@ exports.annotate = function(event) {
     }
     app.start()
       .then(function() {
-         console.log('what is obj:', obj);
-         console.log('what is obj.user_id:', obj.user_id);
          window.localStorage.setItem('user_id', obj.user_id);
-         console.log('user_id set in localStorage');
          app.annotations.load({
           uri: window.location.href.split('?')[0],
           user: window.localStorage.getItem('user_id')
@@ -45,7 +42,7 @@ exports.annotate = function(event) {
       });
   });
 
-  document.addEventListener('showFriendAnnotations', function(e) {
+  document.addEventListener('getFriendAnnotations', function(e) {
     console.log("show this dude's annotation:", e.detail.userId);
     app.annotations.load({
       uri: window.location.href.split('?')[0],

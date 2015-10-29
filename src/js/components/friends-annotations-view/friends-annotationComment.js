@@ -8,6 +8,7 @@ var friendAnnotationComment = React.createClass({
   },
 
   render: function() {
+    
     var annotation = this.props.annotation;
     return (
       <div>
