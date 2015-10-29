@@ -8,7 +8,7 @@ exports.annotate = function(event) {
         ann.uri = window.location.href.split("?")[0];
         ann.title = document.querySelector('meta[name="twitter:title"]').getAttribute("content");
         ann.description = document.querySelector('meta[name="twitter:description"]').getAttribute("content");
-        ann.user = window.localStorage.getItem('user_id');
+        ann.user_id = window.localStorage.getItem('user_id');
       }
     };
   };
@@ -33,16 +33,23 @@ exports.annotate = function(event) {
       return;
     }
     app.start()
-       .then(function() {
+      .then(function() {
          console.log('what is obj:', obj);
          console.log('what is obj.user_id:', obj.user_id);
          window.localStorage.setItem('user_id', obj.user_id);
          console.log('user_id set in localStorage');
          app.annotations.load({
           uri: window.location.href.split('?')[0],
-          user: obj.user_id
+          user: window.localStorage.getItem('user_id')
         });
-       });
+      });
   });
 
+  document.addEventListener('showFriendAnnotations', function(e) {
+    console.log("show this dude's annotation:", e.detail.userId);
+    app.annotations.load({
+      uri: window.location.href.split('?')[0],
+      user: e.detail.userId
+    })
+  })
 };
