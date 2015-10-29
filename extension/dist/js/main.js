@@ -20499,8 +20499,8 @@ var SettingsButton = React.createClass({displayName: "SettingsButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, 
-        "ST"
+      React.createElement("div", {onClick: this.handleClick, className: "feed-settings-button-container"}, 
+        React.createElement("img", {className: "feed-settings-button", src: "https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_settings_48px-128.png"})
       )
     );
   }
