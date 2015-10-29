@@ -20648,17 +20648,19 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
       console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
-        return (
-          React.createElement("div", null, 
-            React.createElement("li", {className: "annotation"}, 
-              user.toString() === ownId ? 
-                React.createElement(AnnotationComment, {user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
-              : React.createElement(FriendAnnotationComment, {user: annotation.user, annotation: annotation})
-              
-            ), 
-            React.createElement("br", null)
+        // if (friends[user]) {
+          return (
+            React.createElement("div", null, 
+              React.createElement("li", {className: "annotation"}, 
+                user.toString() === ownId ? 
+                  React.createElement(AnnotationComment, {user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
+                : React.createElement(FriendAnnotationComment, {user: annotation.user, annotation: annotation})
+                
+              ), 
+              React.createElement("br", null)
+            )
           )
-        )
+        // }
     });
 
     return (
@@ -20776,8 +20778,8 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
       user = uri.substring(uri.indexOf('#')+1, uri.length - 11);
       uri = uri.substring(0, uri.length-13);
     } else {
-      uri = uri;
       user = window.localStorage.getItem('user_id');
+      uri = uri;
     }
     $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: targetUri})
       .done(function(data) {
@@ -20805,7 +20807,8 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
 
     chrome.storage.onChanged.addListener(function(changes) {
-      console.log('chrome storage changed mothafucka')
+      debugger;
+      console.log('chrome storage changed mothafucka', changes);
         self.setState({annotations: changes[uri].newValue});
     })
   }

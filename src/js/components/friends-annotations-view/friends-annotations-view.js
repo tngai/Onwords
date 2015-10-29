@@ -102,8 +102,8 @@ var FriendsAnnotationsView = React.createClass({
       user = uri.substring(uri.indexOf('#')+1, uri.length - 11);
       uri = uri.substring(0, uri.length-13);
     } else {
-      uri = uri;
       user = window.localStorage.getItem('user_id');
+      uri = uri;
     }
     $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: targetUri})
       .done(function(data) {
@@ -131,7 +131,8 @@ var FriendsAnnotationsView = React.createClass({
 
 
     chrome.storage.onChanged.addListener(function(changes) {
-      console.log('chrome storage changed mothafucka')
+      debugger;
+      console.log('chrome storage changed mothafucka', changes);
         self.setState({annotations: changes[uri].newValue});
     })
   }
