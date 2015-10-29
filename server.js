@@ -108,13 +108,6 @@ app.get('/api/search',function(req,res){
   var uri = req.query.uri;
 
   db.model('User').fetchById({id:userId}).then(function(data){
-
-    if(data === null) {
-      returnObj.rows = [];   
-      res.set('Content-Type', 'application/JSON');
-      res.json(returnObj);
-      res.end();   
-    }
     var returnArray = data.relations.annotations.models.map(function(e){
       var resObj = {
         id: e.attributes.id,
