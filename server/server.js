@@ -152,7 +152,7 @@ app.get('/api/search',function(req,res){
   var userId = req.query.user;
   var uri = req.query.uri;
 
-  db.model('Annotation').fetchById(uri).then(function(data){
+  db.model('Annotation').fetchByUri(uri).then(function(data){
  
     var uriFilter = data.models.filter(function(e){
       return ( (e.attributes.uri === uri) && (e.attributes.user_id == userId));

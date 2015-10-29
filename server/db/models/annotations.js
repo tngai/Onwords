@@ -24,7 +24,7 @@ var Annotation = db.Model.extend({
   fetchByUri: function(uri) {
     return new this({
       uri:uri
-    }).fetchAll()
+    }).fetch()
   },
   destroyById: function(id) {
     return new this({id:id}).destroy()
