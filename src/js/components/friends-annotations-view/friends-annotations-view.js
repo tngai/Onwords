@@ -93,29 +93,45 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   componentDidMount: function() {
+    debugger;
     console.log('friend annotations view mounted');
     var self = this;
     var uri = window.location.href.split("?")[0];
-    //ajax call
-    chrome.storage.local.get(uri, function(obj) {
-      if (obj[uri]) {
+    if (uri.substring(uri.length-11) === 'onwords1991') {
+      uri = uri.substring(0, uri.length-13);
+      user = code.substring(0, code.length - 11);
+    } else {
+      uri = uri;
+      user = window.localStorage.getItem('user_id');
+    }
+    $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: targetUri})
+      .done(function(data) {
+        debugger;
         var friends = {};
-        for (var i = 0; i < obj[uri].length; i++) {
-          friends[obj[uri][i].user_id] = true;
+        for (var i = 0; i < data.rows.length; i++) {
+          if (data.rows[i].user_id) {
+              if (data.rows[i].user_id === user) {
+                friends[data.rows[i].user_id] = true;
+              } else {
+                friends[data.rows[i].user_id] = false;
+              }
+          }
         }
-        self.setState({annotations: obj[uri], friends: friends});
-      } 
-    })
+        var ownId = window.localStorage.getItem('user_id');
+        friends[ownId] = true;
+        chrome.storage.local.get(uri, function(obj) {
+          if (obj[uri]) {
+            self.setState({annotations: obj[uri], friends: friends});
+          } else {
+            self.setState({friends: friends});
+          }
+        })
+      })
+
 
     chrome.storage.onChanged.addListener(function(changes) {
       console.log('chrome storage changed mothafucka')
-      debugger;
-      var friends = {};
-      var uri = window.location.href.split('?')[0];
-      for (var i = 0; i < changes[uri].newValue.length; i++) {
-        friends[changes[uri].newValue[i].user_id] = true;
-      }
-        self.setState({annotations: changes[uri].newValue, friends: friends});
+        self.setState({annotations: changes[uri].newValue});
     })
   }
 });

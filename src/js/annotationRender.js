@@ -1,4 +1,11 @@
 var renderAnnotations = function() {
+  var uri = window.location.href.split("?")[0];
+  if (uri.substring(uri.length-11) === 'onwords1991') {
+    uri = uri.substring(0, uri.length-13);
+  } else {
+    uri = uri;
+  }
+
   return {
     // annotationsLoaded: function(annotations) {
     //   var uri = window.location.href.split("?")[0];
@@ -9,7 +16,6 @@ var renderAnnotations = function() {
     // },
 
     annotationCreated: function(annotation) {
-      var uri = window.location.href.split("?")[0];
       console.log("annotation created:", annotation);
       chrome.storage.local.get(uri, function(obj) {
         console.log('values before CREATING:', obj[uri])
@@ -40,7 +46,6 @@ var renderAnnotations = function() {
     beforeAnnotationDeleted: function(annotation) {
       var id = annotation.id;
       $('[data-annotation-id=' + id + ']').contents().unwrap();
-      var uri = window.location.href.split("?")[0];
       chrome.storage.local.get(uri, function(obj) {
         debugger;
         console.log('values before DELETING:', obj[uri]);
@@ -58,7 +63,6 @@ var renderAnnotations = function() {
 
     beforeRenderDeleted: function(annotations) {
       debugger;
-      var uri = window.location.href.split("?")[0];
       chrome.storage.local.get(uri, function(obj) {
         debugger;
         for (var i = 0; i < annotations.length; i++) {
@@ -78,7 +82,6 @@ var renderAnnotations = function() {
     },
 
     beforeAnnotationUpdated: function(annotation) {
-      var uri = window.location.href.split('?')[0];
       chrome.storage.local.get(uri, function(obj) {
         console.log('values before UPDATING:', obj[uri]);
         for (var i = 0; i < obj[uri].length; i++) {

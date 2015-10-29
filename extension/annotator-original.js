@@ -12981,7 +12981,7 @@ HttpStorage.prototype._apiRequest = function (action, obj) {
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
-    console.log('options:', options);
+
     var request = $.ajax(url, options);
 
     // Append the id and action to the request object
@@ -13023,10 +13023,6 @@ HttpStorage.prototype._apiRequestOptions = function (action, obj) {
     // Don't JSONify obj if making search request.
     if (action === "search") {
         opts = $.extend(opts, {data: obj});
-        // sneak in the user_id to end of uri as search query
-        var user_id = window.localStorage.getItem('user_id');
-        // opts.data.uri += '&user=' + user_id;
-        console.log('opts:', opts);
         return opts;
     }
 
@@ -14785,6 +14781,11 @@ Highlighter.prototype.drawAll = function (annotations) {
             
             debugger;
             var uri = window.location.href.split("?")[0];
+            if (uri.substring(uri.length-11) === 'onwords1991') {
+              uri = uri.substring(0, uri.length-13);
+            } else {
+              uri = uri;
+            }
             chrome.storage.local.get(uri, function(obj) {
               if (obj[uri] && now.length > 0) {
                 debugger;
