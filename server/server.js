@@ -152,13 +152,12 @@ app.get('/api/search',function(req,res){
   var userId = req.query.user;
   var uri = req.query.uri;
 
-
-  db.model('User').fetchById({id:userId}).then(function(data){
-    var uriFilter = data.relations.annotations.models.filter(function(e){
-      console.log('****** e.attributes ', e.attributes.uri, '  **uri  ',uri);
-      return (e.attributes.uri === uri);
+  db.model('Annotation').fetchById(uri).then(function(data){
+ 
+    var uriFilter = data.models.filter(function(e){
+      return ( (e.attributes.uri === uri) && (e.attributes.user_id == userId));
     });
-    console.log('********* uriFilter ',uriFilter);
+
     var returnArray = uriFilter.map(function(e){
       var resObj = {
         id: e.attributes.id,
@@ -182,8 +181,7 @@ app.get('/api/search',function(req,res){
     res.json(returnObj);
     res.end(); 
     });
-
-  });
+  })
 
 
 app.listen(process.env.PORT || 8000);
