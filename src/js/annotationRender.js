@@ -56,6 +56,27 @@ var renderAnnotations = function() {
       })
     },
 
+    beforeRenderDeleted: function(annotations) {
+      debugger;
+      var uri = window.location.href.split("?")[0];
+      chrome.storage.local.get(uri, function(obj) {
+        debugger;
+        for (var i = 0; i < annotations.length; i++) {
+          var id = annotations[i].id;
+          $('[data-annotation-id=' + id + ']').contents().unwrap();
+          for (var j = 0; j < obj[uri].length; j++) {
+            if (obj[uri][j].id === id) {
+              obj[uri].splice(j, 1);
+              break;
+            }
+          }
+        }
+        var newObj = {};
+        newObj[uri] = obj[uri];
+        chrome.storage.local.set(newObj);
+      })
+    },
+
     beforeAnnotationUpdated: function(annotation) {
       var uri = window.location.href.split('?')[0];
       chrome.storage.local.get(uri, function(obj) {
