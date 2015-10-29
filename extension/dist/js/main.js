@@ -20249,7 +20249,9 @@ var FeedFriendsButton = React.createClass({displayName: "FeedFriendsButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "F")
+      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
+        React.createElement("img", {className: "feed-button", src: "http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png"})
+      )
     );
   }
 });
@@ -20265,7 +20267,9 @@ var FeedHomeButton = React.createClass({displayName: "FeedHomeButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "H")
+      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
+        React.createElement("img", {className: "feed-button", src: "https://cdn3.iconfinder.com/data/icons/black-easy/512/535106-user_512x512.png"})
+      )
     );
   }
 });
@@ -20297,7 +20301,7 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
   },
   render: function() {
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {className: "feed-my-annotations-container"}, 
         "MyAnnotations!"
       )
     );
@@ -20315,7 +20319,9 @@ var FeedSearchButton = React.createClass({displayName: "FeedSearchButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, "S")
+      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
+        React.createElement("img", {className: "feed-button", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Feedbin-Icon-home-search.svg/2000px-Feedbin-Icon-home-search.svg.png"})
+      )
     );
   }
 });
@@ -20495,8 +20501,8 @@ var SettingsButton = React.createClass({displayName: "SettingsButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick}, 
-        "ST"
+      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
+        React.createElement("img", {className: "feed-button", src: "https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_settings_48px-128.png"})
       )
     );
   }
@@ -20700,7 +20706,10 @@ exports.annotate = function(event) {
          console.log('what is obj.user_id:', obj.user_id);
          window.localStorage.setItem('user_id', obj.user_id);
          console.log('user_id set in localStorage');
-         app.annotations.load({uri: window.location.href.split('?')[0]});
+         app.annotations.load({
+          uri: window.location.href.split('?')[0],
+          user: obj.user_id
+        });
        });
   });
 

@@ -6,8 +6,8 @@ var SettingsButton = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={this.handleClick}>
-        ST
+      <div onClick={this.handleClick} className='feed-button'>
+        <img className='feed-button' src='https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_settings_48px-128.png' />
       </div>
     );
   }
