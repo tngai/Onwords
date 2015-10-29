@@ -33,7 +33,7 @@ exports.annotate = function(event) {
       return;
     }
     app.start()
-       .then(function() {
+      .then(function() {
          console.log('what is obj:', obj);
          console.log('what is obj.user_id:', obj.user_id);
          window.localStorage.setItem('user_id', obj.user_id);
@@ -42,7 +42,14 @@ exports.annotate = function(event) {
           uri: window.location.href.split('?')[0],
           user: obj.user_id
         });
-       });
+      });
   });
 
+  document.addEventlistener('showFriendAnnotations', function(e) {
+    console.log("show this dude's annotation:", e.detail.userId);
+    app.annotations.load({
+      uri: window.location.href.split('?')[0],
+      user: e.detail.userId
+    })
+  })
 };

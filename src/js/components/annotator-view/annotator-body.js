@@ -17,12 +17,16 @@ var AnnotatorBody = React.createClass({
         self.setState({annotations: object[uri]});
       }
     })
+  },
+
+  componentDidMount: function() {
     chrome.storage.onChanged.addListener(function(changes) {
+      var uri = window.location.href.split("?")[0];
       console.log('annotator body, storage updated', changes[uri]);
       if (changes[uri] && changes[uri].newValue) {
         self.setState({annotations: changes[uri].newValue});
       }
-    })
+    });
   },
 
   render: function() {
