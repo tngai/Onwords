@@ -40,14 +40,14 @@ exports.annotate = function(event) {
         })
       })
   } else {
-    chrome.storage.sync.get('user_id', function(obj) {
-      if (!obj['user_id']) {
+    chrome.storage.sync.get('user', function(obj) {
+      if (!obj['user']) {
         console.error('Unable to access user_id from chrome.storage');
         return;
       }
       app.start()
         .then(function() {
-           window.localStorage.setItem('user_id', obj.user_id);
+           window.localStorage.setItem('user_id', obj.user.id);
            app.annotations.load({
             uri: window.location.href.split('?')[0],
             user: window.localStorage.getItem('user_id')
@@ -65,6 +65,6 @@ exports.annotate = function(event) {
     app.annotations.load({
       uri: window.location.href.split('?')[0],
       user: e.detail.userId
-    })
-  })
+    });
+  });
 };

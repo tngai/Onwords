@@ -20364,11 +20364,9 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
   componentDidMount: function() {
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
-    var completeUri = 'https://onwords-test-server.herokuapp.com/api/search?uri=' + uri + '&user=' + user;
+    var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users=?user_id=' + user;
 
-    console.log('USER!!!', completeUri);
     $.get(completeUri, function(result) {
-      console.log('it worked!!', this.state.data);
       if (this.isMounted()) {
         this.setState({
           data: result
@@ -20408,19 +20406,29 @@ module.exports = FeedSearchButton;
 
 },{"react":156}],173:[function(require,module,exports){
 var React = require('react');
+// var FeedSearchList = require('./feed-search-list');
 
 var FeedSearchView = React.createClass({displayName: "FeedSearchView",
+  getInitialState: function() {
+    return {
+      text: ''
+    };
+  },
+
   handleSubmit: function(e) {
     e.preventDefault();
     var inputVal = React.findDOMNode(this.refs.input).value;
-    console.log('Search:', inputVal);
+    if (inputVal === '') { return; }
+    this.setState({text: inputVal});
   },
+
   render: function() {
     return (
       React.createElement("div", {className: "search-view-container"}, 
         React.createElement("form", {onSubmit: this.handleSubmit, className: "form-search-container"}, 
-          React.createElement("input", {type: "text", ref: "input", placeholder: "Search"})
+          React.createElement("input", {type: "text", ref: "input", placeholder: "Find people to follow..."})
         )
+      /*<FeedSearchList fullName={this.state.text} />*/
       )
     );
   }
@@ -20859,17 +20867,15 @@ var renderComponents = function() {
 };
 
 var identityListener = function(changes) {
-  console.log(changes);
-  if (changes.user_id && changes.user_id.newValue) {
+  if (changes.user && changes.user.newValue) {
     renderComponents();
     test.annotate();
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
 
-chrome.storage.sync.get('user_id', function(obj) {
-  if (obj['user_id']) {
-    console.log('user_id in main.js get:', obj['user']);
+chrome.storage.sync.get('user', function(obj) {
+  if (obj['user']) {
     renderComponents();
     test.annotate();
   } else {
@@ -20920,14 +20926,14 @@ exports.annotate = function(event) {
         })
       })
   } else {
-    chrome.storage.sync.get('user_id', function(obj) {
-      if (!obj['user_id']) {
+    chrome.storage.sync.get('user', function(obj) {
+      if (!obj['user']) {
         console.error('Unable to access user_id from chrome.storage');
         return;
       }
       app.start()
         .then(function() {
-           window.localStorage.setItem('user_id', obj.user_id);
+           window.localStorage.setItem('user_id', obj.user.id);
            app.annotations.load({
             uri: window.location.href.split('?')[0],
             user: window.localStorage.getItem('user_id')
@@ -20945,8 +20951,8 @@ exports.annotate = function(event) {
     app.annotations.load({
       uri: window.location.href.split('?')[0],
       user: e.detail.userId
-    })
-  })
+    });
+  });
 };
 
 },{"./annotationRender":157}]},{},[184]);
