@@ -20289,15 +20289,19 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
 
   },
   componentDidMount: function() {
-    $.get('https://onwords-test-server.herokuapp.com/api/search/user_uri?user=1', function(result) {
-      console.log('it worked!!', this.state.data);
-      if (this.isMounted()) {
-        this.setState({
-          data: result
-        });
-      }
-      console.log('it worked!!2', this.state.data);
-    }.bind(this));
+    var user = window.localStorage.user_id;
+    var uri = window.location.href.split("?")[0];
+    // var completeUri = '?uri=' + 
+    console.log('USER!!!',user, uri);
+    // $.get('https://onwords-test-server.herokuapp.com/api/search?uri=http://alistapart.com/topic/javascript&user=1', function(result) {
+    //   console.log('it worked!!', this.state.data);
+    //   if (this.isMounted()) {
+    //     this.setState({
+    //       data: result
+    //     });
+    //   }
+    //   console.log('it worked!!2', this.state.data);
+    // }.bind(this));
   },
   render: function() {
     return (
