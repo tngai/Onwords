@@ -106,10 +106,11 @@ app.get('/api/search',function(req,res){
   var returnObj = {};
   var userId = req.query.user;
   var uri = req.query.uri;
-
+  var returnArray;
+  
   db.model('User').fetchById({id:userId}).then(function(data){
     if(data){
-      var returnArray = data.relations.annotations.models.map(function(e){
+      returnArray = data.relations.annotations.models.map(function(e){
       var resObj = {
         id: e.attributes.id,
         uri: e.attributes.uri,
