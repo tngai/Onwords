@@ -8,6 +8,9 @@ exports.annotate = function(event) {
     targetUri = uri;
   }
 
+  chrome.storage.local.remove(targetUri);
+
+
   var pageUri = function() {
     return {
       beforeAnnotationCreated: function(ann) {
@@ -21,17 +24,17 @@ exports.annotate = function(event) {
 
   var app = new annotator.App();
   app.include(annotator.ui.main)
-     .include(annotator.storage.http, {
-        prefix: 'https://onwords-test-server.herokuapp.com',
-        urls: {
-          create: '/api/annotations',
-          update: '/api/annotations/{id}',
-          destroy: '/api/annotations/{id}',
-          search: '/api/search'
-        }
-      })
-     .include(pageUri)
-     .include(renderAnnotations);
+    .include(annotator.storage.http, {
+      prefix: 'https://onwords-test-server.herokuapp.com',
+      urls: {
+        create: '/api/annotations',
+        update: '/api/annotations/{id}',
+        destroy: '/api/annotations/{id}',
+        search: '/api/search'
+      }
+    })
+   .include(pageUri)
+   .include(renderAnnotations);
 
 
   var code = window.location.hash.substring(1);

@@ -20032,7 +20032,11 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
     chrome.storage.onChanged.addListener(function(changes) {
       var uri = window.location.href.split("?")[0];
       console.log('annotator body, storage updated', changes[uri]);
+<<<<<<< HEAD
       if (changes[uri] && changes[uri].newValue) {
+=======
+      if (changes[uri]) {
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
         self.setState({annotations: changes[uri].newValue});
       }
     });
@@ -20073,13 +20077,21 @@ var React = require('react');
 var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimizeButton",
   handleClick: function() {
     this.props.updateView('showAnnotatorButton');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
     // image rendering from files
     // src={chrome.extension.getURL('/assets/right-copy.png')} 
   },
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "annotator-my-view-button-container"}, 
+<<<<<<< HEAD
         React.createElement("img", {className: "annotator-my-view-button", src: chrome.extension.getURL('/assets/right-copy.png')})
+=======
+        React.createElement("img", {className: "annotator-my-view-button", src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg"})
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
       )
     );
   }
@@ -20124,9 +20136,14 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
     return (
       React.createElement("div", {className: "annotator-view-container"}, 
         React.createElement("div", {className: "annotator-buttons-container"}, 
+<<<<<<< HEAD
           React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
           React.createElement(FriendsAnnotationsButton, React.__spread({},  this.props)), 
           React.createElement(HomeButton, React.__spread({},  this.props))
+=======
+          React.createElement(HomeButton, React.__spread({},  this.props)), 
+          React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props))
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
         ), 
 
         React.createElement(AnnotatorHeader, React.__spread({},  this.props)), 
@@ -20216,14 +20233,14 @@ var App = React.createClass({displayName: "App",
             this.setState({showFeedView: false});
             $('.annotation-sidebar').animate({right: -(565)}, duration);
             break;
-        case 'showFriendsAnnotations':
-            console.log('showFriendsAnnotations!!');
-            this.setState({showFriendsAnnotations: true});
-            this.setState({showAnnotatorButton: false});
-            this.setState({showAnnotatorView: false});
-            this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(300)}, 50);
-            break;
+        // case 'showFriendsAnnotations':
+        //     console.log('showFriendsAnnotations!!');
+        //     this.setState({showFriendsAnnotations: true});
+        //     this.setState({showAnnotatorButton: false});
+        //     this.setState({showAnnotatorView: false});
+        //     this.setState({showFeedView: false});
+        //     $('.annotation-sidebar').animate({right: -(300)}, 50);
+        //     break;
         case 'showAnnotatorView':
             this.setState({showFriendsAnnotations: true});
             this.setState({showAnnotatorButton: false});
@@ -20296,7 +20313,7 @@ var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
         uri: 'http://blogs.scientificamerican.com/guest-blog/presidential-candidates-who-believes-in-climate-change/',
         title: 'Presidential Candidates: Who Believes in Climate Change?',
         profPic: 'https://scontent-lax3-1.xx.fbcdn.net/hphotos-xpa1/t31.0-8/q87/s960x960/980347_10201703421134973_1425263140_o.jpg',
-        name: 'Irving Fuck',
+        name: 'Irving Barajas',
         user_id: '2'
       }
     }
@@ -20688,17 +20705,19 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
       console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
-        return (
-          React.createElement("div", null, 
-            React.createElement("li", {className: "annotation"}, 
-              user.toString() === ownId ? 
-                React.createElement(AnnotationComment, {user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
-              : React.createElement(FriendAnnotationComment, {user: annotation.user, annotation: annotation})
-              
-            ), 
-            React.createElement("br", null)
+        if (friends[user]) {
+          return (
+            React.createElement("div", null, 
+              React.createElement("li", {className: "annotation"}, 
+                user.toString() === ownId ? 
+                  React.createElement(AnnotationComment, {user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
+                : React.createElement(FriendAnnotationComment, {user: annotation.user, annotation: annotation})
+                
+              ), 
+              React.createElement("br", null)
+            )
           )
-        )
+        }
     });
 
     return (
@@ -20816,24 +20835,26 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
       user = uri.substring(uri.indexOf('#')+1, uri.length - 11);
       uri = uri.substring(0, uri.length-13);
     } else {
-      uri = uri;
       user = window.localStorage.getItem('user_id');
+      uri = uri;
     }
     $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: targetUri})
       .done(function(data) {
         debugger;
+        var ownId = window.localStorage.getItem('user_id');
         var friends = {};
         for (var i = 0; i < data.rows.length; i++) {
           if (data.rows[i].user_id) {
-              if (data.rows[i].user_id.toString() === user) {
+              if (data.rows[i].user_id.toString() === user && data.rows[i].user_id.toString() !== ownId) {
+                friends[data.rows[i].user_id] = true;
+                friends[ownId] = false;
+              } else if (data.rows[i].user_id.toString() == ownId) {
                 friends[data.rows[i].user_id] = true;
               } else {
                 friends[data.rows[i].user_id] = false;
               }
           }
         }
-        var ownId = window.localStorage.getItem('user_id');
-        friends[ownId] = false;
         chrome.storage.local.get(uri, function(obj) {
           if (obj[uri]) {
             self.setState({annotations: obj[uri], friends: friends});
@@ -20845,7 +20866,8 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
 
     chrome.storage.onChanged.addListener(function(changes) {
-      console.log('chrome storage changed mothafucka')
+      debugger;
+      console.log('chrome storage changed mothafucka', changes);
         self.setState({annotations: changes[uri].newValue});
     })
   }
@@ -20952,6 +20974,15 @@ chrome.storage.sync.get('user', function(obj) {
     chrome.storage.onChanged.addListener(identityListener);
   }
 });
+<<<<<<< HEAD
+=======
+
+chrome.runtime.onMessage.addListener(function(request) {
+  if (request.message === 'tokenRemoved') {
+    $('.annotation-sidebar').remove();
+  }
+})
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
 
 },{"./components/app":166,"./test":186,"react":156}],186:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
@@ -20963,6 +20994,9 @@ exports.annotate = function(event) {
   } else {
     targetUri = uri;
   }
+
+  chrome.storage.local.remove(targetUri);
+
 
   var pageUri = function() {
     return {
@@ -20977,18 +21011,45 @@ exports.annotate = function(event) {
 
   var app = new annotator.App();
   app.include(annotator.ui.main)
-     .include(annotator.storage.http, {
-        prefix: 'https://onwords-test-server.herokuapp.com',
-        urls: {
-          create: '/api/annotations',
-          update: '/api/annotations/{id}',
-          destroy: '/api/annotations/{id}',
-          search: '/api/search'
-        }
-      })
-     .include(pageUri)
-     .include(renderAnnotations);
+    .include(annotator.storage.http, {
+      prefix: 'https://onwords-test-server.herokuapp.com',
+      urls: {
+        create: '/api/annotations',
+        update: '/api/annotations/{id}',
+        destroy: '/api/annotations/{id}',
+        search: '/api/search'
+      }
+    })
+   .include(pageUri)
+   .include(renderAnnotations);
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+  chrome.storage.sync.get('facebook_id', function(obj) {
+    if (!obj['facebook_id']) {
+      console.error('Unable to access facebook_id from chrome.storage');
+      return;
+    }
+    app.start()
+       .then(function() {
+         window.localStorage.setItem('facebook_id', obj.facebook_id);
+         console.log('facebook_id set in localStorage');
+         app.annotations.load({uri: window.location.href.split("?")[0]});
+       });
+  });
+=======
+  app.start()
+    .then(function() {
+      app.annotations.load({uri: window.location.href.split("?")[0]});
+    })
+
+    chrome.runtime.onMessage.addListener(function(request) {
+      if (request.message === 'tokenRemoved') {
+        app.destroy();
+      }
+    })
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
+=======
 
   var code = window.location.hash.substring(1);
   debugger;
@@ -21017,6 +21078,7 @@ exports.annotate = function(event) {
         });
     });
   }
+>>>>>>> fix/multipleRender
 
 
   document.addEventListener('getFriendAnnotations', function(e) {
