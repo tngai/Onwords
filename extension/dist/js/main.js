@@ -20003,7 +20003,11 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
     })
     chrome.storage.onChanged.addListener(function(changes) {
       console.log('annotator body, storage updated', changes[uri]);
+<<<<<<< HEAD
       if (changes[uri] && changes[uri].newValue) {
+=======
+      if (changes[uri]) {
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
         self.setState({annotations: changes[uri].newValue});
       }
     })
@@ -20044,13 +20048,21 @@ var React = require('react');
 var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimizeButton",
   handleClick: function() {
     this.props.updateView('showAnnotatorButton');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
     // image rendering from files
     // src={chrome.extension.getURL('/assets/right-copy.png')} 
   },
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "annotator-my-view-button-container"}, 
+<<<<<<< HEAD
         React.createElement("img", {className: "annotator-my-view-button", src: chrome.extension.getURL('/assets/right-copy.png')})
+=======
+        React.createElement("img", {className: "annotator-my-view-button", src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg"})
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
       )
     );
   }
@@ -20095,9 +20107,14 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
     return (
       React.createElement("div", {className: "annotator-view-container"}, 
         React.createElement("div", {className: "annotator-buttons-container"}, 
+<<<<<<< HEAD
           React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
           React.createElement(FriendsAnnotationsButton, React.__spread({},  this.props)), 
           React.createElement(HomeButton, React.__spread({},  this.props))
+=======
+          React.createElement(HomeButton, React.__spread({},  this.props)), 
+          React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props))
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
         ), 
 
         React.createElement(AnnotatorHeader, React.__spread({},  this.props)), 
@@ -20656,6 +20673,15 @@ chrome.storage.sync.get('facebook_id', function(obj) {
     chrome.storage.onChanged.addListener(identityListener);
   }
 });
+<<<<<<< HEAD
+=======
+
+chrome.runtime.onMessage.addListener(function(request) {
+  if (request.message === 'tokenRemoved') {
+    $('.annotation-sidebar').remove();
+  }
+})
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
 
 },{"./components/app":166,"./test":182,"react":156}],182:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
@@ -20675,18 +20701,19 @@ exports.annotate = function(event) {
 
   var app = new annotator.App();
   app.include(annotator.ui.main)
-     .include(annotator.storage.http, {
-        prefix: 'https://onwords-test-server.herokuapp.com',
-        urls: {
-          create: '/api/annotations',
-          update: '/api/annotations/{id}',
-          destroy: '/api/annotations/{id}',
-          search: '/api/search'
-        }
-      })
-     .include(pageUri)
-     .include(renderAnnotations);
+    .include(annotator.storage.http, {
+      prefix: 'https://onwords-test-server.herokuapp.com',
+      urls: {
+        create: '/api/annotations',
+        update: '/api/annotations/{id}',
+        destroy: '/api/annotations/{id}',
+        search: '/api/search'
+      }
+    })
+   .include(pageUri)
+   .include(renderAnnotations);
 
+<<<<<<< HEAD
   chrome.storage.sync.get('facebook_id', function(obj) {
     if (!obj['facebook_id']) {
       console.error('Unable to access facebook_id from chrome.storage');
@@ -20699,6 +20726,18 @@ exports.annotate = function(event) {
          app.annotations.load({uri: window.location.href.split("?")[0]});
        });
   });
+=======
+  app.start()
+    .then(function() {
+      app.annotations.load({uri: window.location.href.split("?")[0]});
+    })
+
+    chrome.runtime.onMessage.addListener(function(request) {
+      if (request.message === 'tokenRemoved') {
+        app.destroy();
+      }
+    })
+>>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
 
 }
 

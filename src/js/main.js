@@ -26,3 +26,4 @@ chrome.storage.sync.get('facebook_id', function(obj) {
     chrome.storage.onChanged.addListener(identityListener);
   }
 });
+
