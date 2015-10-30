@@ -26,3 +26,4 @@ chrome.storage.sync.get('user', function(obj) {
     chrome.storage.onChanged.addListener(identityListener);
   }
 });
+
