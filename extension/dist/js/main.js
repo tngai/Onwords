@@ -20032,11 +20032,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
     chrome.storage.onChanged.addListener(function(changes) {
       var uri = window.location.href.split("?")[0];
       console.log('annotator body, storage updated', changes[uri]);
-<<<<<<< HEAD
       if (changes[uri] && changes[uri].newValue) {
-=======
-      if (changes[uri]) {
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
         self.setState({annotations: changes[uri].newValue});
       }
     });
@@ -20077,21 +20073,14 @@ var React = require('react');
 var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimizeButton",
   handleClick: function() {
     this.props.updateView('showAnnotatorButton');
-<<<<<<< HEAD
-=======
 
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
     // image rendering from files
     // src={chrome.extension.getURL('/assets/right-copy.png')} 
   },
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "annotator-my-view-button-container"}, 
-<<<<<<< HEAD
         React.createElement("img", {className: "annotator-my-view-button", src: chrome.extension.getURL('/assets/right-copy.png')})
-=======
-        React.createElement("img", {className: "annotator-my-view-button", src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg"})
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
       )
     );
   }
@@ -20136,14 +20125,9 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
     return (
       React.createElement("div", {className: "annotator-view-container"}, 
         React.createElement("div", {className: "annotator-buttons-container"}, 
-<<<<<<< HEAD
           React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
           React.createElement(FriendsAnnotationsButton, React.__spread({},  this.props)), 
           React.createElement(HomeButton, React.__spread({},  this.props))
-=======
-          React.createElement(HomeButton, React.__spread({},  this.props)), 
-          React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props))
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
         ), 
 
         React.createElement(AnnotatorHeader, React.__spread({},  this.props)), 
@@ -20382,25 +20366,27 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
       var redirectUri = annotation.uri + '#' + annotation.user_id + 'onwords1991';
       console.log(redirectUri)
       return (
-        React.createElement("div", {key: index}, 
-          React.createElement("a", {onClick: handleClick, href: redirectUri, target: "blank", className: "redirectLink"}, annotation.uri, " : ", index)
+        React.createElement("div", {key: index, className: "my-annotations-link-container"}, 
+          React.createElement("a", {onClick: handleClick, href: redirectUri, target: "blank", className: "redirectLink"}, "URL TITLE GOES HERE : ", index)
         )
       )
     });
 
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {className: "my-annotations-links-container"}, 
         urls
       )
     )
   },
   componentDidMount: function() {
+    console.log('MyAnnotationsLink - componentDidMount');
     $(document).on('click', '.redirectLink', function(e) {
       var url = $(this).attr('href');
-      window.open(url, '_blank');      
+      window.open(url, '_blank');  
     });
   },
   componentWillUnmount: function() {
+    console.log('MyAnnotationsLink - componentWillUnmount');
     $(document).off();
   },
 });
@@ -20421,18 +20407,17 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
 
   },
   componentDidMount: function() {
+    console.log('MyAnnotations - componentDidMount');
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
     var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users?user_id=' + user;
-    console.log('1!!!!!!!!');
     $.get(completeUri, function(result) {
       if (this.isMounted()) {
-        console.log('info!', result.rows);
         this.setState({
           info: result.rows
         });
       }
-      console.log('it worked!!2', this.state.info);
+      console.log('MyAnnotations state:INFO = ', this.state.info);
     }.bind(this));
   },
   render: function() {
@@ -20974,15 +20959,6 @@ chrome.storage.sync.get('user', function(obj) {
     chrome.storage.onChanged.addListener(identityListener);
   }
 });
-<<<<<<< HEAD
-=======
-
-chrome.runtime.onMessage.addListener(function(request) {
-  if (request.message === 'tokenRemoved') {
-    $('.annotation-sidebar').remove();
-  }
-})
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
 
 },{"./components/app":166,"./test":186,"react":156}],186:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
@@ -21023,33 +20999,6 @@ exports.annotate = function(event) {
    .include(pageUri)
    .include(renderAnnotations);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  chrome.storage.sync.get('facebook_id', function(obj) {
-    if (!obj['facebook_id']) {
-      console.error('Unable to access facebook_id from chrome.storage');
-      return;
-    }
-    app.start()
-       .then(function() {
-         window.localStorage.setItem('facebook_id', obj.facebook_id);
-         console.log('facebook_id set in localStorage');
-         app.annotations.load({uri: window.location.href.split("?")[0]});
-       });
-  });
-=======
-  app.start()
-    .then(function() {
-      app.annotations.load({uri: window.location.href.split("?")[0]});
-    })
-
-    chrome.runtime.onMessage.addListener(function(request) {
-      if (request.message === 'tokenRemoved') {
-        app.destroy();
-      }
-    })
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
-=======
 
   var code = window.location.hash.substring(1);
   debugger;
@@ -21078,7 +21027,6 @@ exports.annotate = function(event) {
         });
     });
   }
->>>>>>> fix/multipleRender
 
 
   document.addEventListener('getFriendAnnotations', function(e) {

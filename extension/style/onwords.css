@@ -3,8 +3,7 @@
   position: fixed; 
   top: 0; 
   width: 600px; 
-  right: -580px; 
-  background-color: black; 
+  right: -580px;  
   height: 100%; 
   background: rgba(0, 0, 31, 0);
 }
@@ -12,6 +11,9 @@
   color: black; 
 }
 /* React */
+.app-container {
+  background-color: rgb(233, 233, 233);
+}
 .annotator-body-container {
   height: 1000px;
   overflow-y: scroll;
@@ -24,31 +26,15 @@
 .annotator-button {
   width: 25px;
   height: 25px;
-  background: rgba(55, 54, 68, 0);
-}
-
-.annotator-button-container {
-  margin-top: 7px;
-  width: 25px;
-  height: 25px;
-}
-
-.annotator-button {
-  width: 25px;
-  height: 25px;
-  background: rgba(55, 54, 68, 0);
 }
 
 /* Annotator View */
 .annotator-view-container {
   width: 300px;
   height: 700px;
-  background: rgba(249, 249, 249, 1);
 }
-
 .annotator-buttons-container {
   width: 300px;
-<<<<<<< HEAD
   height: 38px;
 }
 .friends-annoataions-button-container {
@@ -57,7 +43,6 @@
   height: 25px;
   margin: 7px 0 0 7px;
 }
-
 .friends-annotations-button {
   width: 25px; 
   height: 25px;
@@ -78,11 +63,9 @@
   margin: 7px 0 0 7px;
   display: inline-block;
 } 
-
 .annotator-my-view-button {
   width: 25px; 
   height: 25px;
-  background: rgba(55, 54, 68, 0);
   border-radius: 50%;
 }
 
@@ -90,7 +73,6 @@
 
   /* Header */
 .annotator-head-container {
-<<<<<<< HEAD
   margin-bottom: 10px;
   width: 300px;
   text-align: center;
@@ -140,7 +122,6 @@
 .feed-view-container {
   width: 600px;
   height: 1000px;
-  background: rgba(249, 249, 249, 1);
   text-align: center;
 }
 .header-container {
@@ -208,7 +189,28 @@
 
 /*Settings*/
 
-/*MyAnnotations*/
+/*FeedMyAnnotations*/
+.feed-my-annotations-container {
+  display: inline-block;
+  height: 800px;
+  width: 595px;
+  overflow-y: scroll;
+  background-image: url('http://www.designbolts.com/wp-content/uploads/2013/02/Noise-Light-Grey-Tileable-Pattern-For-Website-Background.jpg');
+}
+.my-annotations-links-container {
+  display: inline-block;
+  height: 800px;
+  width: 595px;
+  overflow-y: scroll;
+}
+.my-annotations-link-container {
+  display: inline-block;
+  height: 100px;
+  width: 495px;
+  margin: 15px 0px 15px 0px;
+  background-color: white;
+  border: 1px solid black;
+}
 
 /*FriendsFeed*/
 
@@ -228,11 +230,12 @@
   overflow-y: scroll;
 }
 
+
+
   /*FriendsAnnotationsView*/
 .friends-annotations-view-container {
   width: 300px;
   height: 700px;
-  background: rgba(249, 249, 249, 1);
   text-align: center;
 }
 .friends-container {
@@ -251,7 +254,6 @@
   background-color: black;
   display: inline-block;
 }
-
 .redirectLink {
   z-index: 1000;
 }
