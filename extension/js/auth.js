@@ -10,7 +10,7 @@ function fetchToken() {
     url: 'https://www.facebook.com/dialog/oauth?client_id=' + clientID + 
          '&response_type=token&access_type=online&redirect_uri=' + encodeURIComponent(redirectUri) +
          '&scope=email'
-  }
+  };
 
   chrome.identity.launchWebAuthFlow(options, function(redirectUri) {
     if (chrome.runtime.lastError) {
@@ -35,17 +35,12 @@ function fetchToken() {
 chrome.storage.sync.clear();
 
 chrome.browserAction.onClicked.addListener(function() {
+  console.log('browserAction clicked');
   chrome.storage.sync.get('access_token', function(obj) {
     if (!obj['access_token']) {
       fetchToken();
     }
   });
-  chrome.browserAction.onClicked.addListener(function() {
-    chrome.storage.sync.remove('access_token');
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {message: 'tokenRemoved'})
-    });
-  })
 });
 
 function fetchFbProfile(accessToken) {
@@ -60,10 +55,9 @@ function fetchFbProfile(accessToken) {
       profile.full_name = resp.name;
       profile.pic_url = resp.picture.data.url;
       profile.email = resp.email;
-      chrome.storage.sync.set({'facebook_id': resp.id});
       sendFbProfile(profile);
     }
-  }
+  };
   xhr.send();
 }
 
@@ -72,5 +66,18 @@ function sendFbProfile(data) {
   var url = 'https://onwords-test-server.herokuapp.com/api/users';
   xhr.open('POST', url, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      var resp = JSON.parse(xhr.responseText);
+      var user = {
+        id: resp.user_id,
+        fullName: resp.full_name,
+        email: resp.email,
+        picUrl: resp.pic_url/*,
+        desc: resp.description*/
+      };
+      chrome.storage.sync.set({'user': user});
+    }
+  };
   xhr.send(JSON.stringify(data));
 }

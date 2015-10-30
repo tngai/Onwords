@@ -13,7 +13,7 @@
 }
 /* React */
 .annotator-body-container {
-  height: 700px;
+  height: 1000px;
   overflow-y: scroll;
 }
 .annotator-button-container {
@@ -192,13 +192,20 @@
 }
 /*ButtonContainer*/
 .button-container {
-  height: 85px;
+  margin-top: 20px; 
+  margin-right: 10px;
+  height: 130px;
   width: 25px;
-  border: 1px solid red;
   position: absolute;
   top: 0;
   right: 0;
 }
+.feed-button {
+  margin-top: 2px;
+  height: 25px;
+  width: 25px;
+}
+
 /*Settings*/
 
 /*MyAnnotations*/
@@ -216,7 +223,10 @@
   text-align: center;
 }
 
-
+.annotationList {
+  height: 1000px;
+  overflow-y: scroll;
+}
 
   /*FriendsAnnotationsView*/
 .friends-annotations-view-container {
@@ -241,6 +251,11 @@
   background-color: black;
   display: inline-block;
 }
+
+.redirectLink {
+  z-index: 1000;
+}
+
 /*FriendsButtonsContainer*/
 .friends-annotations-buttons-container {
   width: 300px;
