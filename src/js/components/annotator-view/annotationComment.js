@@ -38,11 +38,14 @@ var annotationComment = React.createClass({
         THIS.submitChange(e);
         return false;
       }
-      if (key == 27) {
-        // wont read esc for some reason >.<
-        console.log('Esc was pushed!'); 
-      }
     });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        // rerender the annotator view?
+      }    
+    }); 
   },
 
   render: function() {

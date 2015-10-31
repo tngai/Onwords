@@ -19953,11 +19953,14 @@ var annotationComment = React.createClass({displayName: "annotationComment",
         THIS.submitChange(e);
         return false;
       }
-      if (key == 27) {
-        // wont read esc for some reason >.<
-        console.log('Esc was pushed!'); 
-      }
     });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        // rerender the annotator view?
+      }    
+    }); 
   },
 
   render: function() {
@@ -20221,6 +20224,13 @@ var App = React.createClass({displayName: "App",
     var THIS = this;
     $(document).on('click', '.annotator-hl', function() {
       THIS.updateView('showAnnotatorView');
+    });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        $('.annotator-cancel').trigger('click');
+      }    
     });
   },
   updateView: function(action){
