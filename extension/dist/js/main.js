@@ -19941,6 +19941,23 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     document.dispatchEvent(ev);
     this.setState({shouldEditComment: false});
   },
+  componentDidMount: function(e) {
+    var THIS = this;
+    // esc and enter functionality
+    $(document).keypress(function(e) {
+      var key = e.which;
+      console.log('inside!!!!!!');
+      if (key == 13) {
+        console.log('Enter was pushed!', this);
+        THIS.submitChange(e);
+        return false;
+      }
+      if (key == 27) {
+        // wont read esc for some reason >.<
+        console.log('Esc was pushed!'); 
+      }
+    });
+  },
 
   render: function() {
     var annotation = this.props.annotation;
@@ -19957,11 +19974,11 @@ var annotationComment = React.createClass({displayName: "annotationComment",
             React.createElement("textArea", {id: "annotationEdit", style: {height: 100+"px", width: 300+"px"}}, 
               annotation.text
             ), 
-            React.createElement("button", {onClick: this.submitChange}, "Submit")
+            React.createElement("button", {className: "comment-submit-button", onClick: this.submitChange}, "Submit")
           ), 
           
-        React.createElement("button", {onClick: deleteAnn}, "Remove"), 
-        React.createElement("button", {onClick: this.editComment}, "Edit")
+        React.createElement("button", {className: "comment-delete-button", onClick: deleteAnn}, "Remove"), 
+        React.createElement("button", {className: "comment-edit-button", onClick: this.editComment}, "Edit")
       )
     )
   }
