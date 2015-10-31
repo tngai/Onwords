@@ -52,6 +52,11 @@ var annotationComment = React.createClass({
 
 
   render: function() {
+    var userColor = $('span[data-annotation-id="' + this.props.annotation.id + '"]').css('background-color'); 
+    var divStyle = {
+      borderLeft: '4px solid ' + userColor
+    }
+
     var annotation = this.props.annotation;
     var self = this;
     var deleteAnn = function() {
@@ -59,7 +64,7 @@ var annotationComment = React.createClass({
     }
 
     return (
-      <div>
+      <div style={divStyle}>
         <p onClick={this.goToHighlight}>{annotation.quote}</p>
         {!this.state.shouldEditComment ? <p>{annotation.text}</p> : 
           <form>

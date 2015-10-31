@@ -19968,6 +19968,11 @@ var annotationComment = React.createClass({displayName: "annotationComment",
 
 
   render: function() {
+    var userColor = $('span[data-annotation-id="' + this.props.annotation.id + '"]').css('background-color'); 
+    var divStyle = {
+      borderLeft: '4px solid ' + userColor
+    }
+
     var annotation = this.props.annotation;
     var self = this;
     var deleteAnn = function() {
@@ -19975,7 +19980,7 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     }
 
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {style: divStyle}, 
         React.createElement("p", {onClick: this.goToHighlight}, annotation.quote), 
         !this.state.shouldEditComment ? React.createElement("p", null, annotation.text) : 
           React.createElement("form", null, 
@@ -20833,10 +20838,14 @@ var friendAnnotationComment = React.createClass({displayName: "friendAnnotationC
   },
 
   render: function() {
-    
+    debugger;
+    var userColor = $('span[data-annotation-id="' + this.props.annotation.id + '"]').css('background-color'); 
+    var divStyle = {
+      borderLeft: '4px solid ' + userColor
+    }
     var annotation = this.props.annotation;
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {style: divStyle}, 
         React.createElement("p", {onClick: this.goToHighlight}, annotation.quote), 
         React.createElement("p", null, annotation.text)
       )
