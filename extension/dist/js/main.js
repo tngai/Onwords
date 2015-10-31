@@ -20848,11 +20848,9 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     if (!friends[id]) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      // friends[id] = true;
       console.log('friends are now', this.state.friends);
       console.log(friends[id], ' stored in chrome now')
     } else {
-      // friends[id] = false;
       console.log('friends are now', this.state.friends);
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
@@ -20869,13 +20867,16 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   },
 
   render: function() {
+    var ownId = window.localStorage.getItem('user_id');
     var friendsArray = Object.keys(this.state.friends);
     var self = this;
 
     var friendCarousel = friendsArray.map(function(friend, index) {
-      return (
-        React.createElement("div", {className: "friends-pic", "data-id": friend, onClick: self.toggleFriendAnnotations.bind(null, friend)})
-      )
+      if (friend !== ownId) {
+        return (
+          React.createElement("div", {className: "friends-pic", "data-id": friend, onClick: self.toggleFriendAnnotations.bind(null, friend)})
+        )
+      }
     })
 
     console.log('inside-friendsview, annotations:', this.state.annotations)
@@ -20884,7 +20885,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
       React.createElement("div", {className: "friends-annotations-view-container"}, 
         React.createElement("div", {className: "friends-annotations-buttons-container"}, 
           React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
-          React.createElement(MyAnnotationsButton, React.__spread({},  this.props)), 
+          React.createElement(MyAnnotationsButton, {toggleFriendAnnotations: this.toggleFriendAnnotations}), 
           React.createElement(HomeButton, React.__spread({},  this.props))
         ), 
 
@@ -20902,6 +20903,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     debugger;
     console.log('friend annotations view mounted');
     var self = this;
+    var ownId = window.localStorage.getItem('user_id');
     var uri = window.location.href.split("?")[0];
     if (uri.substring(uri.length-11) === 'onwords1991') {
       uri = uri.substring(0, uri.length-13);
@@ -20921,13 +20923,13 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
               friends[obj[uri][i].user_id] = true;
             }
             annotations = obj[uri];
-          } 
+          }
           for (var i = 0; i < data.rows.length; i++) {
             if (friends[data.rows[i].user_id] === undefined) {
               friends[data.rows[i].user_id] = false;
             }
           }
-        self.setState({annotations: annotations, friends: friends});
+          self.setState({annotations: annotations, friends: friends});
       })
     })
 
@@ -20936,13 +20938,15 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
       debugger;
       if (changes[uri]) {
         var newFriends = {};
+        var oldFriends = self.state.friends;
         console.log('chrome storage changed mothafucka', changes);
         if (changes[uri].newValue.length > 0) {
           for (var i = 0; i < changes[uri].newValue.length; i++) {
             newFriends[changes[uri].newValue[i].user_id] = true;
           }
         }
-        for (var friend in self.state.friends) {
+
+        for (var friend in oldFriends) {
           if (newFriends[friend] === undefined) {
             newFriends[friend] = false;
           }
@@ -20960,7 +20964,8 @@ var React = require('react');
 
 var MyAnnotationsButton = React.createClass({displayName: "MyAnnotationsButton",
   handleClick: function() {
-    this.props.updateView('showAnnotatorView');
+    var ownId = window.localStorage.getItem('user_id');
+    this.props.toggleFriendAnnotations(ownId);
   }, 
   render: function() {   
     return (
@@ -21043,28 +21048,27 @@ var userId;
 
 if (code.substring(code.length - 11)) {
   userId = code.substring(0, code.length - 11);
-} else {
-  chrome.storage.sync.get('user', function(obj) {
-    if (!obj['user']) {
-      console.error('Unable to access user_id from chrome.storage');
-      return;
-    }
-    userId = obj.user.id; 
-    window.localStorage.setItem('user_id', obj.user.id);
-  })
-}
+} 
+
+
 
 
 var identityListener = function(changes) {
   if (changes.user && changes.user.newValue) {
+    debugger;
     renderComponents();
-    test.annotate(userId);
+    test.annotate(changes.user.newValue.id);
+    window.localStorage.setItem('user_id', changes.user.newValue.id);
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
 
 chrome.storage.sync.get('user', function(obj) {
-  if (obj['user']) {
+  if (obj.user) {
+    if (!userId) {
+      userId = obj.user.id;
+      window.localStorage.setItem('user_id', userId);
+    }
     renderComponents();
     test.annotate(userId);
   } else {
