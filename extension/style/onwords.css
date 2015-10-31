@@ -189,6 +189,19 @@
 
 /*Settings*/
 
+.settings-profile-edit-icon {
+  height: 16px;
+  width: 16px;
+}
+#profile-pic {
+  height:300px;
+  width:auto;
+  border-radius: 50%;
+  padding: 5px;
+}
+/*MyAnnotations*/
+
+
 /*FeedMyAnnotations*/
 .feed-my-annotations-container {
   display: inline-block;
@@ -211,6 +224,7 @@
   background-color: white;
   border: 1px solid black;
 }
+
 
 /*FriendsFeed*/
 

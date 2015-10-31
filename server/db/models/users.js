@@ -14,7 +14,7 @@ var User = db.Model.extend({
 },{
   //Model methods
   fetchById: function(options) {
-    return new this(options).fetch();
+    return new this(options).fetch({withRelated:['annotations']});
   },
 
   fetchByFacebookId: function(facebook_id) {
@@ -30,6 +30,12 @@ var User = db.Model.extend({
   },
   newUser: function(options) {
     return new this(options);
+  },
+  fetchByUserId: function(user_id) {
+    return new this({"user_id":user_id}).fetchAll();
+  },
+  fetchByFullName: function(options){
+    return new this(options).fetchAll();
   }
 });
 
