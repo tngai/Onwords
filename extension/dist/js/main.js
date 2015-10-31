@@ -19942,6 +19942,26 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     document.dispatchEvent(ev);
     this.setState({shouldEditComment: false});
   },
+  componentDidMount: function(e) {
+    var THIS = this;
+    // esc and enter functionality
+    $(document).keypress(function(e) {
+      var key = e.which;
+      console.log('inside!!!!!!');
+      if (key == 13) {
+        console.log('Enter was pushed!', this);
+        THIS.submitChange(e);
+        return false;
+      }
+    });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        // rerender the annotator view?
+      }    
+    }); 
+  },
 
   render: function() {
     var annotation = this.props.annotation;
@@ -19958,11 +19978,11 @@ var annotationComment = React.createClass({displayName: "annotationComment",
             React.createElement("textArea", {id: "annotationEdit", style: {height: 100+"px", width: 300+"px"}}, 
               annotation.text
             ), 
-            React.createElement("button", {onClick: this.submitChange}, "Submit")
+            React.createElement("button", {className: "comment-submit-button", onClick: this.submitChange}, "Submit")
           ), 
           
-        React.createElement("button", {onClick: deleteAnn}, "Remove"), 
-        React.createElement("button", {onClick: this.editComment}, "Edit")
+        React.createElement("button", {className: "comment-delete-button", onClick: deleteAnn}, "Remove"), 
+        React.createElement("button", {className: "comment-edit-button", onClick: this.editComment}, "Edit")
       )
     )
   }
@@ -20205,6 +20225,13 @@ var App = React.createClass({displayName: "App",
     $(document).on('click', '.annotator-hl', function() {
       THIS.updateView('showAnnotatorView');
     });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        $('.annotator-cancel').trigger('click');
+      }    
+    });
   },
   updateView: function(action){
     var duration = 200;
@@ -20367,25 +20394,27 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
       var redirectUri = annotation.uri + '#' + annotation.user_id + 'onwords1991';
       console.log(redirectUri)
       return (
-        React.createElement("div", {key: index}, 
-          React.createElement("a", {onClick: handleClick, href: redirectUri, target: "blank", className: "redirectLink"}, annotation.uri, " : ", index)
+        React.createElement("div", {key: index, className: "my-annotations-link-container"}, 
+          React.createElement("a", {onClick: handleClick, href: redirectUri, target: "blank", className: "redirectLink"}, "URL TITLE GOES HERE : ", index)
         )
       )
     });
 
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {className: "my-annotations-links-container"}, 
         urls
       )
     )
   },
   componentDidMount: function() {
+    console.log('MyAnnotationsLink - componentDidMount');
     $(document).on('click', '.redirectLink', function(e) {
       var url = $(this).attr('href');
-      window.open(url, '_blank');      
+      window.open(url, '_blank');  
     });
   },
   componentWillUnmount: function() {
+    console.log('MyAnnotationsLink - componentWillUnmount');
     $(document).off();
   },
 });
@@ -20406,18 +20435,17 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
 
   },
   componentDidMount: function() {
+    console.log('MyAnnotations - componentDidMount');
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
     var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users?user_id=' + user;
-    console.log('1!!!!!!!!');
     $.get(completeUri, function(result) {
       if (this.isMounted()) {
-        console.log('info!', result.rows);
         this.setState({
           info: result.rows
         });
       }
-      console.log('it worked!!2', this.state.info);
+      console.log('MyAnnotations state:INFO = ', this.state.info);
     }.bind(this));
   },
   render: function() {

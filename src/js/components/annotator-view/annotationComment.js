@@ -27,6 +27,26 @@ var annotationComment = React.createClass({
     document.dispatchEvent(ev);
     this.setState({shouldEditComment: false});
   },
+  componentDidMount: function(e) {
+    var THIS = this;
+    // esc and enter functionality
+    $(document).keypress(function(e) {
+      var key = e.which;
+      console.log('inside!!!!!!');
+      if (key == 13) {
+        console.log('Enter was pushed!', this);
+        THIS.submitChange(e);
+        return false;
+      }
+    });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        // rerender the annotator view?
+      }    
+    }); 
+  },
 
   render: function() {
     var annotation = this.props.annotation;
@@ -43,11 +63,11 @@ var annotationComment = React.createClass({
             <textArea id="annotationEdit" style={{height: 100+"px", width: 300+"px"}}>
               {annotation.text}
             </textArea>
-            <button onClick={this.submitChange}>Submit</button>
+            <button className='comment-submit-button' onClick={this.submitChange}>Submit</button>
           </form>
           }
-        <button onClick={deleteAnn}>Remove</button>
-        <button onClick={this.editComment}>Edit</button>
+        <button className='comment-delete-button' onClick={deleteAnn}>Remove</button>
+        <button className='comment-edit-button' onClick={this.editComment}>Edit</button>
       </div>
     )
   }
