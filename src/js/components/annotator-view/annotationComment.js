@@ -21,8 +21,9 @@ var annotationComment = React.createClass({
     e.preventDefault();
     var newText = $('textArea#annotationEdit').val();
     console.log('new text:', newText)
-    this.props.annotation.text = newText;
-    var ev = new CustomEvent('updateAnnotation', {detail: {targetAnnotation: this.props.annotation}})
+    var annotation = this.props.annotation;
+    annotation.text = newText;
+    var ev = new CustomEvent('updateAnnotation', {detail: {targetAnnotation: annotation}})
     document.dispatchEvent(ev);
     this.setState({shouldEditComment: false});
   },
