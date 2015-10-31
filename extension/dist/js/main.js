@@ -20032,11 +20032,7 @@ var AnnotatorBody = React.createClass({displayName: "AnnotatorBody",
     chrome.storage.onChanged.addListener(function(changes) {
       var uri = window.location.href.split("?")[0];
       console.log('annotator body, storage updated', changes[uri]);
-<<<<<<< HEAD
       if (changes[uri] && changes[uri].newValue) {
-=======
-      if (changes[uri]) {
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
         self.setState({annotations: changes[uri].newValue});
       }
     });
@@ -20077,21 +20073,14 @@ var React = require('react');
 var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimizeButton",
   handleClick: function() {
     this.props.updateView('showAnnotatorButton');
-<<<<<<< HEAD
-=======
 
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
     // image rendering from files
     // src={chrome.extension.getURL('/assets/right-copy.png')} 
   },
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "annotator-my-view-button-container"}, 
-<<<<<<< HEAD
         React.createElement("img", {className: "annotator-my-view-button", src: chrome.extension.getURL('/assets/right-copy.png')})
-=======
-        React.createElement("img", {className: "annotator-my-view-button", src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg"})
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
       )
     );
   }
@@ -20136,14 +20125,9 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
     return (
       React.createElement("div", {className: "annotator-view-container"}, 
         React.createElement("div", {className: "annotator-buttons-container"}, 
-<<<<<<< HEAD
           React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
           React.createElement(FriendsAnnotationsButton, React.__spread({},  this.props)), 
           React.createElement(HomeButton, React.__spread({},  this.props))
-=======
-          React.createElement(HomeButton, React.__spread({},  this.props)), 
-          React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props))
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
         ), 
 
         React.createElement(AnnotatorHeader, React.__spread({},  this.props)), 
@@ -20778,10 +20762,12 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     if (!friends[id]) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      friends[id] = true;
+      // friends[id] = true;
+      console.log('friends are now', this.state.friends);
       console.log(friends[id], ' stored in chrome now')
     } else {
-      friends[id] = false;
+      // friends[id] = false;
+      console.log('friends are now', this.state.friends);
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
         console.log(this.state.annotations[i]);
@@ -20832,43 +20818,51 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     var self = this;
     var uri = window.location.href.split("?")[0];
     if (uri.substring(uri.length-11) === 'onwords1991') {
-      user = uri.substring(uri.indexOf('#')+1, uri.length - 11);
       uri = uri.substring(0, uri.length-13);
     } else {
-      user = window.localStorage.getItem('user_id');
       uri = uri;
     }
-    $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: targetUri})
+
+    var annotations = [];
+    var friends = {};
+
+    $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: uri})
       .done(function(data) {
-        debugger;
-        var ownId = window.localStorage.getItem('user_id');
-        var friends = {};
-        for (var i = 0; i < data.rows.length; i++) {
-          if (data.rows[i].user_id) {
-              if (data.rows[i].user_id.toString() === user && data.rows[i].user_id.toString() !== ownId) {
-                friends[data.rows[i].user_id] = true;
-                friends[ownId] = false;
-              } else if (data.rows[i].user_id.toString() == ownId) {
-                friends[data.rows[i].user_id] = true;
-              } else {
-                friends[data.rows[i].user_id] = false;
-              }
-          }
-        }
         chrome.storage.local.get(uri, function(obj) {
-          if (obj[uri]) {
-            self.setState({annotations: obj[uri], friends: friends});
-          } else {
-            self.setState({friends: friends});
+          debugger;
+          if(obj[uri]) {
+            for (var i = 0; i < obj[uri].length; i++) {
+              friends[obj[uri][i].user_id] = true;
+            }
+            annotations = obj[uri];
+          } 
+          for (var i = 0; i < data.rows.length; i++) {
+            if (friends[data.rows[i].user_id] === undefined) {
+              friends[data.rows[i].user_id] = false;
+            }
           }
-        })
+        self.setState({annotations: annotations, friends: friends});
       })
+    })
 
 
     chrome.storage.onChanged.addListener(function(changes) {
       debugger;
-      console.log('chrome storage changed mothafucka', changes);
-        self.setState({annotations: changes[uri].newValue});
+      if (changes[uri]) {
+        var newFriends = {};
+        console.log('chrome storage changed mothafucka', changes);
+        if (changes[uri].newValue.length > 0) {
+          for (var i = 0; i < changes[uri].newValue.length; i++) {
+            newFriends[changes[uri].newValue[i].user_id] = true;
+          }
+        }
+        for (var friend in self.state.friends) {
+          if (newFriends[friend] === undefined) {
+            newFriends[friend] = false;
+          }
+        }
+        self.setState({annotations: changes[uri].newValue, friends: newFriends});
+      }
     })
   }
 });
@@ -20974,15 +20968,6 @@ chrome.storage.sync.get('user', function(obj) {
     chrome.storage.onChanged.addListener(identityListener);
   }
 });
-<<<<<<< HEAD
-=======
-
-chrome.runtime.onMessage.addListener(function(request) {
-  if (request.message === 'tokenRemoved') {
-    $('.annotation-sidebar').remove();
-  }
-})
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
 
 },{"./components/app":166,"./test":186,"react":156}],186:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
@@ -21023,33 +21008,6 @@ exports.annotate = function(event) {
    .include(pageUri)
    .include(renderAnnotations);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  chrome.storage.sync.get('facebook_id', function(obj) {
-    if (!obj['facebook_id']) {
-      console.error('Unable to access facebook_id from chrome.storage');
-      return;
-    }
-    app.start()
-       .then(function() {
-         window.localStorage.setItem('facebook_id', obj.facebook_id);
-         console.log('facebook_id set in localStorage');
-         app.annotations.load({uri: window.location.href.split("?")[0]});
-       });
-  });
-=======
-  app.start()
-    .then(function() {
-      app.annotations.load({uri: window.location.href.split("?")[0]});
-    })
-
-    chrome.runtime.onMessage.addListener(function(request) {
-      if (request.message === 'tokenRemoved') {
-        app.destroy();
-      }
-    })
->>>>>>> 60f10bef8a21395c7135c9dad20e0f0a2822de0f
-=======
 
   var code = window.location.hash.substring(1);
   debugger;
@@ -21078,7 +21036,6 @@ exports.annotate = function(event) {
         });
     });
   }
->>>>>>> fix/multipleRender
 
 
   document.addEventListener('getFriendAnnotations', function(e) {
