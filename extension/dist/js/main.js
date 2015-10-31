@@ -20541,7 +20541,6 @@ var Settings = React.createClass({displayName: "Settings",
     
   },
   handleSubmit: function(e){
-    console.log('this is the event object ', e,e.value,e.target.value,e.target.dataset.setting);
     if(e.charCode == 13) { 
       
       console.log('this is what is entered ',e.target.value)
@@ -20550,8 +20549,7 @@ var Settings = React.createClass({displayName: "Settings",
           this.setState({
             pic_url: e.target.value,
             editPicUrl: false
-          });
-          console.log('this is what is changed into ', e.target.value, e.target.dataset.setting)
+          }); 
           break;
         case 'username':
           this.setState({
@@ -20588,7 +20586,6 @@ var Settings = React.createClass({displayName: "Settings",
 
     return (
       React.createElement("div", {className: "settings-view-container"}, 
-        this.updateServer({picUrl:"asdf",description:"description nonsense"}).done(function(data){"package sent, this is whats sent back ", data}), 
         React.createElement("div", {className: "picture-settings"}, 
           React.createElement("img", {id: "profile-pic", src: this.state.pic_url}), 
           React.createElement("button", {type: "submit", onClick: this.handleClick}, 
