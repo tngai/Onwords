@@ -17,15 +17,15 @@ if (code.substring(code.length - 11)) {
   userId = code.substring(0, code.length - 11);
 } 
 
-
-
-
 var identityListener = function(changes) {
   if (changes.user && changes.user.newValue) {
     debugger;
-    renderComponents();
-    test.annotate(changes.user.newValue.id);
+    if (!userId) {
+      userId = changes.user.newValue.id
+    }
     window.localStorage.setItem('user_id', changes.user.newValue.id);
+    renderComponents();
+      test.annotate(userId);
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
