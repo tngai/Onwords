@@ -20570,7 +20570,6 @@ module.exports = FeedSearchView;
 var React = require('react');
 
 var Settings = React.createClass({displayName: "Settings",
-<<<<<<< HEAD
   getInitialState: function(){
     return {
       description: "Onwords!",
@@ -20590,6 +20589,7 @@ var Settings = React.createClass({displayName: "Settings",
     }.bind(this));
   },
   updateServer: function(options){ 
+    
     return $.ajax({
       url: "http://localhost:8000/api/users/update",
       method: "post",
@@ -20607,7 +20607,7 @@ var Settings = React.createClass({displayName: "Settings",
           this.setState({
             pic_url: e.target.value,
             editPicUrl: false
-          }); 
+          });
           break;
         case 'username':
           this.setState({
@@ -20627,25 +20627,20 @@ var Settings = React.createClass({displayName: "Settings",
   handleClick: function(e) {  
     switch (e.target.dataset.setting) {
       case 'pic':
-        console.log('pic was chosen');
         this.setState({editPicUrl: true});
         break;
       case 'username':
-        console.log('username was chosen');
         this.setState({editUsername: true});
         break;
       case 'description':
-        console.log('description was chosen');
         this.setState({editDescription: true});
         break;
     }  
   },
-=======
->>>>>>> a9f16df0f4b893913455a307fa8bec2b897f2108
   render: function() {
+
     return (
       React.createElement("div", {className: "settings-view-container"}, 
-<<<<<<< HEAD
         React.createElement("div", {className: "picture-settings"}, 
           React.createElement("img", {id: "profile-pic", src: this.state.pic_url}), 
           React.createElement("button", {type: "submit", onClick: this.handleClick}, 
@@ -20653,16 +20648,20 @@ var Settings = React.createClass({displayName: "Settings",
           ), 
           this.state.editPicUrl ? React.createElement("input", {type: "text", placeholder: this.state.pic_url, "data-setting": "picUrl", onKeyPress: this.handleSubmit}) : null
         ), 
-=======
->>>>>>> a9f16df0f4b893913455a307fa8bec2b897f2108
         React.createElement("div", {className: "username-settings"}, 
-          "Username"
+          this.state.username, 
+          React.createElement("button", {type: "submit", onClick: this.handleClick}, 
+            React.createElement("img", {"data-setting": "username", className: "settings-profile-edit-icon", src: "https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+          ), 
+          this.state.editUsername ? React.createElement("input", {type: "text", placeholder: this.state.username, "data-setting": "username", onKeyPress: this.handleSubmit}) : null
         ), 
-        React.createElement("div", {className: "picture-settings"}, 
-          "Picture"
-        ), 
-        React.createElement("div", {className: "description-settings"}, 
-          "Description"
+
+        React.createElement("div", {className: "settingsdescription-settings"}, 
+          "Description: ", this.state.description, 
+          React.createElement("button", {type: "submit", onClick: this.handleClick}, 
+            React.createElement("img", {"data-setting": "description", className: "settings-profile-edit-icon", src: "https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+          ), 
+          this.state.editDescription ? React.createElement("input", {type: "text", placeholder: this.state.description, "data-setting": "description", onKeyPress: this.handleSubmit}) : null
         )
       )
     );
