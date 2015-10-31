@@ -27,26 +27,26 @@ var annotationComment = React.createClass({
     document.dispatchEvent(ev);
     this.setState({shouldEditComment: false});
   },
-  componentDidMount: function(e) {
-    var THIS = this;
-    // esc and enter functionality
-    $(document).keypress(function(e) {
-      var key = e.which;
-      console.log('inside!!!!!!');
-      if (key == 13) {
-        console.log('Enter was pushed!', this);
-        THIS.submitChange(e);
-        return false;
-      }
-    });
+  // componentDidMount: function(e) {
+  //   var THIS = this;
+  //   // esc and enter functionality
+  //   $(document).keypress(function(e) {
+  //     var key = e.which;
+  //     console.log('inside!!!!!!');
+  //     if (key == 13) {
+  //       console.log('Enter was pushed!', this);
+  //       THIS.submitChange(e);
+  //       return false;
+  //     }
+  //   });
 
-    $(document).on('keyup', function(e){
-      if (e.which == 27) { 
-        console.log('ESCAPE KEY PRESSED!');
-        // rerender the annotator view?
-      }    
-    }); 
-  },
+  //   $(document).on('keyup', function(e){
+  //     if (e.which == 27) { 
+  //       console.log('ESCAPE KEY PRESSED!');
+  //       // rerender the annotator view?
+  //     }    
+  //   }); 
+  // },
 
   render: function() {
     var annotation = this.props.annotation;
