@@ -57,15 +57,24 @@ var Settings = React.createClass({
   handleClick: function(e) {  
     switch (e.target.dataset.setting) {
       case 'pic':
-        console.log('pic was chosen');
+        if(this.state.editPicUrl){
+          this.setState({editPicUrl:false})
+          break;
+        }
         this.setState({editPicUrl: true});
         break;
       case 'username':
-        console.log('username was chosen');
+        if(this.state.editUsername){
+            this.setState({editUsername:false})
+            break;
+        }
         this.setState({editUsername: true});
         break;
       case 'description':
-        console.log('description was chosen');
+        if(this.state.editDescription){
+            this.setState({editDescription:false})
+            break;
+        }
         this.setState({editDescription: true});
         break;
     }  
