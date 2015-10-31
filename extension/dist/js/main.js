@@ -20485,14 +20485,19 @@ var React = require('react');
 var Settings = React.createClass({displayName: "Settings",
   getInitialState: function(){
     return {
+<<<<<<< HEAD
       description: "Onwords!",
       editPicUrl: false,
       editUsername: false,
       editDescription: false
+=======
+      description: "description",
+>>>>>>> f05e2974fc57cb0995084fe4f8c7ce9eba4ad7f3
     }
   },
   componentWillMount: function(){
     chrome.storage.sync.get('user',function(data){
+<<<<<<< HEAD
       this.setState({
         pic_url: data.user.picUrl,
         username: data.user.fullName,
@@ -20553,11 +20558,21 @@ var Settings = React.createClass({displayName: "Settings",
         this.setState({editDescription: true});
         break;
     }  
+=======
+      console.log('*** here is the data ', data)
+      this.setState({
+        pic_url: data.user.picUrl,
+        username: data.user.fullName
+      });  
+      
+    }.bind(this));
+>>>>>>> f05e2974fc57cb0995084fe4f8c7ce9eba4ad7f3
   },
   render: function() {
 
     return (
       React.createElement("div", {className: "settings-view-container"}, 
+<<<<<<< HEAD
         this.updateServer({picUrl:"asdf",description:"description nonsense"}).done(function(data){"package sent, this is whats sent back ", data}), 
         React.createElement("div", {className: "picture-settings"}, 
           React.createElement("img", {id: "profile-pic", src: this.state.pic_url}), 
@@ -20580,6 +20595,16 @@ var Settings = React.createClass({displayName: "Settings",
             React.createElement("img", {"data-setting": "description", className: "settings-profile-edit-icon", src: "https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
           ), 
           this.state.editDescription ? React.createElement("input", {type: "text", placeholder: this.state.description, "data-setting": "description", onKeyPress: this.handleSubmit}) : null
+=======
+        React.createElement("div", {className: "picture-settings"}, 
+          "Picture ", React.createElement("img", {id: "", src: this.state.pic_url}), " ", React.createElement("img", {className: "settings-profile-edit-icon", src: "http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+        ), 
+        React.createElement("div", {className: "username-settings"}, 
+          "Username: ", this.state.username, " ", React.createElement("img", {className: "settings-profile-edit-icon", src: "http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+        ), 
+        React.createElement("div", {className: "description-settings"}, 
+          "Description: ", this.state.description, " ", React.createElement("img", {className: "settings-profile-edit-icon", src: "http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+>>>>>>> f05e2974fc57cb0995084fe4f8c7ce9eba4ad7f3
         )
       )
     );

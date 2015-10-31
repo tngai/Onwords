@@ -145,7 +145,7 @@ app.put('/api/annotations/:id',function(req,res){
 });
 
 
-// Search endpoint(Read)
+// Search endpoint(Read)  returns all annotations per user per uri
 
 app.get('/api/search',function(req,res){
 
@@ -188,6 +188,8 @@ app.get('/api/search',function(req,res){
     });
   })
 
+//Returns all annotations from user
+
 app.get('/api/search/users',function(req,res){
   var returnObj = {};
   var user_id = parseInt(req.query.user_id);
@@ -219,10 +221,74 @@ app.get('/api/search/users',function(req,res){
     res.json(returnObj);
     res.end();
   })
-
-
-
 });  
+
+// Search  all annotations per uri (Read)
+
+app.get('/api/search/uri',function(req,res){
+
+  var returnObj = {};
+  var uri = req.query.uri;
+
+  db.model('Annotation').fetchByUri(uri).then(function(data){
+    console.log('here is what is returned ', data.models);
+    var uriFilter = data.models.filter(function(e){
+      return ( (e.attributes.uri === uri) );
+    });
+
+    var returnArray = uriFilter.map(function(e){
+      var resObj = {
+        id: e.attributes.id,
+        uri: e.attributes.uri,
+        text: e.attributes.text,
+        quote: e.attributes.quote,
+        user_id: e.attributes.user_id,
+        ranges: [
+          {
+            start: e.attributes.start,
+            end: e.attributes.end,
+            startOffset: e.attributes.startOffset,
+            endOffset: e.attributes.endOffset
+          }
+        ]
+       };
+       return resObj;   
+    });
+    returnObj.rows = returnArray;   
+    res.set('Content-Type', 'application/JSON');
+    res.json(returnObj);
+    res.end(); 
+    });
+  });
+
+
+  // Search  returning user profile by full name search 
+
+  app.get('/api/users', function(req,res){
+    var returnObj = {};
+    var user_full_name = req.query.full_name;
+    db.model('User').fetchByFullName({full_name:user_full_name}).then(function(data) {
+      var fnFilter = data.models.filter(function(e){
+        return (e.attributes.full_name === user_full_name);
+      });
+
+      var returnArray = fnFilter.map(function(e){
+        var resObj = {
+          full_name: e.attributes.full_name,
+          pic_url: e.attributes.pic_url,
+          email: e.attributes.email
+        };
+         return resObj;   
+      });
+      returnObj.rows = returnArray;   
+      res.set('Content-Type', 'application/JSON');
+      res.json(returnObj);
+      res.end(); 
+    });
+  });
+
+
+
 
 
 app.listen(process.env.PORT || 8000);
