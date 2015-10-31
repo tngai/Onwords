@@ -79,7 +79,7 @@ var FriendsAnnotationsView = React.createClass({
       <div className='friends-annotations-view-container'>
         <div className='friends-annotations-buttons-container'>
           <AnnotatorMinimizeButton {...this.props} />
-          <MyAnnotationsButton {...this.props} />
+          <MyAnnotationsButton toggleFriendAnnotations={this.toggleFriendAnnotations} />
           <HomeButton {...this.props} />
         </div>
 
@@ -117,14 +117,11 @@ var FriendsAnnotationsView = React.createClass({
               friends[obj[uri][i].user_id] = true;
             }
             annotations = obj[uri];
-          } 
+          }
           for (var i = 0; i < data.rows.length; i++) {
             if (friends[data.rows[i].user_id] === undefined) {
               friends[data.rows[i].user_id] = false;
             }
-          }
-          if (friends[ownId] === undefined) {
-            friends[ownId] = false;
           }
           self.setState({annotations: annotations, friends: friends});
       })
@@ -142,14 +139,6 @@ var FriendsAnnotationsView = React.createClass({
             newFriends[changes[uri].newValue[i].user_id] = true;
           }
         }
-
-        // if (newFriends[ownId] === true) {
-        //   if (oldFriends[ownId] === false) {
-        //     var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
-        //     document.dispatchEvent(ev);
-        //     oldFriends[ownId] = true;
-        //   }
-        // }
 
         for (var friend in oldFriends) {
           if (newFriends[friend] === undefined) {

@@ -11,18 +11,17 @@ var MyAnnotations = React.createClass({
 
   },
   componentDidMount: function() {
+    console.log('MyAnnotations - componentDidMount');
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
     var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users?user_id=' + user;
-    console.log('1!!!!!!!!');
     $.get(completeUri, function(result) {
       if (this.isMounted()) {
-        console.log('info!', result.rows);
         this.setState({
           info: result.rows
         });
       }
-      console.log('it worked!!2', this.state.info);
+      console.log('MyAnnotations state:INFO = ', this.state.info);
     }.bind(this));
   },
   render: function() {

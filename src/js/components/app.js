@@ -26,6 +26,13 @@ var App = React.createClass({
     $(document).on('click', '.annotator-hl', function() {
       THIS.updateView('showAnnotatorView');
     });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        $('.annotator-cancel').trigger('click');
+      }    
+    });
   },
   updateView: function(action){
     var duration = 200;

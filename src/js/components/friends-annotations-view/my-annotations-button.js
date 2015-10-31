@@ -2,7 +2,8 @@ var React = require('react');
 
 var MyAnnotationsButton = React.createClass({
   handleClick: function() {
-    this.props.updateView('showAnnotatorView');
+    var ownId = window.localStorage.getItem('user_id');
+    this.props.toggleFriendAnnotations(ownId);
   }, 
   render: function() {   
     return (
