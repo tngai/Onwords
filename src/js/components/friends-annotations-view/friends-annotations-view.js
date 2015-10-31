@@ -45,11 +45,9 @@ var FriendsAnnotationsView = React.createClass({
     if (!friends[id]) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      // friends[id] = true;
       console.log('friends are now', this.state.friends);
       console.log(friends[id], ' stored in chrome now')
     } else {
-      // friends[id] = false;
       console.log('friends are now', this.state.friends);
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
@@ -99,6 +97,7 @@ var FriendsAnnotationsView = React.createClass({
     debugger;
     console.log('friend annotations view mounted');
     var self = this;
+    var ownId = window.localStorage.getItem('user_id');
     var uri = window.location.href.split("?")[0];
     if (uri.substring(uri.length-11) === 'onwords1991') {
       uri = uri.substring(0, uri.length-13);
@@ -124,7 +123,10 @@ var FriendsAnnotationsView = React.createClass({
               friends[data.rows[i].user_id] = false;
             }
           }
-        self.setState({annotations: annotations, friends: friends});
+          if (friends[ownId] === undefined) {
+            friends[ownId] = false;
+          }
+          self.setState({annotations: annotations, friends: friends});
       })
     })
 
@@ -133,13 +135,23 @@ var FriendsAnnotationsView = React.createClass({
       debugger;
       if (changes[uri]) {
         var newFriends = {};
+        var oldFriends = self.state.friends;
         console.log('chrome storage changed mothafucka', changes);
         if (changes[uri].newValue.length > 0) {
           for (var i = 0; i < changes[uri].newValue.length; i++) {
             newFriends[changes[uri].newValue[i].user_id] = true;
           }
         }
-        for (var friend in self.state.friends) {
+
+        // if (newFriends[ownId] === true) {
+        //   if (oldFriends[ownId] === false) {
+        //     var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
+        //     document.dispatchEvent(ev);
+        //     oldFriends[ownId] = true;
+        //   }
+        // }
+
+        for (var friend in oldFriends) {
           if (newFriends[friend] === undefined) {
             newFriends[friend] = false;
           }
