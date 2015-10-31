@@ -19936,10 +19936,31 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     e.preventDefault();
     var newText = $('textArea#annotationEdit').val();
     console.log('new text:', newText)
-    this.props.annotation.text = newText;
-    var ev = new CustomEvent('updateAnnotation', {detail: {targetAnnotation: this.props.annotation}})
+    var annotation = this.props.annotation;
+    annotation.text = newText;
+    var ev = new CustomEvent('updateAnnotation', {detail: {targetAnnotation: annotation}})
     document.dispatchEvent(ev);
     this.setState({shouldEditComment: false});
+  },
+  componentDidMount: function(e) {
+    var THIS = this;
+    // esc and enter functionality
+    $(document).keypress(function(e) {
+      var key = e.which;
+      console.log('inside!!!!!!');
+      if (key == 13) {
+        console.log('Enter was pushed!', this);
+        THIS.submitChange(e);
+        return false;
+      }
+    });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        // rerender the annotator view?
+      }    
+    }); 
   },
 
   render: function() {
@@ -19957,11 +19978,11 @@ var annotationComment = React.createClass({displayName: "annotationComment",
             React.createElement("textArea", {id: "annotationEdit", style: {height: 100+"px", width: 300+"px"}}, 
               annotation.text
             ), 
-            React.createElement("button", {onClick: this.submitChange}, "Submit")
+            React.createElement("button", {className: "comment-submit-button", onClick: this.submitChange}, "Submit")
           ), 
           
-        React.createElement("button", {onClick: deleteAnn}, "Remove"), 
-        React.createElement("button", {onClick: this.editComment}, "Edit")
+        React.createElement("button", {className: "comment-delete-button", onClick: deleteAnn}, "Remove"), 
+        React.createElement("button", {className: "comment-edit-button", onClick: this.editComment}, "Edit")
       )
     )
   }
@@ -20073,6 +20094,7 @@ var React = require('react');
 var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimizeButton",
   handleClick: function() {
     this.props.updateView('showAnnotatorButton');
+
     // image rendering from files
     // src={chrome.extension.getURL('/assets/right-copy.png')} 
   },
@@ -20203,6 +20225,13 @@ var App = React.createClass({displayName: "App",
     $(document).on('click', '.annotator-hl', function() {
       THIS.updateView('showAnnotatorView');
     });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        $('.annotator-cancel').trigger('click');
+      }    
+    });
   },
   updateView: function(action){
     var duration = 200;
@@ -20216,14 +20245,14 @@ var App = React.createClass({displayName: "App",
             this.setState({showFeedView: false});
             $('.annotation-sidebar').animate({right: -(565)}, duration);
             break;
-        case 'showFriendsAnnotations':
-            console.log('showFriendsAnnotations!!');
-            this.setState({showFriendsAnnotations: true});
-            this.setState({showAnnotatorButton: false});
-            this.setState({showAnnotatorView: false});
-            this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(300)}, 50);
-            break;
+        // case 'showFriendsAnnotations':
+        //     console.log('showFriendsAnnotations!!');
+        //     this.setState({showFriendsAnnotations: true});
+        //     this.setState({showAnnotatorButton: false});
+        //     this.setState({showAnnotatorView: false});
+        //     this.setState({showFeedView: false});
+        //     $('.annotation-sidebar').animate({right: -(300)}, 50);
+        //     break;
         case 'showAnnotatorView':
             this.setState({showFriendsAnnotations: true});
             this.setState({showAnnotatorButton: false});
@@ -20296,7 +20325,7 @@ var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
         uri: 'http://blogs.scientificamerican.com/guest-blog/presidential-candidates-who-believes-in-climate-change/',
         title: 'Presidential Candidates: Who Believes in Climate Change?',
         profPic: 'https://scontent-lax3-1.xx.fbcdn.net/hphotos-xpa1/t31.0-8/q87/s960x960/980347_10201703421134973_1425263140_o.jpg',
-        name: 'Irving Fuck',
+        name: 'Irving Barajas',
         user_id: '2'
       }
     }
@@ -20365,25 +20394,27 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
       var redirectUri = annotation.uri + '#' + annotation.user_id + 'onwords1991';
       console.log(redirectUri)
       return (
-        React.createElement("div", {key: index}, 
-          React.createElement("a", {onClick: handleClick, href: redirectUri, target: "blank", className: "redirectLink"}, annotation.uri, " : ", index)
+        React.createElement("div", {key: index, className: "my-annotations-link-container"}, 
+          React.createElement("a", {onClick: handleClick, href: redirectUri, target: "blank", className: "redirectLink"}, "URL TITLE GOES HERE : ", index)
         )
       )
     });
 
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {className: "my-annotations-links-container"}, 
         urls
       )
     )
   },
   componentDidMount: function() {
+    console.log('MyAnnotationsLink - componentDidMount');
     $(document).on('click', '.redirectLink', function(e) {
       var url = $(this).attr('href');
-      window.open(url, '_blank');      
+      window.open(url, '_blank');  
     });
   },
   componentWillUnmount: function() {
+    console.log('MyAnnotationsLink - componentWillUnmount');
     $(document).off();
   },
 });
@@ -20404,18 +20435,17 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
 
   },
   componentDidMount: function() {
+    console.log('MyAnnotations - componentDidMount');
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
     var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users?user_id=' + user;
-    console.log('1!!!!!!!!');
     $.get(completeUri, function(result) {
       if (this.isMounted()) {
-        console.log('info!', result.rows);
         this.setState({
           info: result.rows
         });
       }
-      console.log('it worked!!2', this.state.info);
+      console.log('MyAnnotations state:INFO = ', this.state.info);
     }.bind(this));
   },
   render: function() {
@@ -20485,30 +20515,101 @@ var React = require('react');
 var Settings = React.createClass({displayName: "Settings",
   getInitialState: function(){
     return {
-      description: "description",
+      description: "Onwords!",
+      editPicUrl: false,
+      editUsername: false,
+      editDescription: false
     }
   },
   componentWillMount: function(){
     chrome.storage.sync.get('user',function(data){
-      console.log('*** here is the data ', data)
       this.setState({
         pic_url: data.user.picUrl,
-        username: data.user.fullName
+        username: data.user.fullName,
+        description: data.user.description || 'OnWords  !!  '
       });  
       
     }.bind(this));
   },
+  updateServer: function(options){ 
+    return $.ajax({
+      url: "http://localhost:8000/api/users/update",
+      method: "post",
+      data: options,
+      dataType: 'json'
+  });
+    
+  },
+  handleSubmit: function(e){
+    console.log('this is the event object ', e,e.value,e.target.value,e.target.dataset.setting);
+    if(e.charCode == 13) { 
+      
+      console.log('this is what is entered ',e.target.value)
+      switch (e.target.dataset.setting) {
+        case 'picUrl':
+          this.setState({
+            pic_url: e.target.value,
+            editPicUrl: false
+          });
+          console.log('this is what is changed into ', e.target.value, e.target.dataset.setting)
+          break;
+        case 'username':
+          this.setState({
+            username: e.target.value,
+            editUsername: false
+          });
+          break;
+        case 'description':
+          this.setState({
+             description: e.target.value,
+             editDescription: false
+           });
+          break;
+      }
+    }
+  },
+  handleClick: function(e) {  
+    switch (e.target.dataset.setting) {
+      case 'pic':
+        console.log('pic was chosen');
+        this.setState({editPicUrl: true});
+        break;
+      case 'username':
+        console.log('username was chosen');
+        this.setState({editUsername: true});
+        break;
+      case 'description':
+        console.log('description was chosen');
+        this.setState({editDescription: true});
+        break;
+    }  
+  },
   render: function() {
+
     return (
       React.createElement("div", {className: "settings-view-container"}, 
+        this.updateServer({picUrl:"asdf",description:"description nonsense"}).done(function(data){"package sent, this is whats sent back ", data}), 
         React.createElement("div", {className: "picture-settings"}, 
-          "Picture ", React.createElement("img", {id: "", src: this.state.pic_url}), " ", React.createElement("img", {className: "settings-profile-edit-icon", src: "http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+          React.createElement("img", {id: "profile-pic", src: this.state.pic_url}), 
+          React.createElement("button", {type: "submit", onClick: this.handleClick}, 
+            React.createElement("img", {"data-setting": "pic", className: "settings-profile-edit-icon", src: "https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png", alt: "profile pic"})
+          ), 
+          this.state.editPicUrl ? React.createElement("input", {type: "text", placeholder: this.state.pic_url, "data-setting": "picUrl", onKeyPress: this.handleSubmit}) : null
         ), 
         React.createElement("div", {className: "username-settings"}, 
-          "Username: ", this.state.username, " ", React.createElement("img", {className: "settings-profile-edit-icon", src: "http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+          this.state.username, 
+          React.createElement("button", {type: "submit", onClick: this.handleClick}, 
+            React.createElement("img", {"data-setting": "username", className: "settings-profile-edit-icon", src: "https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+          ), 
+          this.state.editUsername ? React.createElement("input", {type: "text", placeholder: this.state.username, "data-setting": "username", onKeyPress: this.handleSubmit}) : null
         ), 
-        React.createElement("div", {className: "description-settings"}, 
-          "Description: ", this.state.description, " ", React.createElement("img", {className: "settings-profile-edit-icon", src: "http://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+
+        React.createElement("div", {className: "settingsdescription-settings"}, 
+          "Description: ", this.state.description, 
+          React.createElement("button", {type: "submit", onClick: this.handleClick}, 
+            React.createElement("img", {"data-setting": "description", className: "settings-profile-edit-icon", src: "https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
+          ), 
+          this.state.editDescription ? React.createElement("input", {type: "text", placeholder: this.state.description, "data-setting": "description", onKeyPress: this.handleSubmit}) : null
         )
       )
     );
@@ -20703,17 +20804,19 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
       console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
-        return (
-          React.createElement("div", null, 
-            React.createElement("li", {className: "annotation"}, 
-              user.toString() === ownId ? 
-                React.createElement(AnnotationComment, {user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
-              : React.createElement(FriendAnnotationComment, {user: annotation.user, annotation: annotation})
-              
-            ), 
-            React.createElement("br", null)
+        if (friends[user]) {
+          return (
+            React.createElement("div", null, 
+              React.createElement("li", {className: "annotation"}, 
+                user.toString() === ownId ? 
+                  React.createElement(AnnotationComment, {user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
+                : React.createElement(FriendAnnotationComment, {user: annotation.user, annotation: annotation})
+                
+              ), 
+              React.createElement("br", null)
+            )
           )
-        )
+        }
     });
 
     return (
@@ -20774,10 +20877,12 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     if (!friends[id]) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      friends[id] = true;
+      // friends[id] = true;
+      console.log('friends are now', this.state.friends);
       console.log(friends[id], ' stored in chrome now')
     } else {
-      friends[id] = false;
+      // friends[id] = false;
+      console.log('friends are now', this.state.friends);
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
         console.log(this.state.annotations[i]);
@@ -20828,40 +20933,51 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     var self = this;
     var uri = window.location.href.split("?")[0];
     if (uri.substring(uri.length-11) === 'onwords1991') {
-      user = uri.substring(uri.indexOf('#')+1, uri.length - 11);
       uri = uri.substring(0, uri.length-13);
     } else {
       uri = uri;
-      user = window.localStorage.getItem('user_id');
     }
-    $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: targetUri})
+
+    var annotations = [];
+    var friends = {};
+
+    $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: uri})
       .done(function(data) {
-        debugger;
-        var friends = {};
-        for (var i = 0; i < data.rows.length; i++) {
-          if (data.rows[i].user_id) {
-              if (data.rows[i].user_id.toString() === user) {
-                friends[data.rows[i].user_id] = true;
-              } else {
-                friends[data.rows[i].user_id] = false;
-              }
-          }
-        }
-        var ownId = window.localStorage.getItem('user_id');
-        friends[ownId] = false;
         chrome.storage.local.get(uri, function(obj) {
-          if (obj[uri]) {
-            self.setState({annotations: obj[uri], friends: friends});
-          } else {
-            self.setState({friends: friends});
+          debugger;
+          if(obj[uri]) {
+            for (var i = 0; i < obj[uri].length; i++) {
+              friends[obj[uri][i].user_id] = true;
+            }
+            annotations = obj[uri];
+          } 
+          for (var i = 0; i < data.rows.length; i++) {
+            if (friends[data.rows[i].user_id] === undefined) {
+              friends[data.rows[i].user_id] = false;
+            }
           }
-        })
+        self.setState({annotations: annotations, friends: friends});
       })
+    })
 
 
     chrome.storage.onChanged.addListener(function(changes) {
-      console.log('chrome storage changed mothafucka')
-        self.setState({annotations: changes[uri].newValue});
+      debugger;
+      if (changes[uri]) {
+        var newFriends = {};
+        console.log('chrome storage changed mothafucka', changes);
+        if (changes[uri].newValue.length > 0) {
+          for (var i = 0; i < changes[uri].newValue.length; i++) {
+            newFriends[changes[uri].newValue[i].user_id] = true;
+          }
+        }
+        for (var friend in self.state.friends) {
+          if (newFriends[friend] === undefined) {
+            newFriends[friend] = false;
+          }
+        }
+        self.setState({annotations: changes[uri].newValue, friends: newFriends});
+      }
     })
   }
 });
@@ -20951,10 +21067,27 @@ var renderComponents = function() {
   React.render(React.createElement(App, null), document.getElementById('scrollview'));
 };
 
+var code = window.location.hash.substring(1);
+var userId;
+
+if (code.substring(code.length - 11)) {
+  userId = code.substring(0, code.length - 11);
+} else {
+  chrome.storage.sync.get('user', function(obj) {
+    if (!obj['user']) {
+      console.error('Unable to access user_id from chrome.storage');
+      return;
+    }
+    userId = obj.user.id; 
+    window.localStorage.setItem('user_id', obj.user.id);
+  })
+}
+
+
 var identityListener = function(changes) {
   if (changes.user && changes.user.newValue) {
     renderComponents();
-    test.annotate();
+    test.annotate(userId);
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
@@ -20962,7 +21095,7 @@ var identityListener = function(changes) {
 chrome.storage.sync.get('user', function(obj) {
   if (obj['user']) {
     renderComponents();
-    test.annotate();
+    test.annotate(userId);
   } else {
     chrome.storage.onChanged.addListener(identityListener);
   }
@@ -20971,13 +21104,16 @@ chrome.storage.sync.get('user', function(obj) {
 },{"./components/app":166,"./test":186,"react":156}],186:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
 
-exports.annotate = function(event) {
+exports.annotate = function(userId) {
   var uri = window.location.href.split("?")[0];
   if (uri.substring(uri.length-11) === 'onwords1991') {
     targetUri = uri.substring(0, uri.length-13);
   } else {
     targetUri = uri;
   }
+
+  chrome.storage.local.remove(targetUri);
+
 
   var pageUri = function() {
     return {
@@ -20992,47 +21128,26 @@ exports.annotate = function(event) {
 
   var app = new annotator.App();
   app.include(annotator.ui.main)
-     .include(annotator.storage.http, {
-        prefix: 'https://onwords-test-server.herokuapp.com',
-        urls: {
-          create: '/api/annotations',
-          update: '/api/annotations/{id}',
-          destroy: '/api/annotations/{id}',
-          search: '/api/search'
-        }
-      })
-     .include(pageUri)
-     .include(renderAnnotations);
-
-
-  var code = window.location.hash.substring(1);
-  debugger;
-  if (code.substring(code.length-11)) {
-    var user = code.substring(0, code.length - 11);
-    app.start()
-      .then(function() {
-        app.annotations.load({
-          uri: targetUri,
-          user: user
-        })
-      })
-  } else {
-    chrome.storage.sync.get('user', function(obj) {
-      if (!obj['user']) {
-        console.error('Unable to access user_id from chrome.storage');
-        return;
+    .include(annotator.storage.http, {
+      prefix: 'https://onwords-test-server.herokuapp.com',
+      urls: {
+        create: '/api/annotations',
+        update: '/api/annotations/{id}',
+        destroy: '/api/annotations/{id}',
+        search: '/api/search'
       }
-      app.start()
-        .then(function() {
-           window.localStorage.setItem('user_id', obj.user.id);
-           app.annotations.load({
-            uri: targetUri,
-            user: obj.user.id
-          });
-        });
-    });
-  }
+    })
+   .include(pageUri)
+   .include(renderAnnotations);
 
+
+   app.start()
+    .then(function() {
+      app.annotations.load({
+        uri: targetUri,
+        user: userId
+      })
+    })
 
   document.addEventListener('getFriendAnnotations', function(e) {
     console.log("show this dude's annotation:", e.detail.userId);

@@ -14663,7 +14663,9 @@ var util = require('../util');
 var $ = util.$;
 var Promise = util.Promise;
 
-
+/////////////////////////////////////////////////////////////////////////////////
+var userColor = {};
+var colors = ['#FFCCCC', '#FFE5CC', '#FFFFCC', '#E5FFCC', '#CCFFCC', '#CCFFE5', '#CCFFFF', '#CCE5FF', '#CCCCFF', '#E5CCFF', '#FFCCFF', '#FFCCE5'];
 // highlightRange wraps the DOM Nodes within the provided range with a highlight
 // element of the specified class and returns the highlight Elements.
 //
@@ -14671,7 +14673,8 @@ var Promise = util.Promise;
 // cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
 //
 // Returns an array of highlight Elements.
-function highlightRange(normedRange, cssClass) {
+function highlightRange(normedRange, cssClass, userId) {
+  debugger;
     if (typeof cssClass === 'undefined' || cssClass === null) {
         cssClass = 'annotator-hl';
     }
@@ -14682,6 +14685,16 @@ function highlightRange(normedRange, cssClass) {
     // subset of nodes such as table rows and lists. This does mean that there
     // may be the odd abandoned whitespace node in a paragraph that is skipped
     // but better than breaking table layouts.
+
+/////////////////////////////////////////////////////////////////////////////////
+    var index = Math.floor(Math.random() * 11);
+
+    if (!userColor[userId]) {
+      userColor[userId] = colors[index];
+      colors.splice(index, 1);
+    }
+/////////////////////////////////////////////////////////////////////////////////
+
     var nodes = normedRange.textNodes(),
         results = [];
     for (var i = 0, len = nodes.length; i < len; i++) {
@@ -14689,6 +14702,7 @@ function highlightRange(normedRange, cssClass) {
         if (!white.test(node.nodeValue)) {
             var hl = global.document.createElement('span');
             hl.className = cssClass;
+            hl.style.background = userColor[userId];
             node.parentNode.replaceChild(hl, node);
             hl.appendChild(node);
             results.push(hl);
@@ -14795,7 +14809,7 @@ Highlighter.prototype.drawAll = function (annotations) {
                 combined.forEach(function(item) {
                   if (!unique[item.id]) {
                     uniqueArr.push(item);
-                    unique[item.text] = item;
+                    unique[item.id] = item;
                   }
                 })
                 var sorted = sortAnnotations(uniqueArr);
@@ -14804,13 +14818,15 @@ Highlighter.prototype.drawAll = function (annotations) {
                 newObj[uri] = sorted;
                 chrome.storage.local.set(newObj);
                 console.log("annotations loaded", newObj[uri]);
-              } else {
+              } else if (!obj[uri] && now.length > 0) {
                 debugger;
                 var sorted = sortAnnotations(now);
                 var newObj = {};
                 newObj[uri] = sorted;
                 chrome.storage.local.set(newObj);
                 console.log("annotations loaded", newObj[uri]);
+              } else {
+                return;
               }
             })
 
@@ -14839,7 +14855,7 @@ Highlighter.prototype.drawAll = function (annotations) {
 //
 // Returns an Array of drawn highlight elements.
 Highlighter.prototype.draw = function (annotation) {
-  // debugger;
+  debugger;
     var normedRanges = [];
 
     for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
@@ -14864,7 +14880,7 @@ Highlighter.prototype.draw = function (annotation) {
         var normed = normedRanges[j];
         $.merge(
             annotation._local.highlights,
-            highlightRange(normed, this.options.highlightClass)
+            highlightRange(normed, this.options.highlightClass, annotation.user_id)
         );
     }
 
@@ -14883,6 +14899,7 @@ Highlighter.prototype.draw = function (annotation) {
         $(annotation._local.highlights)
             .attr('data-annotation-id', annotation.id);
     }
+
 
     return annotation._local.highlights;
 };
