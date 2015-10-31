@@ -8,7 +8,7 @@ var FriendsAnnotationsView = React.createClass({
   getInitialState: function() {
     return {
       annotations: [],
-      friends: {1: {shown: false}, 2: {shown: false}}
+      friends: {}
     }
   },
   componentWillMount: function() {
@@ -38,16 +38,19 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   toggleFriendAnnotations: function(id) {
+    debugger;
     console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friends;
 
-    if (!friends[id].shown) {
+    if (!friends[id]) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      friends[id].shown = true;
+      // friends[id] = true;
+      console.log('friends are now', this.state.friends);
       console.log(friends[id], ' stored in chrome now')
     } else {
-      friends[id].shown = false;
+      // friends[id] = false;
+      console.log('friends are now', this.state.friends);
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
         console.log(this.state.annotations[i]);
@@ -93,19 +96,55 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   componentDidMount: function() {
+    debugger;
     console.log('friend annotations view mounted');
     var self = this;
     var uri = window.location.href.split("?")[0];
-    chrome.storage.local.get(uri, function(obj) {
-      if (obj[uri]) {
-        self.setState({annotations: obj[uri]})
-      } else {
-        chrome.storage.onChanged.addListener(function(changes) {
-          console.log('chrome storage changed mothafucka')
+    if (uri.substring(uri.length-11) === 'onwords1991') {
+      uri = uri.substring(0, uri.length-13);
+    } else {
+      uri = uri;
+    }
+
+    var annotations = [];
+    var friends = {};
+
+    $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: uri})
+      .done(function(data) {
+        chrome.storage.local.get(uri, function(obj) {
           debugger;
-          var uri = window.location.href.split('?')[0];
-            self.setState({annotations: changes[uri].newValue});
-        })
+          if(obj[uri]) {
+            for (var i = 0; i < obj[uri].length; i++) {
+              friends[obj[uri][i].user_id] = true;
+            }
+            annotations = obj[uri];
+          } 
+          for (var i = 0; i < data.rows.length; i++) {
+            if (friends[data.rows[i].user_id] === undefined) {
+              friends[data.rows[i].user_id] = false;
+            }
+          }
+        self.setState({annotations: annotations, friends: friends});
+      })
+    })
+
+
+    chrome.storage.onChanged.addListener(function(changes) {
+      debugger;
+      if (changes[uri]) {
+        var newFriends = {};
+        console.log('chrome storage changed mothafucka', changes);
+        if (changes[uri].newValue.length > 0) {
+          for (var i = 0; i < changes[uri].newValue.length; i++) {
+            newFriends[changes[uri].newValue[i].user_id] = true;
+          }
+        }
+        for (var friend in self.state.friends) {
+          if (newFriends[friend] === undefined) {
+            newFriends[friend] = false;
+          }
+        }
+        self.setState({annotations: changes[uri].newValue, friends: newFriends});
       }
     })
   }

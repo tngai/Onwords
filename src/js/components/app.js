@@ -26,6 +26,13 @@ var App = React.createClass({
     $(document).on('click', '.annotator-hl', function() {
       THIS.updateView('showAnnotatorView');
     });
+
+    $(document).on('keyup', function(e){
+      if (e.which == 27) { 
+        console.log('ESCAPE KEY PRESSED!');
+        $('.annotator-cancel').trigger('click');
+      }    
+    });
   },
   updateView: function(action){
     var duration = 200;
@@ -39,18 +46,18 @@ var App = React.createClass({
             this.setState({showFeedView: false});
             $('.annotation-sidebar').animate({right: -(565)}, duration);
             break;
-        case 'showFriendsAnnotations':
-            console.log('showFriendsAnnotations!!');
+        // case 'showFriendsAnnotations':
+        //     console.log('showFriendsAnnotations!!');
+        //     this.setState({showFriendsAnnotations: true});
+        //     this.setState({showAnnotatorButton: false});
+        //     this.setState({showAnnotatorView: false});
+        //     this.setState({showFeedView: false});
+        //     $('.annotation-sidebar').animate({right: -(300)}, 50);
+        //     break;
+        case 'showAnnotatorView':
             this.setState({showFriendsAnnotations: true});
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
-            this.setState({showFeedView: false});
-            $('.annotation-sidebar').animate({right: -(300)}, 50);
-            break;
-        case 'showAnnotatorView':
-            this.setState({showFriendsAnnotations: false});
-            this.setState({showAnnotatorButton: false});
-            this.setState({showAnnotatorView: true});
             this.setState({showFeedView: false});
             $('.annotation-sidebar').animate({right: -(300)}, 50);
             break;
