@@ -20,7 +20,6 @@ var Settings = React.createClass({
     }.bind(this));
   },
   updateServer: function(options){ 
-    
     return $.ajax({
       url: "http://localhost:8000/api/users/update",
       method: "post",
@@ -38,7 +37,7 @@ var Settings = React.createClass({
           this.setState({
             pic_url: e.target.value,
             editPicUrl: false
-          });
+          }); 
           break;
         case 'username':
           this.setState({
@@ -58,12 +57,15 @@ var Settings = React.createClass({
   handleClick: function(e) {  
     switch (e.target.dataset.setting) {
       case 'pic':
+        console.log('pic was chosen');
         this.setState({editPicUrl: true});
         break;
       case 'username':
+        console.log('username was chosen');
         this.setState({editUsername: true});
         break;
       case 'description':
+        console.log('description was chosen');
         this.setState({editDescription: true});
         break;
     }  
