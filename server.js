@@ -21,13 +21,8 @@ app.use(function(req, res, next) {
 });
 
 
-app.get('/',function(req,res){
-  res.send('connected')
-});
 
-
-// Create Annotations
-
+// Create annotations 
 app.post('/api/annotations', function(req,res){
   var ann = req.body;
   var text = req.body.text;
@@ -37,7 +32,7 @@ app.post('/api/annotations', function(req,res){
   var end = req.body.ranges[0].end;
   var startOffset = req.body.ranges[0].startOffset;
   var endOffset = req.body.ranges[0].endOffset;
-  var user_id = req.body.user;
+  var user_id = 1;
  
   db.model('Annotation').newAnnotation({
     text: text,
@@ -56,31 +51,10 @@ app.post('/api/annotations', function(req,res){
     res.end();
   });
 
+
+
+
 });
-
-// Create Users 
-app.post('/api/users', function(req,res){
-  var facebook_id = req.body.facebook_id;
-  var full_name = req.body.full_name;
-  var pic_url = req.body.pic_url;
-  var email = req.body.email;
-  
-  var user = {
-    facebook_id: facebook_id,
-    full_name: full_name,
-    pic_url: pic_url,
-    email: email
-  };
-
-  db.model('User').fetchByFacebookId(facebook_id).then(function(data){
-      
-  });
-
-  db.model('User').newUser(newUser).save().then(function(data){
-
-  })
-});
-
 
 
 
@@ -124,42 +98,16 @@ app.put('/api/annotations/:id',function(req,res){
 
 });
 
-
-app.get('/api/search/user_uri', function(req,res) {
-  userId = req.query.user;
-  db.model('Annotation').fetchByUserId(userId).then(function(data){
-    returnObj = {}; 
-    returnObj = data.models;    
-    res.set('Content-Type', 'application/JSON');
-    res.json(returnObj);
-    res.end();
-  }); 
-});
-
-
-// Search Uri annotations endpoint(Read)
+// Search endpoint(Read)
 app.get('/api/search',function(req,res){
-  var qParam = req.url.split('?')[1];
-  var uriParam = qParam.split('&')[0];
-  var userParam = qParam.split('&')[1];  
-  var uri = uriParam.split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
-  
-  if (userParam) {
-    var userId = userParam.split('=')[1];  
-  }
-
-  db.model('User').fetchById(userId).then(function(data) { 
-    var resultsArray = data.relations.annotations.models.filter(function(e) {
-      console.log(e.attributes.uri,' = ',uri)
-      return (e.attributes.uri === uri);
-    }); 
-
-    var returnArray = resultsArray.map(function(e){
+  var uri = req.url.split('?')[1].split('=')[1].replace(/%2F/g,'/').replace(/%3A/,':');
+  db.model('Annotation').fetchByUri(uri).then(function(data){
+    var resultsArray = data.models.map(function(e){
       var resObj = {
         id: e.attributes.id,
-        uri: e.attributes.uri,
         text: e.attributes.text,
         quote: e.attributes.quote,
+        uri: e.attributes.uri,
         ranges: [
           {
             start: e.attributes.start,
@@ -170,17 +118,17 @@ app.get('/api/search',function(req,res){
         ]
        };
        return resObj;   
-    })
-    
-    var returnObj = {};
-    returnObj.rows = returnArray;   
-      res.set('Content-Type', 'application/JSON');
-      res.json(returnObj);
-      res.end();
-    
     });
-     
+
+    var returnObj = {};
+    returnObj.rows = resultsArray;
+    
+    res.set('Content-Type', 'application/JSON');
+    res.json(returnObj);
+    res.end();
   })
+})
+
 
 app.listen(process.env.PORT || 8000);
 console.log("Listening on port 8000...")
