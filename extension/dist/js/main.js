@@ -19936,8 +19936,9 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     e.preventDefault();
     var newText = $('textArea#annotationEdit').val();
     console.log('new text:', newText)
-    this.props.annotation.text = newText;
-    var ev = new CustomEvent('updateAnnotation', {detail: {targetAnnotation: this.props.annotation}})
+    var annotation = this.props.annotation;
+    annotation.text = newText;
+    var ev = new CustomEvent('updateAnnotation', {detail: {targetAnnotation: annotation}})
     document.dispatchEvent(ev);
     this.setState({shouldEditComment: false});
   },
@@ -20970,10 +20971,27 @@ var renderComponents = function() {
   React.render(React.createElement(App, null), document.getElementById('scrollview'));
 };
 
+var code = window.location.hash.substring(1);
+var userId;
+
+if (code.substring(code.length - 11)) {
+  userId = code.substring(0, code.length - 11);
+} else {
+  chrome.storage.sync.get('user', function(obj) {
+    if (!obj['user']) {
+      console.error('Unable to access user_id from chrome.storage');
+      return;
+    }
+    userId = obj.user.id; 
+    window.localStorage.setItem('user_id', obj.user.id);
+  })
+}
+
+
 var identityListener = function(changes) {
   if (changes.user && changes.user.newValue) {
     renderComponents();
-    test.annotate();
+    test.annotate(userId);
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
@@ -20981,7 +20999,7 @@ var identityListener = function(changes) {
 chrome.storage.sync.get('user', function(obj) {
   if (obj['user']) {
     renderComponents();
-    test.annotate();
+    test.annotate(userId);
   } else {
     chrome.storage.onChanged.addListener(identityListener);
   }
@@ -20990,7 +21008,7 @@ chrome.storage.sync.get('user', function(obj) {
 },{"./components/app":166,"./test":186,"react":156}],186:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
 
-exports.annotate = function(event) {
+exports.annotate = function(userId) {
   var uri = window.location.href.split("?")[0];
   if (uri.substring(uri.length-11) === 'onwords1991') {
     targetUri = uri.substring(0, uri.length-13);
@@ -21027,34 +21045,13 @@ exports.annotate = function(event) {
    .include(renderAnnotations);
 
 
-  var code = window.location.hash.substring(1);
-  debugger;
-  if (code.substring(code.length-11)) {
-    var user = code.substring(0, code.length - 11);
-    app.start()
-      .then(function() {
-        app.annotations.load({
-          uri: targetUri,
-          user: user
-        })
+   app.start()
+    .then(function() {
+      app.annotations.load({
+        uri: targetUri,
+        user: userId
       })
-  } else {
-    chrome.storage.sync.get('user', function(obj) {
-      if (!obj['user']) {
-        console.error('Unable to access user_id from chrome.storage');
-        return;
-      }
-      app.start()
-        .then(function() {
-           window.localStorage.setItem('user_id', obj.user.id);
-           app.annotations.load({
-            uri: targetUri,
-            user: obj.user.id
-          });
-        });
-    });
-  }
-
+    })
 
   document.addEventListener('getFriendAnnotations', function(e) {
     console.log("show this dude's annotation:", e.detail.userId);
