@@ -15,28 +15,27 @@ var userId;
 
 if (code.substring(code.length - 11)) {
   userId = code.substring(0, code.length - 11);
-} else {
-  chrome.storage.sync.get('user', function(obj) {
-    if (!obj['user']) {
-      console.error('Unable to access user_id from chrome.storage');
-      return;
-    }
-    userId = obj.user.id; 
-    window.localStorage.setItem('user_id', obj.user.id);
-  })
-}
+} 
+
+
 
 
 var identityListener = function(changes) {
   if (changes.user && changes.user.newValue) {
+    debugger;
     renderComponents();
-    test.annotate(userId);
+    test.annotate(changes.user.newValue.id);
+    window.localStorage.setItem('user_id', changes.user.newValue.id);
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
 
 chrome.storage.sync.get('user', function(obj) {
-  if (obj['user']) {
+  if (obj.user) {
+    if (!userId) {
+      userId = obj.user.id;
+      window.localStorage.setItem('user_id', userId);
+    }
     renderComponents();
     test.annotate(userId);
   } else {
