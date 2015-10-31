@@ -20580,7 +20580,7 @@ var Settings = React.createClass({displayName: "Settings",
       editPicUrl: false,
       editUsername: false,
       editDescription: false
-    }
+    };
   },
   componentWillMount: function(){
     chrome.storage.sync.get('user',function(data){
@@ -20603,8 +20603,6 @@ var Settings = React.createClass({displayName: "Settings",
   },
   handleSubmit: function(e){
     if(e.charCode == 13) { 
-      
-      console.log('this is what is entered ',e.target.value)
       switch (e.target.dataset.setting) {
         case 'picUrl':
           this.setState({
@@ -21059,14 +21057,28 @@ module.exports = FriendsAnnotationsView;
 var React = require('react');
 
 var MyAnnotationsButton = React.createClass({displayName: "MyAnnotationsButton",
+    getInitialState: function(){
+      return {
+        pic_url: 'http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg'
+      }
+    },
+    componentWillMount: function(){
+      chrome.storage.sync.get('user',function(data){
+        this.setState({
+          pic_url: data.user.picUrl,
+          username: data.user.fullName,
+          description: data.user.description || 'OnWords  !!  '
+        });  
+      }.bind(this));
+  },
   handleClick: function() {
     var ownId = window.localStorage.getItem('user_id');
     this.props.toggleFriendAnnotations(ownId);
   }, 
   render: function() {   
     return (
-      React.createElement("div", {onClick: this.handleClick, className: "my-annoataions-button-container"}, 
-        React.createElement("img", {className: "my-annotations-button", src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg"})
+      React.createElement("div", {onClick: this.handleClick, className: "my-annotations-button-container"}, 
+        React.createElement("img", {className: "my-annotations-button", src: this.state.pic_url})
       )
     );
   }
