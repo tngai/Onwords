@@ -64,13 +64,16 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   render: function() {
+    var ownId = window.localStorage.getItem('user_id');
     var friendsArray = Object.keys(this.state.friends);
     var self = this;
 
     var friendCarousel = friendsArray.map(function(friend, index) {
-      return (
-        <div className='friends-pic' data-id={friend} onClick={self.toggleFriendAnnotations.bind(null, friend)}></div>
-      )
+      if (friend !== ownId) {
+        return (
+          <div className='friends-pic' data-id={friend} onClick={self.toggleFriendAnnotations.bind(null, friend)}></div>
+        )
+      }
     })
 
     console.log('inside-friendsview, annotations:', this.state.annotations)
