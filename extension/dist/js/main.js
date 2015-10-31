@@ -20414,60 +20414,39 @@ var FeedSearchList = React.createClass({displayName: "FeedSearchList",
     };
   },
 
-  componentDidMount: function() {
-  //   var urlPrefix = 'https://onwords-test-server.herokuapp.com/api/users';
-  // /*  // var ownId = window.localStorage.getItem('user_id');
-  //   // var userIdQS = '?user_id=' + ownId;
-  //   // var fullNameQS = '&full_name=' + this.props.fullName;
-  //   // var url = urlPrefix + userIdQS + fullNameQS;  */
-  //   var fullNameQS = '?full_name=' + this.props.fullName;
-  //   var url = urlPrefix + fullNameQS;
-  //   console.log('FeedSearchList componentDidMount, right before if condition..., this.props.fullName:', this.props.fullName);
-  //   if (this.props.fullName) {
-  //     console.log('FeedSearchList componentDidMount, about to call $.get...');
-  //     $.get({
-  //       url: url,
-  //       dataType: 'json',
-  //       cache: false,
-  //       success: function(data) {
-  //         this.setState({results: [data]});
-  //       }.bind(this),
-  //       error: function(xhr, status, err) {
-  //         console.error(url, status, err.toString());
-  //       }.bind(this)
-  //     });
-  //   }
-
-    // var sampleData = [
-    //   {
-    //     full_name: "Cason Jollins",
-    //     pic_url: "http://www.makersquare.com/pictures/people/jasoncollins.jpg",
-    //     isFollowing: true
-    //   }, {
-    //     full_name: "Rati Nodriguez",
-    //     pic_url: "http://www.makersquare.com/pictures/people/natirodriguez.png",
-    //     isFollowing: false
-    //   }
-    // ];
-    // this.setState({results: sampleData});
+  componentWillReceiveProps: function(nextProps) {
+    var urlPrefix = 'https://onwords-test-server.herokuapp.com/api/users';
+  /*  // var ownId = window.localStorage.getItem('user_id');
+    // var userIdQS = '?user_id=' + ownId;
+    // var fullNameQS = '&full_name=' + this.props.fullName;
+    // var url = urlPrefix + userIdQS + fullNameQS;  */
+    var fullNameQS = '?full_name=' + nextProps.fullName;
+    var url = urlPrefix + fullNameQS;
+    if (nextProps.fullName) {
+      $.get(url, function(data) {
+        this.setState({results: data.rows});
+      }.bind(this));
+    }
   },
 
   render: function() {
-    var feedSearchResults = this.props.resultsData.map(function(result, index) {
+    var feedSearchResults = this.state.results.map(function(result, index) {
       var picUrl = result.pic_url;
       var fullName = result.full_name;
       var description = null;
       if (description === null) {
         description = "I am an annotator!";
       }
-      var isFollowing = result.isFollowing;
+      // var isFollowing = result.isFollowing;
 
-      var follow = React.createElement("button", {className: "feed-search-follow"}, "Follow");
+      // var follow = <button className="feed-search-follow">Follow</button>;
+      // var following = <button className="feed-search-following">Following</button>;
+      // var editSettings = ;
       return (
         React.createElement("li", {className: "feed-search-result", key: index}, 
           React.createElement("div", {className: "feed-search-img"}, React.createElement("img", {src: picUrl})), 
-          React.createElement("div", {className: "feed-search-name"}, fullName), 
-          isFollowing ? React.createElement("div", null, "✓") : React.createElement("div", null, "+")
+          React.createElement("div", {className: "feed-search-name"}, fullName)
+          /* {isFollowing ? follow : following} */
         )
       );
     });
@@ -20489,8 +20468,7 @@ var FeedSearchList = require('./feed-search-list');
 var FeedSearchView = React.createClass({displayName: "FeedSearchView",
   getInitialState: function() {
     return {
-      text: '',
-      results: []
+      text: ''
     };
   },
 
@@ -20498,26 +20476,16 @@ var FeedSearchView = React.createClass({displayName: "FeedSearchView",
     e.preventDefault();
     var inputVal = React.findDOMNode(this.refs.input).value;
     if (inputVal === '') { return; }
-    console.log('handleSubmit value:', inputVal);
-    // this.setState({text: inputVal});
-
-    var urlPrefix = 'https://onwords-test-server.herokuapp.com/api/users';
-    var fullNameQS = '?full_name=' + inputVal;
-    var url = urlPrefix + fullNameQS;
-    $.get(url, function(data) {
-      this.setState({results: data.rows});
-    }.bind(this));
-
+    this.setState({text: inputVal});
   },
 
   render: function() {
-    console.log('feed-search-view being rendered! here’s state:', this.state);
     return (
       React.createElement("div", {className: "search-view-container"}, 
         React.createElement("form", {onSubmit: this.handleSubmit, className: "form-search-container"}, 
           React.createElement("input", {type: "text", ref: "input", placeholder: "Find people to follow..."})
         ), 
-      React.createElement(FeedSearchList, {resultsData: this.state.results})
+      React.createElement(FeedSearchList, {fullName: this.state.text})
       )
     );
   }

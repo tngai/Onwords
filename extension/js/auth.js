@@ -33,6 +33,7 @@ function fetchToken() {
 }
 
 chrome.storage.sync.clear();
+chrome.storage.local.clear();
 
 chrome.browserAction.onClicked.addListener(function() {
   console.log('browserAction clicked');
@@ -57,7 +58,6 @@ function fetchFbProfile(accessToken) {
       profile.facebook_id = resp.id;
       profile.full_name = resp.name;
       profile.pic_url = resp.picture.data.url;
-      console.log('profile.pic_url:', profile.pic_url);
       profile.email = resp.email;
       sendFbProfile(profile);
     }
