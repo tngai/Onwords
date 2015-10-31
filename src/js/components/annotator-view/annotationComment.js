@@ -27,6 +27,7 @@ var annotationComment = React.createClass({
     document.dispatchEvent(ev);
     this.setState({shouldEditComment: false});
   },
+
   componentDidMount: function(e) {
     // var THIS = this;
     // // esc and enter functionality
@@ -48,6 +49,7 @@ var annotationComment = React.createClass({
     //   }    
     // }); 
   },
+
 
   render: function() {
     var annotation = this.props.annotation;

@@ -19830,6 +19830,7 @@ var renderAnnotations = function() {
     annotationCreated: function(annotation) {
       console.log("annotation created:", annotation);
       chrome.storage.local.get(uri, function(obj) {
+        debugger;
         console.log('values before CREATING:', obj[uri])
         if (!obj[uri]) {
           obj[uri] = [];
@@ -19942,6 +19943,7 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     document.dispatchEvent(ev);
     this.setState({shouldEditComment: false});
   },
+
   componentDidMount: function(e) {
     // var THIS = this;
     // // esc and enter functionality
@@ -19963,6 +19965,7 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     //   }    
     // }); 
   },
+
 
   render: function() {
     var annotation = this.props.annotation;
@@ -21143,15 +21146,15 @@ if (code.substring(code.length - 11)) {
   userId = code.substring(0, code.length - 11);
 } 
 
-
-
-
 var identityListener = function(changes) {
   if (changes.user && changes.user.newValue) {
     debugger;
-    renderComponents();
-    test.annotate(changes.user.newValue.id);
+    if (!userId) {
+      userId = changes.user.newValue.id
+    }
     window.localStorage.setItem('user_id', changes.user.newValue.id);
+    renderComponents();
+      test.annotate(userId);
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
