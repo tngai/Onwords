@@ -80,15 +80,18 @@ var FriendsAnnotationsView = React.createClass({
 
     return (
       <div className='friends-annotations-view-container'>
-        <div className='friends-annotations-buttons-container'>
-          <AnnotatorMinimizeButton {...this.props} />
-          <MyAnnotationsButton toggleFriendAnnotations={this.toggleFriendAnnotations} />
-          <HomeButton {...this.props} />
-        </div>
+        <div className='friends-annotations-header'>
+          <div className='friends-annotations-buttons-container'>
+            <AnnotatorMinimizeButton {...this.props} />
+            <MyAnnotationsButton toggleFriendAnnotations={this.toggleFriendAnnotations} />
+            <HomeButton {...this.props} />
+          </div>
 
-        <div className='friends-container'>
-          {friendCarousel}
+          <div className='friends-container'>
+            {friendCarousel}
+          </div>
         </div>
+        <br></br>
         <div className='friends-annotations-list'>
           {this.state.annotations.length > 0 ? <FriendAnnotationList friends={this.state.friends} annotations={this.state.annotations}/> : null}
         </div>
