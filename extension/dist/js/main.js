@@ -19923,12 +19923,6 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     }
   },
 
-  goToHighlight: function() {
-    $('html, body').animate({
-      scrollTop: this.props.annotation.offsetTop - 200
-    }, 300)
-  },
-
   editComment: function() {
     this.setState({shouldEditComment: true});
   },
@@ -19968,15 +19962,24 @@ var annotationComment = React.createClass({displayName: "annotationComment",
 
 
   render: function() {
+    var userColor = $('span[data-annotation-id="' + this.props.annotation.id + '"]').css('background-color'); 
+    var divStyle = {
+      borderLeft: '4px solid ' + userColor
+    }
+
     var annotation = this.props.annotation;
     var self = this;
     var deleteAnn = function() {
       self.props.deleteAnn(annotation);
-    }
+    };
+
+    var clickHandler = function() {
+      self.props.clickHandler(annotation);
+    };
 
     return (
-      React.createElement("div", null, 
-        React.createElement("p", {onClick: this.goToHighlight}, annotation.quote), 
+      React.createElement("div", {onClick: clickHandler, className: "annotation", style: divStyle}, 
+        React.createElement("p", null, annotation.quote), 
         !this.state.shouldEditComment ? React.createElement("p", null, annotation.text) : 
           React.createElement("form", null, 
             React.createElement("textArea", {id: "annotationEdit", style: {height: 100+"px", width: 300+"px"}}, 
@@ -20580,7 +20583,7 @@ var Settings = React.createClass({displayName: "Settings",
       editPicUrl: false,
       editUsername: false,
       editDescription: false
-    }
+    };
   },
   componentWillMount: function(){
     chrome.storage.sync.get('user',function(data){
@@ -20603,8 +20606,6 @@ var Settings = React.createClass({displayName: "Settings",
   },
   handleSubmit: function(e){
     if(e.charCode == 13) { 
-      
-      console.log('this is what is entered ',e.target.value)
       switch (e.target.dataset.setting) {
         case 'picUrl':
           this.setState({
@@ -20826,18 +20827,28 @@ module.exports = SettingsButton;
 var React = require('react');
 
 var friendAnnotationComment = React.createClass({displayName: "friendAnnotationComment",
-  goToHighlight: function() {
-    $('html, body').animate({
-      scrollTop: this.props.annotation.offsetTop - 200
-    }, 300)
-  },
+
 
   render: function() {
-    
+
     var annotation = this.props.annotation;
+    var self = this;
+    var clickHandler = function() {
+      self.props.clickHandler(annotation);
+    };
+  
+    var userColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
+
+    // var marginRight = this.props.spotlight === annotation.id ? '20px' : '0px';
+
+    var divStyle = {
+      borderLeft: '4px solid ' + userColor,
+      // marginRight: marginRight
+    }
+
     return (
-      React.createElement("div", null, 
-        React.createElement("p", {onClick: this.goToHighlight}, annotation.quote), 
+      React.createElement("div", {onClick: clickHandler, className: "annotation", style: divStyle}, 
+        React.createElement("p", null, annotation.quote), 
         React.createElement("p", null, annotation.text)
       )
     )
@@ -20853,11 +20864,48 @@ var FriendAnnotationComment = require('./friends-annotationComment');
 
 
 var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationList",
+  getInitialState: function() {
+    return {
+      spotlight: ''
+    }
+  },
+
   deleteAnn: function(annotation) {
     var ev = new CustomEvent('deleteAnnotation', {detail: {
       targetAnnotation: annotation
     }});
     document.dispatchEvent(ev);
+  },
+
+  unhighlight: function() {
+    var oldSpotlight = this.state.spotlight;
+    var oldSpotlightColorWithUmph = $('span[data-annotation-id="' + oldSpotlight + '"]').css('background-color'); 
+    var oldSpotlightColor = oldSpotlightColorWithUmph.slice(0, oldSpotlightColorWithUmph.length - 1) + ', 0.5)';
+    oldSpotlightColor = oldSpotlightColor.slice(0, oldSpotlightColor.indexOf('(')) + 'a' + oldSpotlightColor.slice(oldSpotlightColor.indexOf('('));
+    $('span[data-annotation-id="' + oldSpotlight + '"]').css('background-color', oldSpotlightColor);  
+  },
+
+  clickHandler: function(annotation) {
+    $('html, body').animate({
+      scrollTop: annotation.offsetTop - 200
+    }, 300);
+
+    if (this.state.spotlight !== annotation.id) {
+      if (this.state.spotlight !== '') {
+        this.unhighlight();
+      }
+
+      var newSpotlightColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
+      var newSpotlightColorWithUmph = newSpotlightColor.slice(0, newSpotlightColor.lastIndexOf(',') + 1) + ' 1)';
+      $('span[data-annotation-id="' + annotation.id + '"]').css('background-color', newSpotlightColorWithUmph);  
+      this.setState({spotlight: annotation.id});
+    }
+  },
+
+  componentWillUnmount: function() {
+    if (this.state.spotlight !== '') {
+      this.unhighlight();
+    }
   },
 
   render: function() {
@@ -20874,10 +20922,10 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
         if (friends[user]) {
           return (
             React.createElement("div", null, 
-              React.createElement("li", {className: "annotation"}, 
+              React.createElement("li", null, 
                 user.toString() === ownId ? 
-                  React.createElement(AnnotationComment, {user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
-                : React.createElement(FriendAnnotationComment, {user: annotation.user, annotation: annotation})
+                  React.createElement(AnnotationComment, {clickHandler: self.clickHandler, user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
+                : React.createElement(FriendAnnotationComment, {spotlight: self.state.spotlight, clickHandler: self.clickHandler, user: annotation.user, annotation: annotation})
                 
               ), 
               React.createElement("br", null)
@@ -20979,15 +21027,18 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
     return (
       React.createElement("div", {className: "friends-annotations-view-container"}, 
-        React.createElement("div", {className: "friends-annotations-buttons-container"}, 
-          React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
-          React.createElement(MyAnnotationsButton, {toggleFriendAnnotations: this.toggleFriendAnnotations}), 
-          React.createElement(HomeButton, React.__spread({},  this.props))
-        ), 
+        React.createElement("div", {className: "friends-annotations-header"}, 
+          React.createElement("div", {className: "friends-annotations-buttons-container"}, 
+            React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
+            React.createElement(MyAnnotationsButton, {toggleFriendAnnotations: this.toggleFriendAnnotations}), 
+            React.createElement(HomeButton, React.__spread({},  this.props))
+          ), 
 
-        React.createElement("div", {className: "friends-container"}, 
-          friendCarousel
+          React.createElement("div", {className: "friends-container"}, 
+            friendCarousel
+          )
         ), 
+        React.createElement("br", null), 
         React.createElement("div", {className: "friends-annotations-list"}, 
           this.state.annotations.length > 0 ? React.createElement(FriendAnnotationList, {friends: this.state.friends, annotations: this.state.annotations}) : null
         )
@@ -21059,14 +21110,28 @@ module.exports = FriendsAnnotationsView;
 var React = require('react');
 
 var MyAnnotationsButton = React.createClass({displayName: "MyAnnotationsButton",
+    getInitialState: function(){
+      return {
+        pic_url: 'http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg'
+      }
+    },
+    componentWillMount: function(){
+      chrome.storage.sync.get('user',function(data){
+        this.setState({
+          pic_url: data.user.picUrl,
+          username: data.user.fullName,
+          description: data.user.description || 'OnWords  !!  '
+        });  
+      }.bind(this));
+  },
   handleClick: function() {
     var ownId = window.localStorage.getItem('user_id');
     this.props.toggleFriendAnnotations(ownId);
   }, 
   render: function() {   
     return (
-      React.createElement("div", {onClick: this.handleClick, className: "my-annoataions-button-container"}, 
-        React.createElement("img", {className: "my-annotations-button", src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg"})
+      React.createElement("div", {onClick: this.handleClick, className: "my-annotations-button-container"}, 
+        React.createElement("img", {className: "my-annotations-button", src: this.state.pic_url})
       )
     );
   }

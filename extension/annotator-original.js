@@ -14666,7 +14666,7 @@ var Promise = util.Promise;
 
 /////////////////////////////////////////////////////////////////////////////////
 var userColor = {};
-var colors = ['#FFCCCC', '#FFE5CC', '#FFFFCC', '#E5FFCC', '#CCFFCC', '#CCFFE5', '#CCFFFF', '#CCE5FF', '#CCCCFF', '#E5CCFF', '#FFCCFF', '#FFCCE5'];
+var colors = ['rgba(255,204,204, 0.45)', 'rgba(255,229,204, 0.45)', 'rgba(255,255,204, 0.45)', 'rgba(229,204,204, 0.45)', 'rgba(204,255,204, 0.45)', 'rgba(204,255,229, 0.45)', 'rgba(204,255,255, 0.45)', 'rgba(204,229,255, 0.45)', 'rgba(204,204,255, 0.45)', 'rgba(229,204,255, 0.45)', 'rgba(255,204,255, 0.45)', 'rgba(255,204,229, 0.45)'];
 // highlightRange wraps the DOM Nodes within the provided range with a highlight
 // element of the specified class and returns the highlight Elements.
 //
