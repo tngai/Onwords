@@ -7,7 +7,7 @@ var Settings = React.createClass({
       editPicUrl: false,
       editUsername: false,
       editDescription: false
-    }
+    };
   },
   componentWillMount: function(){
     chrome.storage.sync.get('user',function(data){
@@ -30,8 +30,6 @@ var Settings = React.createClass({
   },
   handleSubmit: function(e){
     if(e.charCode == 13) { 
-      
-      console.log('this is what is entered ',e.target.value)
       switch (e.target.dataset.setting) {
         case 'picUrl':
           this.setState({
