@@ -20505,7 +20505,9 @@ var FeedSearchList = React.createClass({displayName: "FeedSearchList",
       }.bind(this));
     }
   },
-
+  handleClick: function(evt) {
+    console.log('this is what is clicked ', evt);
+  },
   render: function() {
     var feedSearchResults = this.state.results.map(function(result, index) {
       var picUrl = result.pic_url;
@@ -20520,7 +20522,7 @@ var FeedSearchList = React.createClass({displayName: "FeedSearchList",
       // var following = <button className="feed-search-following">Following</button>;
       // var editSettings = ;
       return (
-        React.createElement("li", {className: "feed-search-result", key: index}, 
+        React.createElement("li", {className: "feed-search-result", key: index, onClick: this.handleClick}, 
           React.createElement("div", {className: "feed-search-img"}, React.createElement("img", {src: picUrl})), 
           React.createElement("div", {className: "feed-search-name"}, fullName)
           /* {isFollowing ? follow : following} */
@@ -20548,21 +20550,19 @@ var FeedSearchView = React.createClass({displayName: "FeedSearchView",
       text: ''
     };
   },
-
   handleSubmit: function(e) {
     e.preventDefault();
     var inputVal = React.findDOMNode(this.refs.input).value;
     if (inputVal === '') { return; }
     this.setState({text: inputVal});
   },
-
   render: function() {
     return (
       React.createElement("div", {className: "search-view-container"}, 
         React.createElement("form", {onSubmit: this.handleSubmit, className: "form-search-container"}, 
           React.createElement("input", {type: "text", ref: "input", placeholder: "Find people to follow..."})
         ), 
-      React.createElement(FeedSearchList, {fullName: this.state.text})
+        React.createElement(FeedSearchList, {fullName: this.state.text, updateBodyView: this.props.updateBodyView})
       )
     );
   }
