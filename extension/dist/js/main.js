@@ -20408,17 +20408,33 @@ module.exports = FeedHomeButton;
 var React = require('react');
 
 var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
+  handleClick: function() {
+    console.log('Posting!!!!');
+  },
+
   render: function() {
     var handleClick = this.handleClick;
     var info = this.props.info;
+    var user = window.localStorage.user_id;
     var urls = info.map(function(annotation, index) {
       console.log('in MyAnnotationsLink', annotation);
 
-      var redirectUri = annotation.uri + '#' + annotation.user_id + 'onwords1991';
+      // 
+
+      var redirectUri = annotation.uri_link + '#' + user + 'onwords1991';
       console.log(redirectUri)
       return (
         React.createElement("div", {key: index, className: "my-annotations-link-container"}, 
-          React.createElement("a", {onClick: handleClick, href: redirectUri, target: "blank", className: "redirectLink"}, "URL TITLE GOES HERE : ", index)
+          React.createElement("div", {className: "my-annotations-title-container"}, 
+            React.createElement("a", {href: redirectUri, target: "blank", className: "redirectLink"}, annotation.title)
+          ), 
+          React.createElement("div", {className: "my-annotations-likes-container"}, 
+            annotation.likes
+          ), 
+          React.createElement("div", {className: "my-annotations-form-container"}, 
+                React.createElement("textarea", {type: "text", placeholder: "Write a comment..."}), 
+                React.createElement("button", {onClick: handleClick}, "Post")
+          )
         )
       )
     });
@@ -20461,11 +20477,11 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
     console.log('MyAnnotations - componentDidMount');
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
-    var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users?user_id=' + user;
+    var completeUri = 'https://test2server.herokuapp.com/api/personalfeed?user_id=' + user;
     $.get(completeUri, function(result) {
       if (this.isMounted()) {
         this.setState({
-          info: result.rows
+          info: result
         });
       }
       console.log('MyAnnotations state:INFO = ', this.state.info);
