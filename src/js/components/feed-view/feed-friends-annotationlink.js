@@ -3,14 +3,25 @@ var React = require('react');
 var FriendsAnnotationLink = React.createClass({
   render: function() {
     var info = this.props.info
-    var redirectUri = info.uri + '#' + info.user_id + 'onwords1991';
-    console.log(redirectUri)
+    console.log('INFO!!!', info);
+
+    // mapping data without timestamps
+    //    info : users
+    var friendsPost = info.forEach(function(user, key) {
+      console.log('Users', user, key);
+    });
+
+    // var redirectUri = info.uri + '#' + info.user_id + 'onwords1991';
+    // console.log('REDIRECT LINK',redirectUri)
+    // return (
+    //   <div>
+    //     <img className='friends-pic' src={info.profPic}/>
+    //     <p>{info.name}</p>
+    //     <a href={redirectUri} target='blank' className='redirectLink'>{info.title}</a>
+    //   </div>
+    // )
     return (
-      <div>
-        <img className='friends-pic' src={info.profPic}/>
-        <p>{info.name}</p>
-        <a href={redirectUri} target='blank' className='redirectLink'>{info.title}</a>
-      </div>
+      <div>hello</div>
     )
   },
 

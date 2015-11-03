@@ -20314,14 +20314,25 @@ var React = require('react');
 var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLink",
   render: function() {
     var info = this.props.info
-    var redirectUri = info.uri + '#' + info.user_id + 'onwords1991';
-    console.log(redirectUri)
+    console.log('INFO!!!', info);
+
+    // mapping data without timestamps
+    //    info : users
+    var friendsPost = info.forEach(function(user, key) {
+      console.log('Users', user, key);
+    });
+
+    // var redirectUri = info.uri + '#' + info.user_id + 'onwords1991';
+    // console.log('REDIRECT LINK',redirectUri)
+    // return (
+    //   <div>
+    //     <img className='friends-pic' src={info.profPic}/>
+    //     <p>{info.name}</p>
+    //     <a href={redirectUri} target='blank' className='redirectLink'>{info.title}</a>
+    //   </div>
+    // )
     return (
-      React.createElement("div", null, 
-        React.createElement("img", {className: "friends-pic", src: info.profPic}), 
-        React.createElement("p", null, info.name), 
-        React.createElement("a", {href: redirectUri, target: "blank", className: "redirectLink"}, info.title)
-      )
+      React.createElement("div", null, "hello")
     )
   },
 
@@ -20344,13 +20355,7 @@ var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
 
   getInitialState: function() {
     return {
-      info: {
-        uri: 'http://blogs.scientificamerican.com/guest-blog/presidential-candidates-who-believes-in-climate-change/',
-        title: 'Presidential Candidates: Who Believes in Climate Change?',
-        profPic: 'https://scontent-lax3-1.xx.fbcdn.net/hphotos-xpa1/t31.0-8/q87/s960x960/980347_10201703421134973_1425263140_o.jpg',
-        name: 'Irving Barajas',
-        user_id: '2'
-      }
+      info: []
     }
   },
 
@@ -20361,7 +20366,18 @@ var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
   },
 
   componentDidMount: function() {
-    // AJAX calls
+    console.log('FriendsAnnotations - componentDidMount');
+    var user = window.localStorage.user_id;
+    var completeUri = 'https://test2server.herokuapp.com/api/homefeed?user_id=' + user;
+    $.get(completeUri, function(result) {
+      console.log('RESULT FROM API: ',result);
+      if (this.isMounted()) {
+        this.setState({
+          info: result
+        });
+      }
+      console.log('FriendsAnnotations state:INFO = ', this.state.info);
+    }.bind(this));
   }
 
 });
