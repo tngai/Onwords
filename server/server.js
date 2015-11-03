@@ -241,12 +241,13 @@ app.get('/api/search',function (req, res) {
             ]
           };        
       }) 
-      returnObj.rows = finalAnnotationObjects;
       
-    }else{
-      returnObj.rows = [];
-    }
-    res.set('Content-Type','application/JSON'); 
+      returnObj.rows = finalAnnotationObjects;
+      }
+      else {
+        returnObj.rows = [];
+      }
+      res.set('Content-Type','application/JSON'); 
       res.json(returnObj);
   });
 
@@ -305,13 +306,15 @@ app.get('/api/homefeed', function (req, res) {
  
   var getFullNameAndPicURL = function(person) {
     console.log('getFullNameAndPicURL person: ', person);
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) { 
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.log('Connection error: ', err); 
           return reject(err);
         }
         client.query(selectQueries.selectFullNameAndPicURLBasedOnID(person.user_id), function(err, result) {
+          console.log('result in getFullNameAndPicURL: ', result);
+          console.log('this was person.user_id: ', person.user_id);
           done();
           resolve(result.rows[0]);
         });
@@ -596,11 +599,11 @@ app.get('/api/search/users', function(req, res) {
     });
   }
 
-  var getCheckIfYoureFollowingThem = function(user_id) {
+  var getCheckIfYoureFollowingThem = function(personYouSearchedForID) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) console.error('Connection error: ', err);
-        client.query(checkQueries.checkUserFollower(user_id, follower_id), function(err, result) {
+        client.query(checkQueries.checkUserFollower(personYouSearchedForID, user_id), function(err, result) {
           done();
           resolve(result.rows[0].exists);
         });
@@ -611,7 +614,6 @@ app.get('/api/search/users', function(req, res) {
   getFullNamePicURLAndID(full_name)
     .then(function(people) {
       return Promise.map(people, function(person) {
-        console.log('person toward the end: ', person)
         return getCheckIfYoureFollowingThem(person.id)
           .then(function(exists) {
             return {
@@ -665,19 +667,86 @@ app.post('/api/users/follow', function(req, res) {
 
 })
 
-app.get('/api/')
+app.get('/api/users/uri/annotations', function(req, res) {
+  var user_id = req.query.user_id; 
+  var uri = req.query.uri;
+
+
+  var getPeopleYouFollow = function(user_id) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectPeopleYouFollow(user_id), function(err, result) {
+          done();
+          resolve(result.rows);
+        });
+      });
+    });
+  };
+  
+  var checkIfPersonAnnotatedThisArticle = function(uri, person) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.error('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectPersonIfPersonAnnotatedThisPage(uri, person.user_id), function(err, result) {
+          console.log('result after selectPersonIfPersonAnnotatedThisPage: ', result);
+          console.log('person.user_id after selectPersonIfPersonAnnotatedThisPage: ', person.user_id);
+          done();
+          if (result.rows.length > 0) resolve(true);
+          else resolve(false)
+        })
+      })
+    })
+  }
+
+  var getFullNamePicURLAndID = function(person) {
+    console.log('getFullNameAndPicURL person: ', person);
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectFullNameAndPicURLBasedOnID(person.user_id), function(err, result) {
+          done();
+          resolve(result.rows[0]);
+        });
+      });
+    });
+  }
+
+  getPeopleYouFollow(user_id) 
+    .then(function(peopleYouFollow) {
+      console.log('peopleYouFollow in getPeopleYouFollow: ', peopleYouFollow);
+      return Promise.filter(peopleYouFollow, function(personYouFollow) {
+        return checkIfPersonAnnotatedThisArticle(uri, personYouFollow)
+      })
+    })
+    .then(function(peopleYouFollowWhoAnnotatedPage) {
+      console.log('peopleYouFollowWhoAnnotatedPage right before getFullNamePicURLAndID: ', peopleYouFollowWhoAnnotatedPage);
+      return Promise.map(peopleYouFollowWhoAnnotatedPage, function(personYouFollowWhoAnnotatedPage) {
+        return getFullNamePicURLAndID(personYouFollowWhoAnnotatedPage);
+      })
+    })
+    .then(function(fullNamesPicURLsAndIDsOfWhoAnnotatedPage) {
+      console.log('what we send back from /api/users/uri/annotations: '. fullNamesPicURLsAndIDsOfWhoAnnotatedPage);
+      res.set('Content-Type','application/JSON'); 
+      res.json(fullNamesPicURLsAndIDsOfWhoAnnotatedPage);
+    })
+
+
+})
 
 
 app.get('/api/personalfeed/share', function (req, res) {
   var body = req.body;
 
-});
-
-// ----------------------------------------------------
-  // Tommy's endpoints
-
-app.get('/api/search/uri', function (req, res) {
-  // sends back annotations based on uri
 });
 
 
