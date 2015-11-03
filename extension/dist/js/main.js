@@ -20269,7 +20269,7 @@ var App = React.createClass({displayName: "App",
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: true});
-            this.setState({spotlight: {}});
+            this.setState({spotlight: ''});
             $('.annotation-sidebar').animate({right: (0)}, duration);
             break;
         default:
@@ -20284,10 +20284,12 @@ var App = React.createClass({displayName: "App",
     // $(document).on('click', '.annotator-hl', function() {
     //   THIS.updateView('showAnnotatorView');
     // });
-    debugger;
     var self = this;
     document.addEventListener('spotlightAnnotation', function(e) {
-      self.updateView('showAnnotatorView');
+      debugger;
+      if (!self.state.showFriendsAnnotations) {
+        self.updateView('showAnnotatorView');
+      }
       console.log('spotlight this annotation:', e.detail.targetAnnotation);
       self.setState({spotlight: e.detail.targetAnnotation});
     })
@@ -20915,9 +20917,11 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
     var oldSpotlightColorWithUmph = $('span[data-annotation-id="' + oldSpotlight + '"]').css('background-color'); 
     if (oldSpotlightColorWithUmph) {
       var oldSpotlightColor = oldSpotlightColorWithUmph.slice(0, oldSpotlightColorWithUmph.length - 1) + ', 0.25)';
+      var defaultColor = $('body').css('color');
       oldSpotlightColor = oldSpotlightColor.slice(0, oldSpotlightColor.indexOf('(')) + 'a' + oldSpotlightColor.slice(oldSpotlightColor.indexOf('('));
       var styles = {
-        backgroundColor: oldSpotlightColor
+        backgroundColor: oldSpotlightColor,
+        color: defaultColor
       }
       $('span[data-annotation-id="' + oldSpotlight + '"]').css(styles);  
     }
@@ -20926,9 +20930,11 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
   highlight: function(annotation) {
     debugger;
     var newSpotlightColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
+
     var newSpotlightColorWithUmph = newSpotlightColor.slice(0, newSpotlightColor.lastIndexOf(',') + 1) + ' 1)';
     var styles = {
       backgroundColor: newSpotlightColorWithUmph,
+      color: "black"
     }
     $('span[data-annotation-id="' + annotation.id + '"]').css(styles);  
     this.setState({spotlight: annotation});
@@ -20966,6 +20972,11 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
     if (this.state.spotlight !== '') {
       this.clickHandler(this.state.spotlight);
     }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    debugger;
+    this.clickHandler(nextProps.spotlight);
   },
 
   componentWillUnmount: function() {

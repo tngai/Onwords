@@ -64,7 +64,7 @@ var App = React.createClass({
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: true});
-            this.setState({spotlight: {}});
+            this.setState({spotlight: ''});
             $('.annotation-sidebar').animate({right: (0)}, duration);
             break;
         default:
@@ -79,10 +79,12 @@ var App = React.createClass({
     // $(document).on('click', '.annotator-hl', function() {
     //   THIS.updateView('showAnnotatorView');
     // });
-    debugger;
     var self = this;
     document.addEventListener('spotlightAnnotation', function(e) {
-      self.updateView('showAnnotatorView');
+      debugger;
+      if (!self.state.showFriendsAnnotations) {
+        self.updateView('showAnnotatorView');
+      }
       console.log('spotlight this annotation:', e.detail.targetAnnotation);
       self.setState({spotlight: e.detail.targetAnnotation});
     })
