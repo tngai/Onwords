@@ -20418,9 +20418,7 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
     var user = window.localStorage.user_id;
     var urls = info.map(function(annotation, index) {
       console.log('in MyAnnotationsLink', annotation);
-
-      // 
-
+      var numberOfLikes = annotation.likes.length;
       var redirectUri = annotation.uri_link + '#' + user + 'onwords1991';
       console.log(redirectUri)
       return (
@@ -20429,7 +20427,7 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
             React.createElement("a", {href: redirectUri, target: "blank", className: "redirectLink"}, annotation.title)
           ), 
           React.createElement("div", {className: "my-annotations-likes-container"}, 
-            annotation.likes
+            "Likes : ", numberOfLikes
           ), 
           React.createElement("div", {className: "my-annotations-form-container"}, 
                 React.createElement("textarea", {type: "text", placeholder: "Write a comment..."}), 
