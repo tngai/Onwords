@@ -6,7 +6,8 @@ var FriendAnnotationComment = require('./friends-annotationComment');
 var friendsAnnotationList = React.createClass({
   getInitialState: function() {
     return {
-      spotlight: ''
+      spotlight: '',
+      spotlightOn: false
     }
   },
 
@@ -18,27 +19,57 @@ var friendsAnnotationList = React.createClass({
   },
 
   unhighlight: function() {
-    var oldSpotlight = this.state.spotlight;
+    var oldSpotlight = this.state.spotlight.id;
     var oldSpotlightColorWithUmph = $('span[data-annotation-id="' + oldSpotlight + '"]').css('background-color'); 
-    var oldSpotlightColor = oldSpotlightColorWithUmph.slice(0, oldSpotlightColorWithUmph.length - 1) + ', 0.5)';
+    var oldSpotlightColor = oldSpotlightColorWithUmph.slice(0, oldSpotlightColorWithUmph.length - 1) + ', 0.25)';
     oldSpotlightColor = oldSpotlightColor.slice(0, oldSpotlightColor.indexOf('(')) + 'a' + oldSpotlightColor.slice(oldSpotlightColor.indexOf('('));
-    $('span[data-annotation-id="' + oldSpotlight + '"]').css('background-color', oldSpotlightColor);  
+    var styles = {
+      backgroundColor: oldSpotlightColor
+    }
+    $('span[data-annotation-id="' + oldSpotlight + '"]').css(styles);  
+  },
+
+  highlight: function(annotation) {
+    var newSpotlightColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
+    var newSpotlightColorWithUmph = newSpotlightColor.slice(0, newSpotlightColor.lastIndexOf(',') + 1) + ' 1)';
+    var styles = {
+      backgroundColor: newSpotlightColorWithUmph,
+    }
+    $('span[data-annotation-id="' + annotation.id + '"]').css(styles);  
+    this.setState({spotlight: annotation});
   },
 
   clickHandler: function(annotation) {
+    debugger;
     $('html, body').animate({
       scrollTop: annotation.offsetTop - 200
     }, 300);
 
-    if (this.state.spotlight !== annotation.id) {
-      if (this.state.spotlight !== '') {
-        this.unhighlight();
-      }
+    if (this.state.spotlight !== '' && this.state.spotlight.id !== annotation.id) {
+      this.unhighlight();
+    }
 
-      var newSpotlightColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
-      var newSpotlightColorWithUmph = newSpotlightColor.slice(0, newSpotlightColor.lastIndexOf(',') + 1) + ' 1)';
-      $('span[data-annotation-id="' + annotation.id + '"]').css('background-color', newSpotlightColorWithUmph);  
-      this.setState({spotlight: annotation.id});
+    if (this.state.spotlight.id === annotation.id) {
+      if (!this.state.spotlightOn) {
+        this.highlight(annotation);
+        this.setState({spotlightOn: true});
+      } 
+    } else {
+      this.highlight(annotation);
+    }
+  },
+
+  componentWillMount: function() {
+    debugger;
+    if (this.props.spotlight !== '') {
+      this.setState({spotlight: this.props.spotlight});
+    }
+  },
+
+  componentDidMount: function() {
+    debugger;
+    if (this.state.spotlight !== '') {
+      this.clickHandler(this.state.spotlight);
     }
   },
 
