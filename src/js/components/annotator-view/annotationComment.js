@@ -7,12 +7,6 @@ var annotationComment = React.createClass({
     }
   },
 
-  goToHighlight: function() {
-    $('html, body').animate({
-      scrollTop: this.props.annotation.offsetTop - 200
-    }, 300)
-  },
-
   editComment: function() {
     this.setState({shouldEditComment: true});
   },
@@ -52,15 +46,23 @@ var annotationComment = React.createClass({
 
 
   render: function() {
+    var userColor = $('span[data-annotation-id="' + this.props.annotation.id + '"]').css('background-color'); 
+    var divStyle = {
+      borderLeft: '4px solid ' + userColor
+    }
+
     var annotation = this.props.annotation;
     var self = this;
     var deleteAnn = function() {
       self.props.deleteAnn(annotation);
-    }
+    };
+
+    var clickHandler = function() {
+      self.props.clickHandler(annotation);
+    };
 
     return (
-      <div>
-        <p onClick={this.goToHighlight}>{annotation.quote}</p>
+      <div onClick={clickHandler} className="annotation" style={divStyle}>
         {!this.state.shouldEditComment ? <p>{annotation.text}</p> : 
           <form>
             <textArea id="annotationEdit" style={{height: 100+"px", width: 300+"px"}}>

@@ -12,6 +12,7 @@ var FriendsAnnotationsView = React.createClass({
     }
   },
   componentWillMount: function() {
+    debugger;
     console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
@@ -75,22 +76,25 @@ var FriendsAnnotationsView = React.createClass({
         )
       }
     })
-
+    debugger;
     console.log('inside-friendsview, annotations:', this.state.annotations)
 
     return (
       <div className='friends-annotations-view-container'>
-        <div className='friends-annotations-buttons-container'>
-          <AnnotatorMinimizeButton {...this.props} />
-          <MyAnnotationsButton toggleFriendAnnotations={this.toggleFriendAnnotations} />
-          <HomeButton {...this.props} />
-        </div>
+        <div className='friends-annotations-header'>
+          <div className='friends-annotations-buttons-container'>
+            <AnnotatorMinimizeButton {...this.props} />
+            <MyAnnotationsButton toggleFriendAnnotations={this.toggleFriendAnnotations} />
+            <HomeButton {...this.props} />
+          </div>
 
-        <div className='friends-container'>
-          {friendCarousel}
+          <div className='friends-container'>
+            {friendCarousel}
+          </div>
         </div>
+        <br></br>
         <div className='friends-annotations-list'>
-          {this.state.annotations.length > 0 ? <FriendAnnotationList friends={this.state.friends} annotations={this.state.annotations}/> : null}
+          {this.state.annotations.length > 0 ? <FriendAnnotationList spotlight={this.props.spotlight} friends={this.state.friends} annotations={this.state.annotations}/> : null}
         </div>
       </div>
     );
@@ -150,7 +154,9 @@ var FriendsAnnotationsView = React.createClass({
         }
         self.setState({annotations: changes[uri].newValue, friends: newFriends});
       }
-    })
+    });
+
+    
   }
 });
 

@@ -19923,12 +19923,6 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     }
   },
 
-  goToHighlight: function() {
-    $('html, body').animate({
-      scrollTop: this.props.annotation.offsetTop - 200
-    }, 300)
-  },
-
   editComment: function() {
     this.setState({shouldEditComment: true});
   },
@@ -19968,15 +19962,23 @@ var annotationComment = React.createClass({displayName: "annotationComment",
 
 
   render: function() {
+    var userColor = $('span[data-annotation-id="' + this.props.annotation.id + '"]').css('background-color'); 
+    var divStyle = {
+      borderLeft: '4px solid ' + userColor
+    }
+
     var annotation = this.props.annotation;
     var self = this;
     var deleteAnn = function() {
       self.props.deleteAnn(annotation);
-    }
+    };
+
+    var clickHandler = function() {
+      self.props.clickHandler(annotation);
+    };
 
     return (
-      React.createElement("div", null, 
-        React.createElement("p", {onClick: this.goToHighlight}, annotation.quote), 
+      React.createElement("div", {onClick: clickHandler, className: "annotation", style: divStyle}, 
         !this.state.shouldEditComment ? React.createElement("p", null, annotation.text) : 
           React.createElement("form", null, 
             React.createElement("textArea", {id: "annotationEdit", style: {height: 100+"px", width: 300+"px"}}, 
@@ -20213,30 +20215,26 @@ var App = React.createClass({displayName: "App",
       showAnnotatorButton: true,
       showAnnotatorView: false,
       showFeedView: false,
-      showFriendsAnnotations: false
+      showFriendsAnnotations: false,
+      spotlight: ''
     };
   },
-  componentWillMount: function() {
-    console.log('App componentWillMount');
-    var THIS = this;
-    $(document).on('click', '.annotator-hl', function() {
-      THIS.updateView('showAnnotatorView');
-    });
-  },
-  componentDidUpdate: function() {
-    console.log('App componentDidUpdate');
-    var THIS = this;
-    $(document).on('click', '.annotator-hl', function() {
-      THIS.updateView('showAnnotatorView');
-    });
+  
+  // componentDidUpdate: function() {
+  //   debugger;
+  //     console.log('App componentDidUpdate', this.state.showFriendsAnnotations);
+  //     var THIS = this;
+  //     $(document).on('click', '.annotator-hl', function() {
+  //       THIS.updateView('showAnnotatorView');
+  //     });
 
-    $(document).on('keyup', function(e){
-      if (e.which == 27) { 
-        console.log('ESCAPE KEY PRESSED!');
-        $('.annotator-cancel').trigger('click');
-      }    
-    });
-  },
+  //   // $(document).on('keyup', function(e){
+  //   //   if (e.which == 27) { 
+  //   //     console.log('ESCAPE KEY PRESSED!');
+  //   //     $('.annotator-cancel').trigger('click');
+  //   //   }    
+  //   // });
+  // },
   updateView: function(action){
     var duration = 200;
 
@@ -20248,6 +20246,7 @@ var App = React.createClass({displayName: "App",
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: false});
             $('.annotation-sidebar').animate({right: -(565)}, duration);
+            this.setState({spotlight: ''});
             break;
         // case 'showFriendsAnnotations':
         //     console.log('showFriendsAnnotations!!');
@@ -20258,6 +20257,7 @@ var App = React.createClass({displayName: "App",
         //     $('.annotation-sidebar').animate({right: -(300)}, 50);
         //     break;
         case 'showAnnotatorView':
+          debugger;
             this.setState({showFriendsAnnotations: true});
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
@@ -20269,19 +20269,38 @@ var App = React.createClass({displayName: "App",
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: true});
+            this.setState({spotlight: {}});
             $('.annotation-sidebar').animate({right: (0)}, duration);
             break;
         default:
             console.log('nothing happened')
     }
   },
+
+  componentDidMount: function() {
+    // console.log('App componentWillMount');
+    // debugger;
+    // var THIS = this;
+    // $(document).on('click', '.annotator-hl', function() {
+    //   THIS.updateView('showAnnotatorView');
+    // });
+    debugger;
+    var self = this;
+    document.addEventListener('spotlightAnnotation', function(e) {
+      self.updateView('showAnnotatorView');
+      console.log('spotlight this annotation:', e.detail.targetAnnotation);
+      self.setState({spotlight: e.detail.targetAnnotation});
+    })
+  },
+
   render: function() {
+    debugger;
     return (
       React.createElement("div", {className: "app-container"}, 
         this.state.showAnnotatorButton ? React.createElement(AnnotatorButton, {updateView: this.updateView}) : null, 
         this.state.showAnnotatorView ? React.createElement(AnnotatorView, {updateView: this.updateView}) : null, 
         this.state.showFeedView ? React.createElement(FeedView, {updateView: this.updateView}) : null, 
-        this.state.showFriendsAnnotations ? React.createElement(FriendsAnnotations, {updateView: this.updateView}) : null
+        this.state.showFriendsAnnotations ? React.createElement(FriendsAnnotations, {spotlight: this.state.spotlight, updateView: this.updateView}) : null
       )
     );
   }
@@ -20760,7 +20779,7 @@ var FeedView = React.createClass({displayName: "FeedView",
       React.createElement("div", {className: "feed-view-container"}, 
         React.createElement("div", {className: "header-container"}, 
           React.createElement(MinimizeButton, React.__spread({},  this.props)), 
-          React.createElement("div", null, "Onwords")
+          React.createElement("div", {className: "app-name"}, "ONWORDS")
         ), 
 
         React.createElement("div", {className: "body-container"}, 
@@ -20824,18 +20843,27 @@ module.exports = SettingsButton;
 var React = require('react');
 
 var friendAnnotationComment = React.createClass({displayName: "friendAnnotationComment",
-  goToHighlight: function() {
-    $('html, body').animate({
-      scrollTop: this.props.annotation.offsetTop - 200
-    }, 300)
-  },
+
 
   render: function() {
-    
+
     var annotation = this.props.annotation;
+    var self = this;
+    var clickHandler = function() {
+      self.props.clickHandler(annotation);
+    };
+  
+    var userColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
+
+    // var marginRight = this.props.spotlight === annotation.id ? '20px' : '0px';
+
+    var divStyle = {
+      borderLeft: '4px solid ' + userColor,
+      // marginRight: marginRight
+    }
+
     return (
-      React.createElement("div", null, 
-        React.createElement("p", {onClick: this.goToHighlight}, annotation.quote), 
+      React.createElement("div", {onClick: clickHandler, className: "annotation", style: divStyle}, 
         React.createElement("p", null, annotation.text)
       )
     )
@@ -20851,11 +20879,79 @@ var FriendAnnotationComment = require('./friends-annotationComment');
 
 
 var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationList",
+  getInitialState: function() {
+    return {
+      spotlight: '',
+      spotlightOn: false
+    }
+  },
+
   deleteAnn: function(annotation) {
     var ev = new CustomEvent('deleteAnnotation', {detail: {
       targetAnnotation: annotation
     }});
     document.dispatchEvent(ev);
+  },
+
+  unhighlight: function() {
+    var oldSpotlight = this.state.spotlight.id;
+    var oldSpotlightColorWithUmph = $('span[data-annotation-id="' + oldSpotlight + '"]').css('background-color'); 
+    var oldSpotlightColor = oldSpotlightColorWithUmph.slice(0, oldSpotlightColorWithUmph.length - 1) + ', 0.25)';
+    oldSpotlightColor = oldSpotlightColor.slice(0, oldSpotlightColor.indexOf('(')) + 'a' + oldSpotlightColor.slice(oldSpotlightColor.indexOf('('));
+    var styles = {
+      backgroundColor: oldSpotlightColor
+    }
+    $('span[data-annotation-id="' + oldSpotlight + '"]').css(styles);  
+  },
+
+  highlight: function(annotation) {
+    var newSpotlightColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
+    var newSpotlightColorWithUmph = newSpotlightColor.slice(0, newSpotlightColor.lastIndexOf(',') + 1) + ' 1)';
+    var styles = {
+      backgroundColor: newSpotlightColorWithUmph,
+    }
+    $('span[data-annotation-id="' + annotation.id + '"]').css(styles);  
+    this.setState({spotlight: annotation});
+  },
+
+  clickHandler: function(annotation) {
+    debugger;
+    $('html, body').animate({
+      scrollTop: annotation.offsetTop - 200
+    }, 300);
+
+    if (this.state.spotlight !== '' && this.state.spotlight.id !== annotation.id) {
+      this.unhighlight();
+    }
+
+    if (this.state.spotlight.id === annotation.id) {
+      if (!this.state.spotlightOn) {
+        this.highlight(annotation);
+        this.setState({spotlightOn: true});
+      } 
+    } else {
+      this.highlight(annotation);
+    }
+  },
+
+  componentWillMount: function() {
+    debugger;
+    if (this.props.spotlight !== '') {
+      this.setState({spotlight: this.props.spotlight});
+    }
+  },
+
+  componentDidMount: function() {
+    debugger;
+    if (this.state.spotlight !== '') {
+      this.clickHandler(this.state.spotlight);
+    }
+  },
+
+  componentWillUnmount: function() {
+    if (this.state.spotlight !== '') {
+      this.unhighlight();
+    }
   },
 
   render: function() {
@@ -20872,10 +20968,10 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
         if (friends[user]) {
           return (
             React.createElement("div", null, 
-              React.createElement("li", {className: "annotation"}, 
+              React.createElement("li", null, 
                 user.toString() === ownId ? 
-                  React.createElement(AnnotationComment, {user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
-                : React.createElement(FriendAnnotationComment, {user: annotation.user, annotation: annotation})
+                  React.createElement(AnnotationComment, {clickHandler: self.clickHandler, user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
+                : React.createElement(FriendAnnotationComment, {spotlight: self.state.spotlight, clickHandler: self.clickHandler, user: annotation.user, annotation: annotation})
                 
               ), 
               React.createElement("br", null)
@@ -20909,6 +21005,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     }
   },
   componentWillMount: function() {
+    debugger;
     console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
@@ -20972,22 +21069,25 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         )
       }
     })
-
+    debugger;
     console.log('inside-friendsview, annotations:', this.state.annotations)
 
     return (
       React.createElement("div", {className: "friends-annotations-view-container"}, 
-        React.createElement("div", {className: "friends-annotations-buttons-container"}, 
-          React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
-          React.createElement(MyAnnotationsButton, {toggleFriendAnnotations: this.toggleFriendAnnotations}), 
-          React.createElement(HomeButton, React.__spread({},  this.props))
-        ), 
+        React.createElement("div", {className: "friends-annotations-header"}, 
+          React.createElement("div", {className: "friends-annotations-buttons-container"}, 
+            React.createElement(AnnotatorMinimizeButton, React.__spread({},  this.props)), 
+            React.createElement(MyAnnotationsButton, {toggleFriendAnnotations: this.toggleFriendAnnotations}), 
+            React.createElement(HomeButton, React.__spread({},  this.props))
+          ), 
 
-        React.createElement("div", {className: "friends-container"}, 
-          friendCarousel
+          React.createElement("div", {className: "friends-container"}, 
+            friendCarousel
+          )
         ), 
+        React.createElement("br", null), 
         React.createElement("div", {className: "friends-annotations-list"}, 
-          this.state.annotations.length > 0 ? React.createElement(FriendAnnotationList, {friends: this.state.friends, annotations: this.state.annotations}) : null
+          this.state.annotations.length > 0 ? React.createElement(FriendAnnotationList, {spotlight: this.props.spotlight, friends: this.state.friends, annotations: this.state.annotations}) : null
         )
       )
     );
@@ -21047,7 +21147,9 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         }
         self.setState({annotations: changes[uri].newValue, friends: newFriends});
       }
-    })
+    });
+
+    
   }
 });
 
@@ -21172,6 +21274,7 @@ var identityListener = function(changes) {
 };
 
 chrome.storage.sync.get('user', function(obj) {
+  debugger;
   if (obj.user) {
     if (!userId) {
       userId = obj.user.id;
@@ -21180,6 +21283,7 @@ chrome.storage.sync.get('user', function(obj) {
     renderComponents();
     test.annotate(userId);
   } else {
+    debugger;
     chrome.storage.onChanged.addListener(identityListener);
   }
 });
@@ -21212,7 +21316,7 @@ exports.annotate = function(userId) {
   var app = new annotator.App();
   app.include(annotator.ui.main)
     .include(annotator.storage.http, {
-      prefix: 'https://onwords-test-server.herokuapp.com',
+      prefix: 'https://test2server.herokuapp.com',
       urls: {
         create: '/api/annotations',
         update: '/api/annotations/{id}',
