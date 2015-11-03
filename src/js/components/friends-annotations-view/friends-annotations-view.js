@@ -115,8 +115,9 @@ var FriendsAnnotationsView = React.createClass({
     var annotations = [];
     var friends = {};
 
-    $.get('https://onwords-test-server.herokuapp.com/api/search/uri', {uri: uri})
-      .done(function(data) {
+    $.get('https://test2server.herokuapp.com/api/search/uri', {uri: uri, user: ownId})
+      .done(function(data) { 
+        debugger;
         chrome.storage.local.get(uri, function(obj) {
           debugger;
           if(obj[uri]) {
@@ -125,9 +126,9 @@ var FriendsAnnotationsView = React.createClass({
             }
             annotations = obj[uri];
           }
-          for (var i = 0; i < data.rows.length; i++) {
-            if (friends[data.rows[i].user_id] === undefined) {
-              friends[data.rows[i].user_id] = false;
+          for (var i = 0; i < data.length; i++) {
+            if (friends[data[i]] === undefined) {
+              friends[data[i]] = false;
             }
           }
           self.setState({annotations: annotations, friends: friends});
