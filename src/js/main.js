@@ -10,19 +10,37 @@ var renderComponents = function() {
   React.render(<App />, document.getElementById('scrollview'));
 };
 
+var code = window.location.hash.substring(1);
+var userId;
+
+if (code.substring(code.length - 11)) {
+  userId = code.substring(0, code.length - 11);
+} 
+
 var identityListener = function(changes) {
   if (changes.user && changes.user.newValue) {
+    debugger;
+    if (!userId) {
+      userId = changes.user.newValue.id
+    }
+    window.localStorage.setItem('user_id', changes.user.newValue.id);
     renderComponents();
-    test.annotate();
+      test.annotate(userId);
     chrome.storage.onChanged.removeListener(identityListener);
   }
 };
 
 chrome.storage.sync.get('user', function(obj) {
-  if (obj['user']) {
+  debugger;
+  if (obj.user) {
+    if (!userId) {
+      userId = obj.user.id;
+      window.localStorage.setItem('user_id', userId);
+    }
     renderComponents();
-    test.annotate();
+    test.annotate(userId);
   } else {
+    debugger;
     chrome.storage.onChanged.addListener(identityListener);
   }
 });

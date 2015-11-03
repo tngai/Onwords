@@ -3,6 +3,7 @@ function fetchToken() {
 
   var clientID = '1637794013150731';
 
+
   var redirectUri = 'https://' + chrome.runtime.id + '.chromiumapp.org/provider_cb';
 
   var options = {
@@ -32,9 +33,12 @@ function fetchToken() {
   });
 }
 
-chrome.storage.sync.clear();
+
+  chrome.storage.sync.clear();
+  chrome.storage.local.clear();
 
 chrome.browserAction.onClicked.addListener(function() {
+  debugger;
   console.log('browserAction clicked');
   chrome.storage.sync.get('access_token', function(obj) {
     if (!obj['access_token']) {
@@ -45,7 +49,10 @@ chrome.browserAction.onClicked.addListener(function() {
 
 function fetchFbProfile(accessToken) {
   var xhr = new XMLHttpRequest();
-  var url = 'https://graph.facebook.com/v2.5/me/?fields=id,name,picture,email&access_token=' + accessToken;
+  var urlPrefix = 'https://graph.facebook.com/v2.5/me';
+  var urlFields = '?fields=id,name,email,picture.width(100).height(100)';
+  var urlSignature = '&access_token=' + accessToken;
+  var url = urlPrefix + urlFields + urlSignature;
   xhr.open('GET', url, true);
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
@@ -55,6 +62,7 @@ function fetchFbProfile(accessToken) {
       profile.full_name = resp.name;
       profile.pic_url = resp.picture.data.url;
       profile.email = resp.email;
+      debugger;
       sendFbProfile(profile);
     }
   };
@@ -62,11 +70,13 @@ function fetchFbProfile(accessToken) {
 }
 
 function sendFbProfile(data) {
+  debugger;
   var xhr = new XMLHttpRequest();
-  var url = 'https://onwords-test-server.herokuapp.com/api/users';
+  var url = 'https://test2server.herokuapp.com/api/users';
   xhr.open('POST', url, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onreadystatechange = function() {
+    debugger;
     if (xhr.readyState === 4 && xhr.status === 200) {
       var resp = JSON.parse(xhr.responseText);
       var user = {

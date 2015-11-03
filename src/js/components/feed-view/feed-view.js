@@ -74,7 +74,7 @@ var FeedView = React.createClass({
       <div className='feed-view-container'>
         <div className='header-container'>
           <MinimizeButton {...this.props} />
-          <div>Onwords</div>
+          <div className='app-name' >ONWORDS</div>
         </div>
 
         <div className='body-container'>
