@@ -20779,7 +20779,7 @@ var FeedView = React.createClass({displayName: "FeedView",
       React.createElement("div", {className: "feed-view-container"}, 
         React.createElement("div", {className: "header-container"}, 
           React.createElement(MinimizeButton, React.__spread({},  this.props)), 
-          React.createElement("div", null, "Onwords")
+          React.createElement("div", {className: "app-name"}, "ONWORDS")
         ), 
 
         React.createElement("div", {className: "body-container"}, 
@@ -21274,6 +21274,7 @@ var identityListener = function(changes) {
 };
 
 chrome.storage.sync.get('user', function(obj) {
+  debugger;
   if (obj.user) {
     if (!userId) {
       userId = obj.user.id;
@@ -21282,6 +21283,7 @@ chrome.storage.sync.get('user', function(obj) {
     renderComponents();
     test.annotate(userId);
   } else {
+    debugger;
     chrome.storage.onChanged.addListener(identityListener);
   }
 });

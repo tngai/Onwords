@@ -1,7 +1,7 @@
 function fetchToken() {
   var access_token;
 
-  var clientID = '190161771316309';
+  var clientID = '';
 
 
   var redirectUri = 'https://' + chrome.runtime.id + '.chromiumapp.org/provider_cb';
@@ -33,10 +33,12 @@ function fetchToken() {
   });
 }
 
-chrome.storage.sync.clear();
-chrome.storage.local.clear();
+
+  chrome.storage.sync.clear();
+  chrome.storage.local.clear();
 
 chrome.browserAction.onClicked.addListener(function() {
+  debugger;
   console.log('browserAction clicked');
   chrome.storage.sync.get('access_token', function(obj) {
     if (!obj['access_token']) {
