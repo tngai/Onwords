@@ -20392,6 +20392,10 @@ module.exports = FeedHomeButton;
 var React = require('react');
 
 var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
+  handleClick: function() {
+    console.log('Posting!!!!');
+  },
+
   render: function() {
     var handleClick = this.handleClick;
     var info = this.props.info;
@@ -20402,7 +20406,14 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
       console.log(redirectUri)
       return (
         React.createElement("div", {key: index, className: "my-annotations-link-container"}, 
-          React.createElement("a", {onClick: handleClick, href: redirectUri, target: "blank", className: "redirectLink"}, "URL TITLE GOES HERE : ", index)
+          React.createElement("div", {className: "my-annotations-title-container"}, 
+            React.createElement("a", {href: redirectUri, target: "blank", className: "redirectLink"}, "URL TITLE GOES HERE : ", index)
+          ), 
+
+          React.createElement("div", {className: "my-annotations-form-container"}, 
+                React.createElement("textarea", {type: "text", placeholder: "Write a comment..."}), 
+                React.createElement("button", {onClick: handleClick}, "Post")
+          )
         )
       )
     });

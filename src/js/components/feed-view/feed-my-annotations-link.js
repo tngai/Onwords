@@ -1,6 +1,10 @@
 var React = require('react');
 
 var MyAnnotationsLink = React.createClass({
+  handleClick: function() {
+    console.log('Posting!!!!');
+  },
+
   render: function() {
     var handleClick = this.handleClick;
     var info = this.props.info;
@@ -11,7 +15,14 @@ var MyAnnotationsLink = React.createClass({
       console.log(redirectUri)
       return (
         <div key={index} className='my-annotations-link-container'>
-          <a onClick={handleClick} href={redirectUri} target='blank' className='redirectLink'>URL TITLE GOES HERE : {index}</a>
+          <div className='my-annotations-title-container'>
+            <a href={redirectUri} target='blank' className='redirectLink'>URL TITLE GOES HERE : {index}</a>
+          </div>
+
+          <div className='my-annotations-form-container'>
+                <textarea type='text' placeholder='Write a comment...'></textarea>
+                <button onClick={handleClick}>Post</button>
+          </div>
         </div>
       )
     });
