@@ -14666,7 +14666,7 @@ var Promise = util.Promise;
 
 /////////////////////////////////////////////////////////////////////////////////
 var userColor = {};
-var colors = ['rgba(255,204,204, 0.45)', 'rgba(255,229,204, 0.45)', 'rgba(255,255,204, 0.45)', 'rgba(229,204,204, 0.45)', 'rgba(204,255,204, 0.45)', 'rgba(204,255,229, 0.45)', 'rgba(204,255,255, 0.45)', 'rgba(204,229,255, 0.45)', 'rgba(204,204,255, 0.45)', 'rgba(229,204,255, 0.45)', 'rgba(255,204,255, 0.45)', 'rgba(255,204,229, 0.45)'];
+var colors = ['rgba(255,153,153, 0.25)', 'rgba(255,204,153, 0.25)', 'rgba(204,255,153, 0.25)', 'rgba(153,255,153, 0.25)', 'rgba(153,255,204, 0.25)', 'rgba(153,255,255, 0.25)', 'rgba(153,204,255, 0.25)', 'rgba(255,153,255, 0.25)', 'rgba(255,153,204, 0.25)'];
 // highlightRange wraps the DOM Nodes within the provided range with a highlight
 // element of the specified class and returns the highlight Elements.
 //
@@ -14688,7 +14688,7 @@ function highlightRange(normedRange, cssClass, userId) {
     // but better than breaking table layouts.
 
 /////////////////////////////////////////////////////////////////////////////////
-    var index = Math.floor(Math.random() * 11);
+    var index = Math.floor(Math.random() * 9);
 
     if (!userColor[userId]) {
       userColor[userId] = colors[index];
@@ -14703,7 +14703,7 @@ function highlightRange(normedRange, cssClass, userId) {
         if (!white.test(node.nodeValue)) {
             var hl = global.document.createElement('span');
             hl.className = cssClass;
-            hl.style.background = userColor[userId];
+            hl.style.backgroundColor = userColor[userId];
             node.parentNode.replaceChild(hl, node);
             hl.appendChild(node);
             results.push(hl);
@@ -14901,6 +14901,20 @@ Highlighter.prototype.draw = function (annotation) {
             .attr('data-annotation-id', annotation.id);
     }
 
+    $('.annotator-hl').on('click', function(event) {
+      var annotations = $(event.target)
+                    .parents('.annotator-hl')
+                    .addBack()
+                    .map(function (_, elem) {
+                        return $(elem).data("annotation");
+                    })
+                    .toArray();
+
+      var ev = new CustomEvent('spotlightAnnotation', {detail: {
+        targetAnnotation: annotations[0]
+      }});
+      document.dispatchEvent(ev);
+    })
 
     return annotation._local.highlights;
 };

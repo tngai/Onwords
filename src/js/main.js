@@ -31,6 +31,7 @@ var identityListener = function(changes) {
 };
 
 chrome.storage.sync.get('user', function(obj) {
+  debugger;
   if (obj.user) {
     if (!userId) {
       userId = obj.user.id;
@@ -39,6 +40,7 @@ chrome.storage.sync.get('user', function(obj) {
     renderComponents();
     test.annotate(userId);
   } else {
+    debugger;
     chrome.storage.onChanged.addListener(identityListener);
   }
 });
