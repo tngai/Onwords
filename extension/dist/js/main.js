@@ -20763,7 +20763,7 @@ var FeedView = React.createClass({displayName: "FeedView",
       React.createElement("div", {className: "feed-view-container"}, 
         React.createElement("div", {className: "header-container"}, 
           React.createElement(MinimizeButton, React.__spread({},  this.props)), 
-          React.createElement("div", null, "Onwords")
+          React.createElement("div", {className: "app-name"}, "ONWORDS")
         ), 
 
         React.createElement("div", {className: "body-container"}, 
