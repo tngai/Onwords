@@ -22,7 +22,6 @@ var friendAnnotationComment = React.createClass({
 
     return (
       <div onClick={clickHandler} className="annotation" style={divStyle}>
-        <p>{annotation.quote}</p>
         <p>{annotation.text}</p>
       </div>
     )

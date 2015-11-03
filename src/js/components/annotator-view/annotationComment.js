@@ -63,7 +63,6 @@ var annotationComment = React.createClass({
 
     return (
       <div onClick={clickHandler} className="annotation" style={divStyle}>
-        <p>{annotation.quote}</p>
         {!this.state.shouldEditComment ? <p>{annotation.text}</p> : 
           <form>
             <textArea id="annotationEdit" style={{height: 100+"px", width: 300+"px"}}>
