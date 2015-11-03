@@ -21164,13 +21164,13 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         if (changes[uri].newValue.length > 0) {
           for (var i = 0; i < changes[uri].newValue.length; i++) {
             var user = changes[uri].newValue[i].user_id;
-            newFriends[user] = {shown: true, pic: oldFriends[user], name: oldFriends[user]};
+            newFriends[user] = {shown: true, pic: oldFriends[user].pic, name: oldFriends[user].name};
           }
         }
 
         for (var friend in oldFriends) {
           if (newFriends[friend] === undefined) {
-            newFriends[friend] = {shown: false, pic: oldFriends[friend], name: oldFriends[friend]};
+            newFriends[friend] = {shown: false, pic: oldFriends[friend].pic, name: oldFriends[friend].name};
           }
         }
         self.setState({annotations: changes[uri].newValue, friendsShown: newFriends});
