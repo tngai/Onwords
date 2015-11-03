@@ -8,7 +8,8 @@ var FriendsAnnotationsView = React.createClass({
   getInitialState: function() {
     return {
       annotations: [],
-      friends: {}
+      friendsShown: {},
+      friendsInfo: {}
     }
   },
   componentWillMount: function() {
@@ -41,15 +42,15 @@ var FriendsAnnotationsView = React.createClass({
   toggleFriendAnnotations: function(id) {
     debugger;
     console.log('toggleFriendAnnotations: ', id)
-    var friends = this.state.friends;
+    var friends = this.state.friendsShown;
 
     if (!friends[id]) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      console.log('friends are now', this.state.friends);
+      console.log('friends are now', this.state.friendsShown);
       console.log(friends[id], ' stored in chrome now')
     } else {
-      console.log('friends are now', this.state.friends);
+      console.log('friends are now', this.state.friendsShown);
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
         console.log(this.state.annotations[i]);
@@ -66,7 +67,7 @@ var FriendsAnnotationsView = React.createClass({
 
   render: function() {
     var ownId = window.localStorage.getItem('user_id');
-    var friendsArray = Object.keys(this.state.friends);
+    var friendsArray = Object.keys(this.state.friendsShown);
     var self = this;
 
     var friendCarousel = friendsArray.map(function(friend, index) {
@@ -94,7 +95,7 @@ var FriendsAnnotationsView = React.createClass({
         </div>
         <br></br>
         <div className='friends-annotations-list'>
-          {this.state.annotations.length > 0 ? <FriendAnnotationList spotlight={this.props.spotlight} friends={this.state.friends} annotations={this.state.annotations}/> : null}
+          {this.state.annotations.length > 0 ? <FriendAnnotationList spotlight={this.props.spotlight} friends={this.state.friendsShown} annotations={this.state.annotations}/> : null}
         </div>
       </div>
     );
@@ -113,25 +114,27 @@ var FriendsAnnotationsView = React.createClass({
     }
 
     var annotations = [];
-    var friends = {};
+    var friendsShown = {};
+    var friendsInfo = {};
 
-    $.get('https://test2server.herokuapp.com/api/search/uri', {uri: uri, user: ownId})
+    $.get('https://test2server.herokuapp.com/api/users/uri/annotations', {uri: uri, user_id: ownId})
       .done(function(data) { 
         debugger;
         chrome.storage.local.get(uri, function(obj) {
           debugger;
           if(obj[uri]) {
             for (var i = 0; i < obj[uri].length; i++) {
-              friends[obj[uri][i].user_id] = true;
+              friendsShown[obj[uri][i].user_id] = true;
             }
             annotations = obj[uri];
           }
           for (var i = 0; i < data.length; i++) {
-            if (friends[data[i]] === undefined) {
-              friends[data[i]] = false;
+            friendsInfo[data[i].id] = {pic: data[i].pic_url, name: data[i].full_name};
+            if (friendsShown[data[i].id] === undefined) {
+              friendsShown[data[i].id] = false;
             }
           }
-          self.setState({annotations: annotations, friends: friends});
+          self.setState({annotations: annotations, friendsShown: friendsShown, friendsInfo: friendsInfo});
       })
     })
 
@@ -140,7 +143,7 @@ var FriendsAnnotationsView = React.createClass({
       debugger;
       if (changes[uri]) {
         var newFriends = {};
-        var oldFriends = self.state.friends;
+        var oldFriends = self.state.friendsShown;
         console.log('chrome storage changed mothafucka', changes);
         if (changes[uri].newValue.length > 0) {
           for (var i = 0; i < changes[uri].newValue.length; i++) {
@@ -153,7 +156,7 @@ var FriendsAnnotationsView = React.createClass({
             newFriends[friend] = false;
           }
         }
-        self.setState({annotations: changes[uri].newValue, friends: newFriends});
+        self.setState({annotations: changes[uri].newValue, friendsShown: newFriends});
       }
     });
 

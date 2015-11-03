@@ -21,7 +21,9 @@ var FeedSearchList = React.createClass({
       }.bind(this));
     }
   },
-
+  handleClick: function(evt) {
+    console.log('this is what is clicked ', evt);
+  },
   render: function() {
     var feedSearchResults = this.state.results.map(function(result, index) {
       var picUrl = result.pic_url;
@@ -36,7 +38,7 @@ var FeedSearchList = React.createClass({
       // var following = <button className="feed-search-following">Following</button>;
       // var editSettings = ;
       return (
-        <li className="feed-search-result" key={index}>
+        <li className="feed-search-result" key={index} onClick={this.handleClick} >
           <div className="feed-search-img"><img src={picUrl} /></div>
           <div className="feed-search-name">{fullName}</div>
           {/* {isFollowing ? follow : following} */}

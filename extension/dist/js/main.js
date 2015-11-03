@@ -20408,17 +20408,33 @@ module.exports = FeedHomeButton;
 var React = require('react');
 
 var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
+  handleClick: function() {
+    console.log('Posting!!!!');
+  },
+
   render: function() {
     var handleClick = this.handleClick;
     var info = this.props.info;
+    var user = window.localStorage.user_id;
     var urls = info.map(function(annotation, index) {
       console.log('in MyAnnotationsLink', annotation);
 
-      var redirectUri = annotation.uri + '#' + annotation.user_id + 'onwords1991';
+      // 
+
+      var redirectUri = annotation.uri_link + '#' + user + 'onwords1991';
       console.log(redirectUri)
       return (
         React.createElement("div", {key: index, className: "my-annotations-link-container"}, 
-          React.createElement("a", {onClick: handleClick, href: redirectUri, target: "blank", className: "redirectLink"}, "URL TITLE GOES HERE : ", index)
+          React.createElement("div", {className: "my-annotations-title-container"}, 
+            React.createElement("a", {href: redirectUri, target: "blank", className: "redirectLink"}, annotation.title)
+          ), 
+          React.createElement("div", {className: "my-annotations-likes-container"}, 
+            annotation.likes
+          ), 
+          React.createElement("div", {className: "my-annotations-form-container"}, 
+                React.createElement("textarea", {type: "text", placeholder: "Write a comment..."}), 
+                React.createElement("button", {onClick: handleClick}, "Post")
+          )
         )
       )
     });
@@ -20461,11 +20477,11 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
     console.log('MyAnnotations - componentDidMount');
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
-    var completeUri = 'https://onwords-test-server.herokuapp.com/api/search/users?user_id=' + user;
+    var completeUri = 'https://test2server.herokuapp.com/api/personalfeed?user_id=' + user;
     $.get(completeUri, function(result) {
       if (this.isMounted()) {
         this.setState({
-          info: result.rows
+          info: result
         });
       }
       console.log('MyAnnotations state:INFO = ', this.state.info);
@@ -20524,7 +20540,9 @@ var FeedSearchList = React.createClass({displayName: "FeedSearchList",
       }.bind(this));
     }
   },
-
+  handleClick: function(evt) {
+    console.log('this is what is clicked ', evt);
+  },
   render: function() {
     var feedSearchResults = this.state.results.map(function(result, index) {
       var picUrl = result.pic_url;
@@ -20539,7 +20557,7 @@ var FeedSearchList = React.createClass({displayName: "FeedSearchList",
       // var following = <button className="feed-search-following">Following</button>;
       // var editSettings = ;
       return (
-        React.createElement("li", {className: "feed-search-result", key: index}, 
+        React.createElement("li", {className: "feed-search-result", key: index, onClick: this.handleClick}, 
           React.createElement("div", {className: "feed-search-img"}, React.createElement("img", {src: picUrl})), 
           React.createElement("div", {className: "feed-search-name"}, fullName)
           /* {isFollowing ? follow : following} */
@@ -20567,21 +20585,19 @@ var FeedSearchView = React.createClass({displayName: "FeedSearchView",
       text: ''
     };
   },
-
   handleSubmit: function(e) {
     e.preventDefault();
     var inputVal = React.findDOMNode(this.refs.input).value;
     if (inputVal === '') { return; }
     this.setState({text: inputVal});
   },
-
   render: function() {
     return (
       React.createElement("div", {className: "search-view-container"}, 
         React.createElement("form", {onSubmit: this.handleSubmit, className: "form-search-container"}, 
           React.createElement("input", {type: "text", ref: "input", placeholder: "Find people to follow..."})
         ), 
-      React.createElement(FeedSearchList, {fullName: this.state.text})
+        React.createElement(FeedSearchList, {fullName: this.state.text, updateBodyView: this.props.updateBodyView})
       )
     );
   }
@@ -21001,7 +21017,8 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   getInitialState: function() {
     return {
       annotations: [],
-      friends: {}
+      friendsShown: {},
+      friendsInfo: {}
     }
   },
   componentWillMount: function() {
@@ -21034,15 +21051,15 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   toggleFriendAnnotations: function(id) {
     debugger;
     console.log('toggleFriendAnnotations: ', id)
-    var friends = this.state.friends;
+    var friends = this.state.friendsShown;
 
     if (!friends[id]) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      console.log('friends are now', this.state.friends);
+      console.log('friends are now', this.state.friendsShown);
       console.log(friends[id], ' stored in chrome now')
     } else {
-      console.log('friends are now', this.state.friends);
+      console.log('friends are now', this.state.friendsShown);
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
         console.log(this.state.annotations[i]);
@@ -21059,7 +21076,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
   render: function() {
     var ownId = window.localStorage.getItem('user_id');
-    var friendsArray = Object.keys(this.state.friends);
+    var friendsArray = Object.keys(this.state.friendsShown);
     var self = this;
 
     var friendCarousel = friendsArray.map(function(friend, index) {
@@ -21087,7 +21104,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         ), 
         React.createElement("br", null), 
         React.createElement("div", {className: "friends-annotations-list"}, 
-          this.state.annotations.length > 0 ? React.createElement(FriendAnnotationList, {spotlight: this.props.spotlight, friends: this.state.friends, annotations: this.state.annotations}) : null
+          this.state.annotations.length > 0 ? React.createElement(FriendAnnotationList, {spotlight: this.props.spotlight, friends: this.state.friendsShown, annotations: this.state.annotations}) : null
         )
       )
     );
@@ -21106,25 +21123,27 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     }
 
     var annotations = [];
-    var friends = {};
+    var friendsShown = {};
+    var friendsInfo = {};
 
-    $.get('https://test2server.herokuapp.com/api/search/uri', {uri: uri, user: ownId})
+    $.get('https://test2server.herokuapp.com/api/users/uri/annotations', {uri: uri, user_id: ownId})
       .done(function(data) { 
         debugger;
         chrome.storage.local.get(uri, function(obj) {
           debugger;
           if(obj[uri]) {
             for (var i = 0; i < obj[uri].length; i++) {
-              friends[obj[uri][i].user_id] = true;
+              friendsShown[obj[uri][i].user_id] = true;
             }
             annotations = obj[uri];
           }
           for (var i = 0; i < data.length; i++) {
-            if (friends[data[i]] === undefined) {
-              friends[data[i]] = false;
+            friendsInfo[data[i].id] = {pic: data[i].pic_url, name: data[i].full_name};
+            if (friendsShown[data[i].id] === undefined) {
+              friendsShown[data[i].id] = false;
             }
           }
-          self.setState({annotations: annotations, friends: friends});
+          self.setState({annotations: annotations, friendsShown: friendsShown, friendsInfo: friendsInfo});
       })
     })
 
@@ -21133,7 +21152,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
       debugger;
       if (changes[uri]) {
         var newFriends = {};
-        var oldFriends = self.state.friends;
+        var oldFriends = self.state.friendsShown;
         console.log('chrome storage changed mothafucka', changes);
         if (changes[uri].newValue.length > 0) {
           for (var i = 0; i < changes[uri].newValue.length; i++) {
@@ -21146,7 +21165,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
             newFriends[friend] = false;
           }
         }
-        self.setState({annotations: changes[uri].newValue, friends: newFriends});
+        self.setState({annotations: changes[uri].newValue, friendsShown: newFriends});
       }
     });
 
