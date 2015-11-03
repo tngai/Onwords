@@ -44,7 +44,7 @@ var FriendsAnnotationsView = React.createClass({
     console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friendsShown;
 
-    if (!friends[id]) {
+    if (!friends[id].shown) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
       console.log('friends are now', this.state.friendsShown);
@@ -68,12 +68,15 @@ var FriendsAnnotationsView = React.createClass({
   render: function() {
     var ownId = window.localStorage.getItem('user_id');
     var friendsArray = Object.keys(this.state.friendsShown);
+    var friendsObject = this.state.friendsShown;
     var self = this;
 
     var friendCarousel = friendsArray.map(function(friend, index) {
       if (friend !== ownId) {
         return (
-          <div className='friends-pic' data-id={friend} onClick={self.toggleFriendAnnotations.bind(null, friend)}></div>
+          <div data-id={friend} onClick={self.toggleFriendAnnotations.bind(null, friend)}>
+            <img className='friends-pic' src={friendsObject[friend].pic} />
+          </div>
         )
       }
     })
@@ -115,7 +118,6 @@ var FriendsAnnotationsView = React.createClass({
 
     var annotations = [];
     var friendsShown = {};
-    var friendsInfo = {};
 
     $.get('https://test2server.herokuapp.com/api/users/uri/annotations', {uri: uri, user_id: ownId})
       .done(function(data) { 
@@ -124,17 +126,18 @@ var FriendsAnnotationsView = React.createClass({
           debugger;
           if(obj[uri]) {
             for (var i = 0; i < obj[uri].length; i++) {
-              friendsShown[obj[uri][i].user_id] = true;
+              friendsShown[obj[uri][i].user_id] = { shown: true };
             }
             annotations = obj[uri];
           }
           for (var i = 0; i < data.length; i++) {
-            friendsInfo[data[i].id] = {pic: data[i].pic_url, name: data[i].full_name};
-            if (friendsShown[data[i].id] === undefined) {
-              friendsShown[data[i].id] = false;
+            if (friendsShown[data[i].id]) {
+              friendsShown[data[i].id] = {shown: true, pic: data[i].pic_url, name: data[i].full_name};
+            } else {
+              friendsShown[data[i].id] = {shown: false, pic: data[i].pic_url, name: data[i].full_name};
             }
           }
-          self.setState({annotations: annotations, friendsShown: friendsShown, friendsInfo: friendsInfo});
+          self.setState({annotations: annotations, friendsShown: friendsShown});
       })
     })
 
@@ -147,13 +150,14 @@ var FriendsAnnotationsView = React.createClass({
         console.log('chrome storage changed mothafucka', changes);
         if (changes[uri].newValue.length > 0) {
           for (var i = 0; i < changes[uri].newValue.length; i++) {
-            newFriends[changes[uri].newValue[i].user_id] = true;
+            var user = changes[uri].newValue[i].user_id;
+            newFriends[user] = {shown: true, pic: oldFriends[user], name: oldFriends[user]};
           }
         }
 
         for (var friend in oldFriends) {
           if (newFriends[friend] === undefined) {
-            newFriends[friend] = false;
+            newFriends[friend] = {shown: false, pic: oldFriends[friend], name: oldFriends[friend]};
           }
         }
         self.setState({annotations: changes[uri].newValue, friendsShown: newFriends});

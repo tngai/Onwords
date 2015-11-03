@@ -19,17 +19,21 @@ var friendsAnnotationList = React.createClass({
   },
 
   unhighlight: function() {
+    debugger;
     var oldSpotlight = this.state.spotlight.id;
     var oldSpotlightColorWithUmph = $('span[data-annotation-id="' + oldSpotlight + '"]').css('background-color'); 
-    var oldSpotlightColor = oldSpotlightColorWithUmph.slice(0, oldSpotlightColorWithUmph.length - 1) + ', 0.25)';
-    oldSpotlightColor = oldSpotlightColor.slice(0, oldSpotlightColor.indexOf('(')) + 'a' + oldSpotlightColor.slice(oldSpotlightColor.indexOf('('));
-    var styles = {
-      backgroundColor: oldSpotlightColor
+    if (oldSpotlightColorWithUmph) {
+      var oldSpotlightColor = oldSpotlightColorWithUmph.slice(0, oldSpotlightColorWithUmph.length - 1) + ', 0.25)';
+      oldSpotlightColor = oldSpotlightColor.slice(0, oldSpotlightColor.indexOf('(')) + 'a' + oldSpotlightColor.slice(oldSpotlightColor.indexOf('('));
+      var styles = {
+        backgroundColor: oldSpotlightColor
+      }
+      $('span[data-annotation-id="' + oldSpotlight + '"]').css(styles);  
     }
-    $('span[data-annotation-id="' + oldSpotlight + '"]').css(styles);  
   },
 
   highlight: function(annotation) {
+    debugger;
     var newSpotlightColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
     var newSpotlightColorWithUmph = newSpotlightColor.slice(0, newSpotlightColor.lastIndexOf(',') + 1) + ' 1)';
     var styles = {
