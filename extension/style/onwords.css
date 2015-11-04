@@ -268,13 +268,16 @@
   width: 90px;
   height: 90px;
 }
-.feed-search-follow {
-  height: 1.5em;
-  width: 3em;
+.feed-search-following .following-text,
+.feed-search-following:hover .unfollow-text {
+  display: block
 }
-.feed-search-following {
-  height: 1.5em;
-  width: 3em;
+.feed-search-following .unfollow-text,
+.feed-search-following:hover .following-text {
+  display: none
+}
+.feed-search-following:hover {
+  background: red;
 }
 .feed-search-name {
   font-size: medium;
