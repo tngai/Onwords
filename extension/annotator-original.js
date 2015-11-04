@@ -14901,7 +14901,8 @@ Highlighter.prototype.draw = function (annotation) {
             .attr('data-annotation-id', annotation.id);
     }
 
-    $('.annotator-hl').on('click', function(event) {
+    $('.annotator-hl').unbind('click').bind('click', function(event) {
+      debugger;
       var annotations = $(event.target)
                     .parents('.annotator-hl')
                     .addBack()
