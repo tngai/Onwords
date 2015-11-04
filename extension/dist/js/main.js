@@ -20991,6 +20991,8 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
         }
       }
       this.setState({spotlightOn: false, spotlight: ''});
+    } else if (nextProps.spotlight === this.state.spotlight) {
+      this.props.changeSpotlight('');
     }
   },
 
@@ -20998,7 +21000,7 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
     if (this.state.spotlight !== '') {
       this.unhighlight();
       this.setState({spotlightOn: false, spotlight: ''});
-      this.props.changeSpotlight('');
+      this.props.changeSpotlight('')
     }
   },
 

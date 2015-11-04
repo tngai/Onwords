@@ -94,6 +94,8 @@ var friendsAnnotationList = React.createClass({
         }
       }
       this.setState({spotlightOn: false, spotlight: ''});
+    } else if (nextProps.spotlight === this.state.spotlight) {
+      this.props.changeSpotlight('');
     }
   },
 
@@ -101,7 +103,7 @@ var friendsAnnotationList = React.createClass({
     if (this.state.spotlight !== '') {
       this.unhighlight();
       this.setState({spotlightOn: false, spotlight: ''});
-      this.props.changeSpotlight('');
+      this.props.changeSpotlight('')
     }
   },
 
