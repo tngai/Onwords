@@ -7,10 +7,34 @@ var FriendsAnnotationLink = React.createClass({
 
     // mapping data without timestamps
     //    info : users
-    var friendsPost = info.forEach(function(user, key) {
-      console.log('Users', user, key);
-    });
+    var allPosts = [];
+    info.forEach(function(user, key1) {
+      var userName = user.full_name;
+      var picUrl = user.pic_url ? user.pic_url : 'http://register.adviceiq.com/img/empty_profile.png';
+      var allArticles = user.articles;
+      var userId = user.user_id;
+      console.log('Users', user, userName, picUrl);
 
+      // render all annotations for each user.
+      var post = allArticles.map(function(article, key2) {
+        var title = article.title;
+        var likes = article.likes.length;
+        // var general_post = article.general_post;
+        // var comments = article.commentsOnGeneralPost.forEach(function(){});
+
+        var redirectUri = article.uri_link + '#' + userId + 'onwords1991';
+        console.log('Article', redirectUri, likes, title);
+
+        return (
+          <div key={key1 + key2}>
+            hello
+          </div>
+        ); 
+      });
+
+      allPosts.concat(post);
+      console.log('ALL POST',allPosts);
+    });
     // var redirectUri = info.uri + '#' + info.user_id + 'onwords1991';
     // console.log('REDIRECT LINK',redirectUri)
     // return (

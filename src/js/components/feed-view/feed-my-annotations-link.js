@@ -29,7 +29,6 @@ var MyAnnotationsLink = React.createClass({
         </div>
       )
     });
-
     return (
       <div className='my-annotations-links-container'>
         {urls}
