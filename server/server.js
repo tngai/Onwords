@@ -745,7 +745,6 @@ app.get('/api/users/uri/annotations', function(req, res) {
 
 
 app.get('/api/personalfeed/share', function (req, res) {
-  var body = req.body;
 
 });
 
