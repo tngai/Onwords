@@ -60,11 +60,12 @@ var friendsAnnotationList = React.createClass({
     if (this.state.spotlight.id === annotation.id) {
       if (!this.state.spotlightOn) {
         this.highlight(annotation);
-        this.setState({spotlightOn: true});
-      } 
+      }
     } else {
       this.highlight(annotation);
     }
+    this.setState({spotlightOn: true});
+
   },
 
   componentWillMount: function() {
@@ -83,12 +84,24 @@ var friendsAnnotationList = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     debugger;
-    this.clickHandler(nextProps.spotlight);
+    if (nextProps.spotlight !== this.state.spotlight && nextProps.spotlight !== '') {
+      this.clickHandler(nextProps.spotlight);
+    } else if (nextProps.spotlight === '') {
+      for (var i = 0; i < nextProps.annotations.length; i++) {
+        if (nextProps.annotations[i].id === this.state.spotlight.id) {
+          this.setState({spotlightOn: true});
+          return;
+        }
+      }
+      this.setState({spotlightOn: false, spotlight: ''});
+    }
   },
 
   componentWillUnmount: function() {
     if (this.state.spotlight !== '') {
       this.unhighlight();
+      this.setState({spotlightOn: false, spotlight: ''});
+      this.props.changeSpotlight('');
     }
   },
 
@@ -106,7 +119,7 @@ var friendsAnnotationList = React.createClass({
         if (friends[user]) {
           return (
             <div>
-              <li>
+              <li className="annotationListItem">
                 {user.toString() === ownId ? 
                   <AnnotationComment clickHandler={self.clickHandler} user={annotation.user_id} annotation={annotation} deleteAnn={self.deleteAnn} />
                 : <FriendAnnotationComment spotlight={self.state.spotlight} clickHandler={self.clickHandler} user={annotation.user} annotation={annotation}/>

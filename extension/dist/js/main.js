@@ -20295,6 +20295,10 @@ var App = React.createClass({displayName: "App",
     })
   },
 
+  changeSpotlight: function(annotation) {
+    this.setState({spotlight: annotation});
+  },
+
   render: function() {
     debugger;
     return (
@@ -20302,7 +20306,7 @@ var App = React.createClass({displayName: "App",
         this.state.showAnnotatorButton ? React.createElement(AnnotatorButton, {updateView: this.updateView}) : null, 
         this.state.showAnnotatorView ? React.createElement(AnnotatorView, {updateView: this.updateView}) : null, 
         this.state.showFeedView ? React.createElement(FeedView, {updateView: this.updateView}) : null, 
-        this.state.showFriendsAnnotations ? React.createElement(FriendsAnnotations, {spotlight: this.state.spotlight, updateView: this.updateView}) : null
+        this.state.showFriendsAnnotations ? React.createElement(FriendsAnnotations, {changeSpotlight: this.changeSpotlight, spotlight: this.state.spotlight, updateView: this.updateView}) : null
       )
     );
   }
@@ -20953,11 +20957,12 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
     if (this.state.spotlight.id === annotation.id) {
       if (!this.state.spotlightOn) {
         this.highlight(annotation);
-        this.setState({spotlightOn: true});
-      } 
+      }
     } else {
       this.highlight(annotation);
     }
+    this.setState({spotlightOn: true});
+
   },
 
   componentWillMount: function() {
@@ -20976,12 +20981,24 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
 
   componentWillReceiveProps: function(nextProps) {
     debugger;
-    this.clickHandler(nextProps.spotlight);
+    if (nextProps.spotlight !== this.state.spotlight && nextProps.spotlight !== '') {
+      this.clickHandler(nextProps.spotlight);
+    } else if (nextProps.spotlight === '') {
+      for (var i = 0; i < nextProps.annotations.length; i++) {
+        if (nextProps.annotations[i].id === this.state.spotlight.id) {
+          this.setState({spotlightOn: true});
+          return;
+        }
+      }
+      this.setState({spotlightOn: false, spotlight: ''});
+    }
   },
 
   componentWillUnmount: function() {
     if (this.state.spotlight !== '') {
       this.unhighlight();
+      this.setState({spotlightOn: false, spotlight: ''});
+      this.props.changeSpotlight('');
     }
   },
 
@@ -20999,7 +21016,7 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
         if (friends[user]) {
           return (
             React.createElement("div", null, 
-              React.createElement("li", null, 
+              React.createElement("li", {className: "annotationListItem"}, 
                 user.toString() === ownId ? 
                   React.createElement(AnnotationComment, {clickHandler: self.clickHandler, user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
                 : React.createElement(FriendAnnotationComment, {spotlight: self.state.spotlight, clickHandler: self.clickHandler, user: annotation.user, annotation: annotation})
@@ -21096,11 +21113,10 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     var self = this;
 
     var friendCarousel = friendsArray.map(function(friend, index) {
+      debugger;
       if (friend !== ownId) {
         return (
-          React.createElement("div", {"data-id": friend, onClick: self.toggleFriendAnnotations.bind(null, friend)}, 
-            React.createElement("img", {className: "friends-pic", src: friendsObject[friend].pic})
-          )
+            React.createElement("img", {"data-id": friend, onClick: self.toggleFriendAnnotations.bind(null, friend), className: "friends-pic", src: friendsObject[friend].pic})
         )
       }
     })
@@ -21122,7 +21138,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         ), 
         React.createElement("br", null), 
         React.createElement("div", {className: "friends-annotations-list"}, 
-          this.state.annotations.length > 0 ? React.createElement(FriendAnnotationList, {spotlight: this.props.spotlight, friends: this.state.friendsShown, annotations: this.state.annotations}) : null
+          this.state.annotations.length > 0 ? React.createElement(FriendAnnotationList, React.__spread({},  this.props, {friends: this.state.friendsShown, annotations: this.state.annotations})) : null
         )
       )
     );
@@ -21160,6 +21176,9 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
             } else {
               friendsShown[data[i].id] = {shown: false, pic: data[i].pic_url, name: data[i].full_name};
             }
+          }
+          if (!friendsShown[ownId]) {
+            friendsShown[ownId] = {shown: false};
           }
           self.setState({annotations: annotations, friendsShown: friendsShown});
       })

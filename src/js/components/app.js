@@ -90,6 +90,10 @@ var App = React.createClass({
     })
   },
 
+  changeSpotlight: function(annotation) {
+    this.setState({spotlight: annotation});
+  },
+
   render: function() {
     debugger;
     return (
@@ -97,7 +101,7 @@ var App = React.createClass({
         {this.state.showAnnotatorButton ? <AnnotatorButton updateView={this.updateView} /> : null}
         {this.state.showAnnotatorView ? <AnnotatorView updateView={this.updateView} /> : null}
         {this.state.showFeedView ? <FeedView updateView={this.updateView} /> : null} 
-        {this.state.showFriendsAnnotations ? <FriendsAnnotations spotlight={this.state.spotlight} updateView={this.updateView} /> : null} 
+        {this.state.showFriendsAnnotations ? <FriendsAnnotations changeSpotlight={this.changeSpotlight} spotlight={this.state.spotlight} updateView={this.updateView} /> : null} 
       </div>
     );
   }
