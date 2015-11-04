@@ -58,34 +58,19 @@ var checkAndInsertIfNotExists = function (checkQuery, insertQuery, callback) {
   }
 }
 
-// pg.connect(connectionString, function(err, client, done) {
-//  if (err) console.log('Connection error: ', err);
-//  client.query(checkQueries.checkURIUser(20, 1), function(err, result) {
-//    done();
-//    console.log('lets see: ',result.rows[0].exists);
-//  });
-// });
-
-// pg.connect(connectionString, function(err, client, done) {
-//  if (err) console.log('Connection error: ', err);
-//  client.query(checkQueries.checkURI(uri), function(err, result) {
-//    done();
-//    resolve(result.rows[0].exists);
-//  });
-// });  
 
 
 //------------------------------------------------------------------------------------//
 
 app.get('/',function(req,res){
-  res.end('connected!!');
+  res.end('connected!!!!!!');
 });
 
 app.post('/api/users', function (req, res) {
 
   var full_name = req.body.full_name;
   var username = req.body.username;
-  var fb_pic = req.body.fb_pic;
+  var pic_url = req.body.pic_url;
   var uploaded_pic = req.body.uploaded_pic;
   var facebook_id = req.body.facebook_id;
   var email = req.body.email;
@@ -114,8 +99,8 @@ app.post('/api/users', function (req, res) {
   .then(function(exists) {
     if (!exists) {
       pg.connect(connectionString, function (err, client, done) {
-        client.query(insertQueries.insertPerson('users', full_name, username, fb_pic, uploaded_pic, facebook_id, email, description));
-        client.query(insertQueries.insertPerson('followers', full_name, username, fb_pic, uploaded_pic, facebook_id, email, description), function(err, result) {
+        client.query(insertQueries.insertPerson('users', full_name, username, pic_url, uploaded_pic, facebook_id, email, description));
+        client.query(insertQueries.insertPerson('followers', full_name, username, pic_url, uploaded_pic, facebook_id, email, description), function(err, result) {
           done();
           req.body.user_id = result.rows[0].id;
           res.set('Content-Type','application/JSON'); 
@@ -256,12 +241,13 @@ app.get('/api/search',function (req, res) {
             ]
           };        
       }) 
-      returnObj.rows = finalAnnotationObjects;
       
-    }else{
-      returnObj.rows = [];
-    }
-    res.set('Content-Type','application/JSON'); 
+      returnObj.rows = finalAnnotationObjects;
+      }
+      else {
+        returnObj.rows = [];
+      }
+      res.set('Content-Type','application/JSON'); 
       res.json(returnObj);
   });
 
@@ -299,37 +285,470 @@ app.delete('/api/annotations/:id',function (req, res) {
 });
 
 
+app.get('/api/homefeed', function (req, res) {
+  var user_id = req.query.user_id;
+  console.log('dude, it does the changes')
+  // returns an array of people (user ids) you follow
+  var getPeopleYouFollow = function(user_id) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectPeopleYouFollow(user_id), function(err, result) {
+          done();
+          resolve(result.rows);
+        });
+      });
+    });
+  };
+ 
+  var getFullNameAndPicURL = function(person) {
+    console.log('getFullNameAndPicURL person: ', person);
+    return new Promise(function(resolve, reject) { 
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err); 
+          return reject(err);
+        }
+        client.query(selectQueries.selectFullNameAndPicURLBasedOnID(person.user_id), function(err, result) {
+          console.log('result in getFullNameAndPicURL: ', result);
+          console.log('this was person.user_id: ', person.user_id);
+          done();
+          resolve(result.rows[0]);
+        });
+      });
+    });
+  };
+ 
+  // returns an array of urls (uri objs) a person has annotated
+  //    uri objs have 2 properties: url_link and title
+  var getUriObjsOfPerson = function(person) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectURIs(person.user_id), function(err, result) {
+          done();
+          resolve(result.rows);
+        });
+      });
+    });
+  };
 
-
-
-
-
-
-
-
+ 
+  // returns the general post for a specific uri
+  var getGeneralPost = function(uri, userId) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectGeneralPost(uri.uri_link, userId), function(err, result) {
+          done();
+          resolve(result.rows[0].general_post);
+        });
+      });
+    });
+  };
+ 
+  var getCommentsOnGeneralPost = function(uri, userId) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectCommentsOnGeneralPost(uri.uri_link, userId), function(err, result) {
+          done();
+          resolve(result.rows);
+        });
+      });
+    });
+  };
+ 
+  var getLikesOnGeneralPost = function(uri, userId) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.whoLikedThisPost(uri.uri_link, userId), function(err, result) {
+          done();
+          resolve(result.rows);
+        });
+      });
+    });
+  };
+ 
+  var getGeneralPostCommentsLikes = function(uri, userId) {
+    return Promise.all([
+      getGeneralPost(uri, userId),
+      getCommentsOnGeneralPost(uri, userId),
+      getLikesOnGeneralPost(uri, userId)
+    ]);
+  };
+ 
+  var assembleArticleObj = function(generalPostCommentsLikesArray, uriObj) {
+    var generalPost = generalPostCommentsLikesArray[0];
+    var comments = generalPostCommentsLikesArray[1];
+    var likes = generalPostCommentsLikesArray[2];
+    return {
+      uri_link: uriObj.uri_link,
+      title: uriObj.title,
+      general_post: generalPost,
+      commentsOnGeneralPost: comments,
+      likes: likes
+    };
+  };
+ 
+  var convertUriObjToArticleObj = function(uriObj, userId) {
+    return getGeneralPostCommentsLikes(uriObj, userId)
+      .then(function(generalPostCommentsLikesArray) {
+        return assembleArticleObj(generalPostCommentsLikesArray, uriObj);
+      })
+      .catch(function(err) {
+        console.error('Error in convertUriObjToArticleObj:', err);
+      });
+  };
+ 
+  var assemblePersonInfoWithArticlesObj = function(person) {
+    // Promise.all these two promises
+    return Promise.all([
+      getFullNameAndPicURL(person),
+      getUriObjsOfPerson(person)
+        .then(function(uriObjsArray) {
+          // iterating through each uriObjsArray of each user ID
+          return Promise.map(uriObjsArray, function(uriObj) {
+            // iterating through each uriObj of each uriObjsArray
+            return convertUriObjToArticleObj(uriObj, person.user_id);
+          });
+        })
+    ])
+      .then(function(fullNameFBPicAndUriObjs) {
+        var fullNameAndFBPicObj = fullNameFBPicAndUriObjs[0];
+        var articleObjsOfPerson = fullNameFBPicAndUriObjs[1];
+        return {
+          full_name: fullNameAndFBPicObj.full_name,
+          pic_url: fullNameAndFBPicObj.pic_url,
+          articles: articleObjsOfPerson
+        };
+      })
+      .catch(function(err) {
+          console.error('Error in assemblePersonInfoWithArticlesObj:', err);
+        });
+  };
+ 
+  var getArrayOfPersonInfoWithArticles = getPeopleYouFollow(user_id)
+    .then(function(peopleList) {
+      // iterating through each user ID in peopleList
+      return Promise.map(peopleList, function(person) {
+        return assemblePersonInfoWithArticlesObj(person);
+      });
+    });
+ 
+  getArrayOfPersonInfoWithArticles
+    .then(function(arrayOfPersonInfoWithArticles) {
+      res.json(arrayOfPersonInfoWithArticles);
+    })
+    .catch(function(err) {
+      console.error('Error creating array of article object arrays:', err);
+    });
+});
 
 
 app.get('/api/personalfeed', function (req, res) {
+  var user_id = req.query.user_id;
+ 
+  // returns an array of urls (uri objs) a person has annotated
+  //    uri objs have 2 properties: url_link and title
+  var getUriObjsOfUser = function(user_id) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectURIs(user_id), function(err, result) {
+          done();
+          resolve(result.rows);
+        });
+      });
+    });
+  };
+ 
+  // returns the general post for a specific uri
+  var getGeneralPost = function(uri, userId) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectGeneralPost(uri.uri_link, userId), function(err, result) {
+          done();
+          // console.log('glooooooow: ', general_post);
+          resolve(result.rows[0].general_post);
+        });
+      });
+    });
+  };
+ 
+  var getCommentsOnGeneralPost = function(uri, userId) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectCommentsOnGeneralPost(uri.uri_link, userId), function(err, result) {
+          done();
+          // console.log('dude, these are the comments: ', gpComments);
+          resolve(result.rows);
+        });
+      });
+    });
+  };
+ 
+  var getLikesOnGeneralPost = function(uri, userId) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.whoLikedThisPost(uri.uri_link, userId), function(err, result) {
+          done();
+          // console.log('hey hey hey these likes: ', likes, gpComments);
+          resolve(result.rows);
+        });
+      });
+    });
+  };
+ 
+  var getGeneralPostCommentsLikes = function(uri, userId) {
+    return Promise.all([
+      getGeneralPost(uri, userId),
+      getCommentsOnGeneralPost(uri, userId),
+      getLikesOnGeneralPost(uri, userId)
+    ]);
+  };
+ 
+  var assembleArticleObj = function(generalPostCommentsLikesArray, uriObj) {
+    var generalPost = generalPostCommentsLikesArray[0];
+    var comments = generalPostCommentsLikesArray[1];
+    var likes = generalPostCommentsLikesArray[2];
+    return {
+      uri_link: uriObj.uri_link,
+      title: uriObj.title,
+      general_post: generalPost,
+      commentsOnGeneralPost: comments,
+      likes: likes
+    };
+  };
+ 
+  var convertUriObjToArticleObj = function(uriObj, userId) {
+    return getGeneralPostCommentsLikes(uriObj, userId)
+      .then(function(generalPostCommentsLikesArray) {
+        return assembleArticleObj(generalPostCommentsLikesArray, uriObj);
+      })
+      .catch(function(err) {
+        console.error('Error in convertUriObjToArticleObj:', err);
+      });
+  };
+
+  var getArrayOfArticleObjs = getUriObjsOfUser(user_id)
+    .then(function(uriObjsArray) {
+      // iterating through each uriObjsArray of each user ID
+      return Promise.map(uriObjsArray, function(uriObj) {
+        // iterating through each uriObj of each uriObjsArray
+        return convertUriObjToArticleObj(uriObj, user_id);
+      });
+    });
+ 
+  getArrayOfArticleObjs
+    .then(function(arrayOfArticleObjs) {
+      res.json(arrayOfArticleObjs);
+    })
+    .catch(function(err) {
+      console.error('Error creating array of article object arrays:', err);
+    });
+});
+
+
+app.get('/api/search/users', function(req, res) {
+  var user_id = req.query.user_id;
+  var full_name = req.query.full_name;
+  console.log('user_id = ' + user_id);
+  console.log('full_name = ' + full_name);
+
+  var getFullNamePicURLAndID = function(full_name) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) console.error('Connection error: ', err);
+        client.query(selectQueries.selectFullNamePicURLAndID(full_name), function(err, result) {
+          done();
+          resolve(result.rows);
+        });
+      });
+    });
+  }
+
+  var getCheckIfYoureFollowingThem = function(personYouSearchedForID) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) console.error('Connection error: ', err);
+        client.query(checkQueries.checkUserFollower(personYouSearchedForID, user_id), function(err, result) {
+          done();
+          resolve(result.rows[0].exists);
+        });
+      });
+    });
+  }
+
+  getFullNamePicURLAndID(full_name)
+    .then(function(people) {
+      return Promise.map(people, function(person) {
+        return getCheckIfYoureFollowingThem(person.id)
+          .then(function(exists) {
+            return {
+              person_id: person.id,
+              full_name: person.full_name,
+              pic_url: person.pic_url,
+              is_following: exists
+            }
+          })
+      })
+    })
+    .then(function(peopleArray) {
+      res.set('Content-Type','application/JSON'); 
+      res.json(peopleArray);
+    })
+
+}); 
+
+
+app.post('/api/users/follow', function(req, res) {
+  var user_id = req.body.user_id;
+  var follower_id = req.body.follower_id;
+
+
+  var getCheckIfYoureFollowingThem = function(user_id) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) console.error('Connection error: ', err);
+        client.query(checkQueries.checkUserFollower(user_id, follower_id), function(err, result) {
+          done();
+          resolve(result.rows[0].exists);
+        });
+      });
+    });
+  }
+
+  var insertUserFollowerOrNot = function(exists) {
+    if (!exists) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) console.error('Connection error: ', err);
+        client.query(insertQueries.insertUserFollowerRelationship(user_id, follower_id), function(err, result) {
+          done();
+          res.sendStatus(201);
+        });
+      })
+    }
+  }
+
+  getCheckIfYoureFollowingThem(user_id)
+    .then(insertUserFollowerOrNot)
+
+})
+
+app.get('/api/users/uri/annotations', function(req, res) {
+  var user_id = req.query.user_id; 
+  var uri = req.query.uri;
+
+
+  var getPeopleYouFollow = function(user_id) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectPeopleYouFollow(user_id), function(err, result) {
+          done();
+          resolve(result.rows);
+        });
+      });
+    });
+  };
+  
+  var checkIfPersonAnnotatedThisArticle = function(uri, person) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.error('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectPersonIfPersonAnnotatedThisPage(uri, person.user_id), function(err, result) {
+          console.log('result after selectPersonIfPersonAnnotatedThisPage: ', result);
+          console.log('person.user_id after selectPersonIfPersonAnnotatedThisPage: ', person.user_id);
+          done();
+          if (result.rows.length > 0) resolve(true);
+          else resolve(false)
+        })
+      })
+    })
+  }
+
+  var getFullNamePicURLAndID = function(person) {
+    console.log('getFullNameAndPicURL person: ', person);
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.log('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectFullNameAndPicURLBasedOnID(person.user_id), function(err, result) {
+          done();
+          resolve(result.rows[0]);
+        });
+      });
+    });
+  }
+
+  getPeopleYouFollow(user_id) 
+    .then(function(peopleYouFollow) {
+      console.log('peopleYouFollow in getPeopleYouFollow: ', peopleYouFollow);
+      return Promise.filter(peopleYouFollow, function(personYouFollow) {
+        return checkIfPersonAnnotatedThisArticle(uri, personYouFollow)
+      })
+    })
+    .then(function(peopleYouFollowWhoAnnotatedPage) {
+      console.log('peopleYouFollowWhoAnnotatedPage right before getFullNamePicURLAndID: ', peopleYouFollowWhoAnnotatedPage);
+      return Promise.map(peopleYouFollowWhoAnnotatedPage, function(personYouFollowWhoAnnotatedPage) {
+        return getFullNamePicURLAndID(personYouFollowWhoAnnotatedPage);
+      })
+    })
+    .then(function(fullNamesPicURLsAndIDsOfWhoAnnotatedPage) {
+      console.log('what we send back from /api/users/uri/annotations: '. fullNamesPicURLsAndIDsOfWhoAnnotatedPage);
+      res.set('Content-Type','application/JSON'); 
+      res.json(fullNamesPicURLsAndIDsOfWhoAnnotatedPage);
+    })
+
+
+})
+
+
+app.get('/api/personalfeed/share', function (req, res) {
   var body = req.body;
 
 });
 
-
-app.get('api/personalfeed/share', function (req, res) {
-  var body = req.body;
-
-});
-
-// ----------------------------------------------------
-  // Tommy's endpoints
-
-app.get('/api/search/uri', function (req, res) {
-  // sends back annotations based on uri
-});
-
-app.get('/api/search/users', function (req, res) {
-  // sends back annotations based on users
-});
 
 
 
