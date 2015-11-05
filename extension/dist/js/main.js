@@ -20841,51 +20841,65 @@ var React = require('react');
 var Settings = React.createClass({displayName: "Settings",
   getInitialState: function(){
     return {
-      description: "Onwords!",
       editPicUrl: false,
       editUsername: false,
       editDescription: false
-    };
+    }
   },
   componentWillMount: function(){
     chrome.storage.sync.get('user',function(data){
+      console.log('chrome storage data ', data, data.user);
       this.setState({
         pic_url: data.user.picUrl,
         username: data.user.fullName,
-        description: data.user.description || 'OnWords  !!  '
+        description: data.user.description || 'onWords',
+        userObj: data.user   
       });  
       
     }.bind(this));
   },
-  updateServer: function(options){ 
-    return $.ajax({
-      url: "http://localhost:8000/api/users/update",
-      method: "post",
-      data: options,
-      dataType: 'json'
-  });
-    
+  updateStorage: function( property, value) { 
+    console.log('here is the userObj ', user, this.state.userObj)
+    var user = this.state.userObj; 
+        user[property] = value;
+    console.log('here is the pulled user obj after changes',user.description,user); 
+    chrome.storage.sync.set({'user': user}, function(data){
+      $.ajax({
+        method: "POST",
+        url: "http://localhost:9000/api/users/update",
+        data: { picUrl: user.picUrl, description: user.description, user_id: user.id }
+      }) 
+    });
+
+
+
   },
-  handleSubmit: function(e){
+  handleSubmit: function(e) {
+
     if(e.charCode == 13) { 
+      console.log('this is what is entered ',e.target.value)
       switch (e.target.dataset.setting) {
         case 'picUrl':
           this.setState({
             pic_url: e.target.value,
             editPicUrl: false
-          }); 
+          });
+          this.updateStorage('picUrl', e.target.value);
           break;
         case 'username':
           this.setState({
             username: e.target.value,
             editUsername: false
           });
+          this.updateStorage('fullName', e.target.value);
           break;
         case 'description':
           this.setState({
              description: e.target.value,
              editDescription: false
            });
+          console.log('is it changed in here ?? ', this.state.description)
+          this.updateStorage('description', e.target.value);
           break;
       }
     }
@@ -20893,30 +20907,20 @@ var Settings = React.createClass({displayName: "Settings",
   handleClick: function(e) {  
     switch (e.target.dataset.setting) {
       case 'pic':
-        if(this.state.editPicUrl){
-          this.setState({editPicUrl:false})
-          break;
-        }
+        console.log('pic was chosen');
         this.setState({editPicUrl: true});
         break;
       case 'username':
-        if(this.state.editUsername){
-            this.setState({editUsername:false})
-            break;
-        }
+        console.log('username was chosen');
         this.setState({editUsername: true});
         break;
       case 'description':
-        if(this.state.editDescription){
-            this.setState({editDescription:false})
-            break;
-        }
+        console.log('description was chosen');
         this.setState({editDescription: true});
         break;
     }  
   },
   render: function() {
-
     return (
       React.createElement("div", {className: "settings-view-container"}, 
         React.createElement("div", {className: "picture-settings"}, 
@@ -20927,11 +20931,8 @@ var Settings = React.createClass({displayName: "Settings",
           this.state.editPicUrl ? React.createElement("input", {type: "text", placeholder: this.state.pic_url, "data-setting": "picUrl", onKeyPress: this.handleSubmit}) : null
         ), 
         React.createElement("div", {className: "username-settings"}, 
-          this.state.username, 
-          React.createElement("button", {type: "submit", onClick: this.handleClick}, 
-            React.createElement("img", {"data-setting": "username", className: "settings-profile-edit-icon", src: "https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
-          ), 
-          this.state.editUsername ? React.createElement("input", {type: "text", placeholder: this.state.username, "data-setting": "username", onKeyPress: this.handleSubmit}) : null
+          this.state.username
+          
         ), 
 
         React.createElement("div", {className: "settingsdescription-settings"}, 
