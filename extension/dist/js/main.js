@@ -19938,7 +19938,13 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     this.setState({shouldEditComment: false});
   },
 
-  componentDidMount: function(e) {
+  componentDidMount: function() {
+    var self = this;
+    // $('.comment-delete-button').unbind('click').bind('click', (function(e) {
+    //   debugger;
+    //   e.stopPropagation();
+    //   self.props.deleteAnn(self.props.annotation);
+    // }));
     // var THIS = this;
     // // esc and enter functionality
     // $(document).keypress(function(e) {
@@ -19967,15 +19973,22 @@ var annotationComment = React.createClass({displayName: "annotationComment",
       borderLeft: '4px solid ' + userColor
     }
 
+    console.log('inside annotationcomment:', this.props.annotation);
     var annotation = this.props.annotation;
     var self = this;
-    var deleteAnn = function() {
-      self.props.deleteAnn(annotation);
-    };
 
     var clickHandler = function() {
-      self.props.clickHandler(annotation);
+      if (e.target.className !== 'comment-delete-button') {
+        self.props.clickHandler(annotation);
+      }
     };
+
+    var deleteAnn = function(e) {
+      debugger;
+      console.log(e.target);
+      e.stopPropagation();
+      self.props.deleteAnn(annotation);
+    }
 
     return (
       React.createElement("div", {onClick: clickHandler, className: "annotation", style: divStyle}, 
@@ -20166,7 +20179,7 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
 
 module.exports = AnnotatorView;
 
-},{"../header/header":184,"./annotator-body":160,"./annotator-minimize-button":162,"./friends-annotations-button":164,"./home-button":165,"react":156}],164:[function(require,module,exports){
+},{"../header/header":185,"./annotator-body":160,"./annotator-minimize-button":162,"./friends-annotations-button":164,"./home-button":165,"react":156}],164:[function(require,module,exports){
 var React = require('react');
 
 var FriendsAnnotationsButton = React.createClass({displayName: "FriendsAnnotationsButton",
@@ -20216,7 +20229,8 @@ var App = React.createClass({displayName: "App",
       showAnnotatorView: false,
       showFeedView: false,
       showFriendsAnnotations: false,
-      spotlight: ''
+      spotlight: '',
+      annotations: []
     };
   },
   
@@ -20287,15 +20301,63 @@ var App = React.createClass({displayName: "App",
     var self = this;
     document.addEventListener('spotlightAnnotation', function(e) {
       debugger;
+      self.setState({spotlight: e.detail.targetAnnotation});
       if (!self.state.showFriendsAnnotations) {
+        debugger;
         self.updateView('showAnnotatorView');
       }
       console.log('spotlight this annotation:', e.detail.targetAnnotation);
-      self.setState({spotlight: e.detail.targetAnnotation});
-    })
+    });
+
+
+    debugger;
+
+    /////////////////////////
+    var uri = window.location.href.split("?")[0];
+    if (uri.substring(uri.length-11) === 'onwords1991') {
+      uri = uri.substring(0, uri.length-13);
+    } else {
+      uri = uri;
+    }
+
+    chrome.storage.onChanged.addListener(function(changes) {
+      debugger;
+      if (changes[uri].newValue) {
+        var newAnnotations = changes[uri].newValue;
+        var oldAnnotations = self.state.annotations;
+        var currentSpotlight = self.state.spotlight;
+
+        if (newAnnotations.length === 0) {
+          currentSpotlight = '';
+        } else {
+          var intersection = {};
+          for (var i = 0; i < oldAnnotations.length; i++) {
+            intersection[oldAnnotations[i].id] = false;
+          };
+          
+          for (var i = 0; i < newAnnotations.length; i++) {
+            // if (intersection[newAnnotations[i].id !== undefined]) {
+              intersection[newAnnotations[i].id] = true;
+            // }
+          }
+
+          if (intersection[currentSpotlight.id]) {
+            currentSpotlight = currentSpotlight;
+          } else {
+            currentSpotlight = '';
+          }
+        }
+
+        
+        self.setState({annotations: newAnnotations, spotlight: currentSpotlight});
+      }
+    });
+    /////////////////////////
+
   },
 
   changeSpotlight: function(annotation) {
+    debugger;
     this.setState({spotlight: annotation});
   },
 
@@ -20306,7 +20368,7 @@ var App = React.createClass({displayName: "App",
         this.state.showAnnotatorButton ? React.createElement(AnnotatorButton, {updateView: this.updateView}) : null, 
         this.state.showAnnotatorView ? React.createElement(AnnotatorView, {updateView: this.updateView}) : null, 
         this.state.showFeedView ? React.createElement(FeedView, {updateView: this.updateView}) : null, 
-        this.state.showFriendsAnnotations ? React.createElement(FriendsAnnotations, {changeSpotlight: this.changeSpotlight, spotlight: this.state.spotlight, updateView: this.updateView}) : null
+        this.state.showFriendsAnnotations ? React.createElement(FriendsAnnotations, {annotations: this.state.annotations, changeSpotlight: this.changeSpotlight, spotlight: this.state.spotlight, updateView: this.updateView}) : null
       )
     );
   }
@@ -20314,7 +20376,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App;
 
-},{"./annotator-view/annotator-button":161,"./annotator-view/annotator-view":163,"./feed-view/feed-view":177,"./friends-annotations-view/friends-annotations-view":182,"react":156}],167:[function(require,module,exports){
+},{"./annotator-view/annotator-button":161,"./annotator-view/annotator-view":163,"./feed-view/feed-view":178,"./friends-annotations-view/friends-annotations-view":183,"react":156}],167:[function(require,module,exports){
 var React = require('react');
 
 var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLink",
@@ -20525,51 +20587,117 @@ module.exports = FeedSearchButton;
 },{"react":156}],174:[function(require,module,exports){
 var React = require('react');
 
+var FeedSearchFollowButton = React.createClass({displayName: "FeedSearchFollowButton",
+  getInitialState: function() {
+    return {
+      isFollowing: this.props.isFollowing
+    };
+  },
+
+  componentDidMount: function() {
+    console.log('FeedSearchFollowButton mounted');
+  },
+
+  handleFollowClick: function() {
+    this.props.onFollowClick(this.props.personId);
+    this.setState({isFollowing: true});
+  },
+
+  handleUnfollowClick: function() {
+    this.props.onUnfollowClick(this.props.personId);
+    this.setState({isFollowing: false});
+  },
+
+  render: function() {
+    var follow = React.createElement("button", {onClick: this.handleFollowClick, className: "feed-search-follow"}, 
+                    "Follow"
+                 );
+    var following = React.createElement("button", {
+                     className: "feed-search-following", 
+                     onClick: this.handleUnfollowClick}, 
+                      React.createElement("span", {className: "following-text"}, "Following"), 
+                      React.createElement("span", {className: "unfollow-text"}, "Unfollow")
+                    );
+    var isSelf = React.createElement("div", null, "Look who it is!");
+    if (this.props.personId === this.props.ownId) {
+      return isSelf;
+    }
+    return this.state.isFollowing ? following : follow;
+  }
+});
+
+module.exports = FeedSearchFollowButton;
+
+},{"react":156}],175:[function(require,module,exports){
+var React = require('react');
+var FeedSearchFollowButton = require('./feed-search-follow-button');
+
 var FeedSearchList = React.createClass({displayName: "FeedSearchList",
   getInitialState: function() {
     return {
-      results: []
+      results: [],
+      ownId: ''
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
-    var urlPrefix = 'https://test2server.herokuapp.com/api/users';
-  /*  // var ownId = window.localStorage.getItem('user_id');
-    // var userIdQS = '?user_id=' + ownId;
-    // var fullNameQS = '&full_name=' + this.props.fullName;
-    // var url = urlPrefix + userIdQS + fullNameQS;  */
-    var fullNameQS = '?full_name=' + nextProps.fullName;
-    var url = urlPrefix + fullNameQS;
     if (nextProps.fullName) {
-      $.get(url, function(data) {
-        this.setState({results: data.rows});
-      }.bind(this));
+      var url = 'https://test2server.herokuapp.com/api/search/users';
+      var ownId = window.localStorage.getItem('user_id');
+
+      var queryParameters = {
+        full_name: nextProps.fullName,
+        user_id: ownId
+      };
+
+      $.get(url, queryParameters)
+        .done(function(data) {
+          this.setState({results: data});
+        }.bind(this));
     }
   },
-  handleClick: function(evt) {
-    console.log('this is what is clicked ', evt);
+
+  handleFollowClick: function(personId) {
+    var url = 'https://test2server.herokuapp.com/api/users/follow';
+
+    var body = {
+      user_id: personId,
+      follower_id: this.props.ownId
+    };
+
+    $.post(url, body);
   },
+
+  handleUnfollowClick: function(personId) {
+    var urlPrefix = 'https://test2server.herokuapp.com/api/users/unfollow';
+    var url = urlPrefix + '?user_id=' + personId +'&follower_id=' + this.props.ownId;
+
+    $.ajax({
+      method: "DELETE",
+      url: url
+    });
+  },
+
   render: function() {
     var feedSearchResults = this.state.results.map(function(result, index) {
+      var personId = result.person_id;
       var picUrl = result.pic_url;
       var fullName = result.full_name;
-      var description = null;
-      if (description === null) {
-        description = "I am an annotator!";
-      }
-      // var isFollowing = result.isFollowing;
+      var isFollowing = result.is_following;
 
-      // var follow = <button className="feed-search-follow">Follow</button>;
-      // var following = <button className="feed-search-following">Following</button>;
-      // var editSettings = ;
       return (
-        React.createElement("li", {className: "feed-search-result", key: index, onClick: this.handleClick}, 
+        React.createElement("li", {className: "feed-search-result", key: index}, 
           React.createElement("div", {className: "feed-search-img"}, React.createElement("img", {src: picUrl})), 
-          React.createElement("div", {className: "feed-search-name"}, fullName)
-          /* {isFollowing ? follow : following} */
+          React.createElement("div", {className: "feed-search-name"}, fullName), 
+          React.createElement(FeedSearchFollowButton, {
+           onFollowClick: this.handleFollowClick, 
+           onUnfollowClick: this.handleUnfollowClick, 
+           personId: personId, 
+           isFollowing: isFollowing, 
+           ownId: this.props.ownId})
         )
       );
-    });
+    }.bind(this));
 
     return (
       React.createElement("ul", {className: "feed-search-results"}, 
@@ -20581,7 +20709,7 @@ var FeedSearchList = React.createClass({displayName: "FeedSearchList",
 
 module.exports = FeedSearchList;
 
-},{"react":156}],175:[function(require,module,exports){
+},{"./feed-search-follow-button":174,"react":156}],176:[function(require,module,exports){
 var React = require('react');
 var FeedSearchList = require('./feed-search-list');
 
@@ -20598,12 +20726,17 @@ var FeedSearchView = React.createClass({displayName: "FeedSearchView",
     this.setState({text: inputVal});
   },
   render: function() {
+    console.log('FeedSearchView rendered');
+    var ownId = window.localStorage.getItem('user_id');
     return (
       React.createElement("div", {className: "search-view-container"}, 
         React.createElement("form", {onSubmit: this.handleSubmit, className: "form-search-container"}, 
           React.createElement("input", {type: "text", ref: "input", placeholder: "Find people to follow..."})
         ), 
-        React.createElement(FeedSearchList, {fullName: this.state.text, updateBodyView: this.props.updateBodyView})
+        React.createElement(FeedSearchList, {
+         fullName: this.state.text, 
+         updateBodyView: this.props.updateBodyView, 
+         ownId: ownId})
       )
     );
   }
@@ -20611,7 +20744,7 @@ var FeedSearchView = React.createClass({displayName: "FeedSearchView",
 
 module.exports = FeedSearchView;
 
-},{"./feed-search-list":174,"react":156}],176:[function(require,module,exports){
+},{"./feed-search-list":175,"react":156}],177:[function(require,module,exports){
 var React = require('react');
 
 var Settings = React.createClass({displayName: "Settings",
@@ -20724,7 +20857,7 @@ var Settings = React.createClass({displayName: "Settings",
 
 module.exports = Settings;
 
-},{"react":156}],177:[function(require,module,exports){
+},{"react":156}],178:[function(require,module,exports){
 var React = require('react');
 var MinimizeButton = require('./minimize-button');
 var Header = require('../header/header');
@@ -20825,7 +20958,7 @@ var FeedView = React.createClass({displayName: "FeedView",
 
 module.exports = FeedView;
 
-},{"../header/header":184,"../mixins/annotatormixin":185,"./feed-friends-annotations":168,"./feed-friends-button":169,"./feed-home-button":170,"./feed-my-annotations":172,"./feed-search-button":173,"./feed-search-view":175,"./feed-settings":176,"./minimize-button":178,"./settings-button":179,"react":156}],178:[function(require,module,exports){
+},{"../header/header":185,"../mixins/annotatormixin":186,"./feed-friends-annotations":168,"./feed-friends-button":169,"./feed-home-button":170,"./feed-my-annotations":172,"./feed-search-button":173,"./feed-search-view":176,"./feed-settings":177,"./minimize-button":179,"./settings-button":180,"react":156}],179:[function(require,module,exports){
 var React = require('react');
 
 var MinimizeButton = React.createClass({displayName: "MinimizeButton",
@@ -20843,7 +20976,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
 
 module.exports = MinimizeButton;
 
-},{"react":156}],179:[function(require,module,exports){
+},{"react":156}],180:[function(require,module,exports){
 var React = require('react');
 
 var SettingsButton = React.createClass({displayName: "SettingsButton",
@@ -20861,7 +20994,7 @@ var SettingsButton = React.createClass({displayName: "SettingsButton",
 
 module.exports = SettingsButton;
 
-},{"react":156}],180:[function(require,module,exports){
+},{"react":156}],181:[function(require,module,exports){
 var React = require('react');
 
 var friendAnnotationComment = React.createClass({displayName: "friendAnnotationComment",
@@ -20894,7 +21027,7 @@ var friendAnnotationComment = React.createClass({displayName: "friendAnnotationC
 
 module.exports = friendAnnotationComment;
 
-},{"react":156}],181:[function(require,module,exports){
+},{"react":156}],182:[function(require,module,exports){
 var React = require('react');
 var AnnotationComment = require('../annotator-view/annotationComment');
 var FriendAnnotationComment = require('./friends-annotationComment');
@@ -20903,6 +21036,7 @@ var FriendAnnotationComment = require('./friends-annotationComment');
 var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationList",
   getInitialState: function() {
     return {
+      annotations: [],
       spotlight: '',
       spotlightOn: false
     }
@@ -20933,6 +21067,10 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
 
   highlight: function(annotation) {
     debugger;
+    $('html, body').animate({
+      scrollTop: annotation.offsetTop - 200
+    }, 300);
+
     var newSpotlightColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
 
     var newSpotlightColorWithUmph = newSpotlightColor.slice(0, newSpotlightColor.lastIndexOf(',') + 1) + ' 1)';
@@ -20941,66 +21079,82 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
       color: "black"
     }
     $('span[data-annotation-id="' + annotation.id + '"]').css(styles);  
-    this.setState({spotlight: annotation});
+    // this.setState({spotlight: annotation});
   },
 
   clickHandler: function(annotation) {
     debugger;
-    $('html, body').animate({
-      scrollTop: annotation.offsetTop - 200
-    }, 300);
+    this.props.changeSpotlight(annotation);
+    
 
-    if (this.state.spotlight !== '' && this.state.spotlight.id !== annotation.id) {
-      this.unhighlight();
-    }
+    // if (this.state.spotlight !== '' && this.state.spotlight.id !== annotation.id) {
+    //   this.unhighlight();
+    // }
 
-    if (this.state.spotlight.id === annotation.id) {
-      if (!this.state.spotlightOn) {
-        this.highlight(annotation);
-      }
-    } else {
-      this.highlight(annotation);
-    }
-    this.setState({spotlightOn: true});
+    // if (this.state.spotlight.id === annotation.id) {
+    //   if (!this.state.spotlightOn) {
+    //     this.highlight(annotation);
+    //   }
+    // } else {
+    //   this.highlight(annotation);
+    // }
+    // this.setState({spotlightOn: true});
 
   },
 
   componentWillMount: function() {
     debugger;
+    var newSpotlight = '';
     if (this.props.spotlight !== '') {
-      this.setState({spotlight: this.props.spotlight});
-    }
+      newSpotlight = this.props.spotlight;
+      this.highlight(newSpotlight);
+    };
+    this.setState({annotations: this.props.annotations, spotlight: newSpotlight});
   },
 
-  componentDidMount: function() {
-    debugger;
-    if (this.state.spotlight !== '') {
-      this.clickHandler(this.state.spotlight);
-    }
-  },
+  // componentDidMount: function() {
+  //   debugger;
+  //   if (this.state.spotlight !== '') {
+  //     this.clickHandler(this.state.spotlight);
+  //   }
+  // },
 
   componentWillReceiveProps: function(nextProps) {
     debugger;
-    if (nextProps.spotlight !== this.state.spotlight && nextProps.spotlight !== '') {
-      this.clickHandler(nextProps.spotlight);
-    } else if (nextProps.spotlight === '') {
-      for (var i = 0; i < nextProps.annotations.length; i++) {
-        if (nextProps.annotations[i].id === this.state.spotlight.id) {
-          this.setState({spotlightOn: true});
-          return;
-        }
+    // if (nextProps.spotlight !== this.state.spotlight && nextProps.spotlight !== '') {
+    //   this.clickHandler(nextProps.spotlight);
+    // } else if (nextProps.spotlight === '') {
+    //   for (var i = 0; i < nextProps.annotations.length; i++) {
+    //     if (nextProps.annotations[i].id === this.state.spotlight.id) {
+    //       this.setState({spotlightOn: true});
+    //       return;
+    //     }
+    //   }
+    //   this.setState({spotlightOn: false, spotlight: ''});
+    // } else if (nextProps.spotlight === this.state.spotlight) {
+    //   this.props.changeSpotlight('');
+    // }
+
+    if (nextProps.spotlight !== this.state.spotlight) {
+      if (this.state.spotlight !== '') {
+        this.unhighlight();
       }
-      this.setState({spotlightOn: false, spotlight: ''});
-    } else if (nextProps.spotlight === this.state.spotlight) {
-      this.props.changeSpotlight('');
+      if (nextProps.spotlight !== '') {
+        this.highlight(nextProps.spotlight);
+      }
+
     }
+
+    this.setState({annotations: nextProps.annotations, spotlight: nextProps.spotlight});
+
   },
 
   componentWillUnmount: function() {
+    debugger;
     if (this.state.spotlight !== '') {
       this.unhighlight();
-      this.setState({spotlightOn: false, spotlight: ''});
-      this.props.changeSpotlight('')
+      // this.setState({spotlightOn: false, spotlight: ''});
+      this.props.changeSpotlight('');
     }
   },
 
@@ -21009,15 +21163,16 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
     debugger;
     var ownId = window.localStorage.getItem('user_id');
     var friends = this.props.friends;
-    var annotations = this.props.annotations;
+    var annotations = this.state.annotations;
     var self = this;
 
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
       console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
         if (friends[user]) {
+          console.log('annotation is:', annotation);
           return (
-            React.createElement("div", null, 
+            React.createElement("div", {key: index}, 
               React.createElement("li", {className: "annotationListItem"}, 
                 user.toString() === ownId ? 
                   React.createElement(AnnotationComment, {clickHandler: self.clickHandler, user: annotation.user_id, annotation: annotation, deleteAnn: self.deleteAnn})
@@ -21040,7 +21195,7 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
 
 module.exports = friendsAnnotationList;
 
-},{"../annotator-view/annotationComment":158,"./friends-annotationComment":180,"react":156}],182:[function(require,module,exports){
+},{"../annotator-view/annotationComment":158,"./friends-annotationComment":181,"react":156}],183:[function(require,module,exports){
 var React = require('react');
 var HomeButton = require('../annotator-view/home-button');
 var AnnotatorMinimizeButton = require('../annotator-view/annotator-minimize-button');
@@ -21075,7 +21230,82 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
       }
       THIS.props.updateView('showAnnotatorButton');
     });
+
+    // debugger;
+    // console.log('friend annotations view mounted');
+    // var self = this;
+    // var ownId = window.localStorage.getItem('user_id');
+    // var uri = window.location.href.split("?")[0];
+    // if (uri.substring(uri.length-11) === 'onwords1991') {
+    //   uri = uri.substring(0, uri.length-13);
+    // } else {
+    //   uri = uri;
+    // }
+
+    // var annotations = [];
+    // var friendsShown = {};
+
+    // $.get('https://test2server.herokuapp.com/api/users/uri/annotations', {uri: uri, user_id: ownId})
+    //   .done(function(data) { 
+    //     debugger;
+    //     // chrome.storage.local.get(uri, function(obj) {
+    //       var oldAnnotations = self.props.annotations;
+    //       debugger;
+    //       if(oldAnnotations) {
+    //         for (var i = 0; i < oldAnnotations.length; i++) {
+    //           friendsShown[oldAnnotations[i].user_id] = { shown: true };
+    //         }
+    //         annotations = oldAnnotations;
+    //       }
+    //       for (var i = 0; i < data.length; i++) {
+    //         if (friendsShown[data[i].id]) {
+    //           friendsShown[data[i].id] = {shown: true, pic: data[i].pic_url, name: data[i].full_name};
+    //         } else {
+    //           friendsShown[data[i].id] = {shown: false, pic: data[i].pic_url, name: data[i].full_name};
+    //         }
+    //       }
+    //       if (!friendsShown[ownId]) {
+    //         friendsShown[ownId] = {shown: false};
+    //       }
+    //       self.setState({annotations: annotations, friendsShown: friendsShown});
+    //     // })
+    //   })
+    // this.setState({annotations: this.props.annotations});
+
   },
+    
+  /////////////////////////
+
+
+  componentWillReceiveProps: function(nextProps) {
+
+    debugger;
+    // this.setState({annotations: nextProps.annotations});
+    if (nextProps.annotations !== this.props.annotations) {
+      var newFriends = {};
+      var oldFriends = this.state.friendsShown;
+      console.log('chrome storage changed mothafucka', nextProps.annotations);
+      if (nextProps.annotations.length > 0) {
+        for (var i = 0; i < nextProps.annotations.length; i++) {
+          var user = nextProps.annotations[i].user_id;
+          newFriends[user] = {shown: true, pic: oldFriends[user].pic, name: oldFriends[user].name};
+        }
+      }
+
+      for (var friend in oldFriends) {
+        if (newFriends[friend] === undefined) {
+          newFriends[friend] = {shown: false, pic: oldFriends[friend].pic, name: oldFriends[friend].name};
+        }
+      }
+      this.setState({annotations: nextProps.annotations, friendsShown: newFriends});      
+    }
+
+
+  },
+  
+  /////////////////////////
+
+
 
   componentWillUnmount: function() {
     console.log('friends annotaions mounted unmounted');
@@ -21115,10 +21345,9 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     var self = this;
 
     var friendCarousel = friendsArray.map(function(friend, index) {
-      debugger;
       if (friend !== ownId) {
         return (
-            React.createElement("img", {"data-id": friend, onClick: self.toggleFriendAnnotations.bind(null, friend), className: "friends-pic", src: friendsObject[friend].pic})
+            React.createElement("img", {key: index, "data-id": friend, onClick: self.toggleFriendAnnotations.bind(null, friend), className: "friends-pic", src: friendsObject[friend].pic})
         )
       }
     })
@@ -21164,13 +21393,14 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     $.get('https://test2server.herokuapp.com/api/users/uri/annotations', {uri: uri, user_id: ownId})
       .done(function(data) { 
         debugger;
-        chrome.storage.local.get(uri, function(obj) {
+        // chrome.storage.local.get(uri, function(obj) {
+          var oldAnnotations = self.props.annotations;
           debugger;
-          if(obj[uri]) {
-            for (var i = 0; i < obj[uri].length; i++) {
-              friendsShown[obj[uri][i].user_id] = { shown: true };
+          if(oldAnnotations) {
+            for (var i = 0; i < oldAnnotations.length; i++) {
+              friendsShown[oldAnnotations[i].user_id] = { shown: true };
             }
-            annotations = obj[uri];
+            annotations = oldAnnotations;
           }
           for (var i = 0; i < data.length; i++) {
             if (friendsShown[data[i].id]) {
@@ -21183,31 +21413,31 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
             friendsShown[ownId] = {shown: false};
           }
           self.setState({annotations: annotations, friendsShown: friendsShown});
+        // })
       })
-    })
 
 
-    chrome.storage.onChanged.addListener(function(changes) {
-      debugger;
-      if (changes[uri]) {
-        var newFriends = {};
-        var oldFriends = self.state.friendsShown;
-        console.log('chrome storage changed mothafucka', changes);
-        if (changes[uri].newValue.length > 0) {
-          for (var i = 0; i < changes[uri].newValue.length; i++) {
-            var user = changes[uri].newValue[i].user_id;
-            newFriends[user] = {shown: true, pic: oldFriends[user].pic, name: oldFriends[user].name};
-          }
-        }
+    // chrome.storage.onChanged.addListener(function(changes) {
+    //   debugger;
+    //   if (changes[uri]) {
+    //     var newFriends = {};
+    //     var oldFriends = self.state.friendsShown;
+    //     console.log('chrome storage changed mothafucka', changes);
+    //     if (changes[uri].newValue.length > 0) {
+    //       for (var i = 0; i < changes[uri].newValue.length; i++) {
+    //         var user = changes[uri].newValue[i].user_id;
+    //         newFriends[user] = {shown: true, pic: oldFriends[user].pic, name: oldFriends[user].name};
+    //       }
+    //     }
 
-        for (var friend in oldFriends) {
-          if (newFriends[friend] === undefined) {
-            newFriends[friend] = {shown: false, pic: oldFriends[friend].pic, name: oldFriends[friend].name};
-          }
-        }
-        self.setState({annotations: changes[uri].newValue, friendsShown: newFriends});
-      }
-    });
+    //     for (var friend in oldFriends) {
+    //       if (newFriends[friend] === undefined) {
+    //         newFriends[friend] = {shown: false, pic: oldFriends[friend].pic, name: oldFriends[friend].name};
+    //       }
+    //     }
+    //     self.setState({annotations: changes[uri].newValue, friendsShown: newFriends});
+    //   }
+    // });
 
     
   }
@@ -21215,7 +21445,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
 module.exports = FriendsAnnotationsView;
 
-},{"../annotator-view/annotator-minimize-button":162,"../annotator-view/home-button":165,"./friends-annotationList":181,"./my-annotations-button":183,"react":156}],183:[function(require,module,exports){
+},{"../annotator-view/annotator-minimize-button":162,"../annotator-view/home-button":165,"./friends-annotationList":182,"./my-annotations-button":184,"react":156}],184:[function(require,module,exports){
 var React = require('react');
 
 var MyAnnotationsButton = React.createClass({displayName: "MyAnnotationsButton",
@@ -21248,7 +21478,7 @@ var MyAnnotationsButton = React.createClass({displayName: "MyAnnotationsButton",
 
 module.exports = MyAnnotationsButton;
 
-},{"react":156}],184:[function(require,module,exports){
+},{"react":156}],185:[function(require,module,exports){
 var React = require('react');
 
 var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
@@ -21283,7 +21513,7 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
 
 module.exports = AnnotatorHead;
 
-},{"react":156}],185:[function(require,module,exports){
+},{"react":156}],186:[function(require,module,exports){
 var React = require('react');
 
 var AnnotatorMixin = {
@@ -21300,7 +21530,7 @@ var AnnotatorMixin = {
 
 module.exports = AnnotatorMixin;
 
-},{"react":156}],186:[function(require,module,exports){
+},{"react":156}],187:[function(require,module,exports){
 var App = require('./components/app');
 var React = require('react');
 var test = require('./test');
@@ -21348,7 +21578,7 @@ chrome.storage.sync.get('user', function(obj) {
   }
 });
 
-},{"./components/app":166,"./test":187,"react":156}],187:[function(require,module,exports){
+},{"./components/app":166,"./test":188,"react":156}],188:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
 
 exports.annotate = function(userId) {
@@ -21405,4 +21635,4 @@ exports.annotate = function(userId) {
   });
 };
 
-},{"./annotationRender":157}]},{},[186]);
+},{"./annotationRender":157}]},{},[187]);

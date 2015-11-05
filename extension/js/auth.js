@@ -1,7 +1,7 @@
 function fetchToken() {
   var access_token;
 
-  var clientID = '190161771316309';
+  var clientID = '';
 
 
   var redirectUri = 'https://' + chrome.runtime.id + '.chromiumapp.org/provider_cb';
@@ -50,13 +50,14 @@ chrome.browserAction.onClicked.addListener(function() {
 function fetchFbProfile(accessToken) {
   var xhr = new XMLHttpRequest();
   var urlPrefix = 'https://graph.facebook.com/v2.5/me';
-  var urlFields = '?fields=id,name,email,picture.width(100).height(100)';
+  var urlFields = '?fields=id,name,email,picture.width(310).height(310)';
   var urlSignature = '&access_token=' + accessToken;
   var url = urlPrefix + urlFields + urlSignature;
   xhr.open('GET', url, true);
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
       var resp = JSON.parse(xhr.responseText);
+      console.log('resp:', resp);
       var profile = {};
       profile.facebook_id = resp.id;
       profile.full_name = resp.name;

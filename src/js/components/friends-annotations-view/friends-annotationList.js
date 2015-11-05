@@ -6,6 +6,7 @@ var FriendAnnotationComment = require('./friends-annotationComment');
 var friendsAnnotationList = React.createClass({
   getInitialState: function() {
     return {
+      annotations: [],
       spotlight: '',
       spotlightOn: false
     }
@@ -36,6 +37,10 @@ var friendsAnnotationList = React.createClass({
 
   highlight: function(annotation) {
     debugger;
+    $('html, body').animate({
+      scrollTop: annotation.offsetTop - 200
+    }, 300);
+
     var newSpotlightColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
 
     var newSpotlightColorWithUmph = newSpotlightColor.slice(0, newSpotlightColor.lastIndexOf(',') + 1) + ' 1)';
@@ -44,66 +49,82 @@ var friendsAnnotationList = React.createClass({
       color: "black"
     }
     $('span[data-annotation-id="' + annotation.id + '"]').css(styles);  
-    this.setState({spotlight: annotation});
+    // this.setState({spotlight: annotation});
   },
 
   clickHandler: function(annotation) {
     debugger;
-    $('html, body').animate({
-      scrollTop: annotation.offsetTop - 200
-    }, 300);
+    this.props.changeSpotlight(annotation);
+    
 
-    if (this.state.spotlight !== '' && this.state.spotlight.id !== annotation.id) {
-      this.unhighlight();
-    }
+    // if (this.state.spotlight !== '' && this.state.spotlight.id !== annotation.id) {
+    //   this.unhighlight();
+    // }
 
-    if (this.state.spotlight.id === annotation.id) {
-      if (!this.state.spotlightOn) {
-        this.highlight(annotation);
-      }
-    } else {
-      this.highlight(annotation);
-    }
-    this.setState({spotlightOn: true});
+    // if (this.state.spotlight.id === annotation.id) {
+    //   if (!this.state.spotlightOn) {
+    //     this.highlight(annotation);
+    //   }
+    // } else {
+    //   this.highlight(annotation);
+    // }
+    // this.setState({spotlightOn: true});
 
   },
 
   componentWillMount: function() {
     debugger;
+    var newSpotlight = '';
     if (this.props.spotlight !== '') {
-      this.setState({spotlight: this.props.spotlight});
-    }
+      newSpotlight = this.props.spotlight;
+      this.highlight(newSpotlight);
+    };
+    this.setState({annotations: this.props.annotations, spotlight: newSpotlight});
   },
 
-  componentDidMount: function() {
-    debugger;
-    if (this.state.spotlight !== '') {
-      this.clickHandler(this.state.spotlight);
-    }
-  },
+  // componentDidMount: function() {
+  //   debugger;
+  //   if (this.state.spotlight !== '') {
+  //     this.clickHandler(this.state.spotlight);
+  //   }
+  // },
 
   componentWillReceiveProps: function(nextProps) {
     debugger;
-    if (nextProps.spotlight !== this.state.spotlight && nextProps.spotlight !== '') {
-      this.clickHandler(nextProps.spotlight);
-    } else if (nextProps.spotlight === '') {
-      for (var i = 0; i < nextProps.annotations.length; i++) {
-        if (nextProps.annotations[i].id === this.state.spotlight.id) {
-          this.setState({spotlightOn: true});
-          return;
-        }
+    // if (nextProps.spotlight !== this.state.spotlight && nextProps.spotlight !== '') {
+    //   this.clickHandler(nextProps.spotlight);
+    // } else if (nextProps.spotlight === '') {
+    //   for (var i = 0; i < nextProps.annotations.length; i++) {
+    //     if (nextProps.annotations[i].id === this.state.spotlight.id) {
+    //       this.setState({spotlightOn: true});
+    //       return;
+    //     }
+    //   }
+    //   this.setState({spotlightOn: false, spotlight: ''});
+    // } else if (nextProps.spotlight === this.state.spotlight) {
+    //   this.props.changeSpotlight('');
+    // }
+
+    if (nextProps.spotlight !== this.state.spotlight) {
+      if (this.state.spotlight !== '') {
+        this.unhighlight();
       }
-      this.setState({spotlightOn: false, spotlight: ''});
-    } else if (nextProps.spotlight === this.state.spotlight) {
-      this.props.changeSpotlight('');
+      if (nextProps.spotlight !== '') {
+        this.highlight(nextProps.spotlight);
+      }
+
     }
+
+    this.setState({annotations: nextProps.annotations, spotlight: nextProps.spotlight});
+
   },
 
   componentWillUnmount: function() {
+    debugger;
     if (this.state.spotlight !== '') {
       this.unhighlight();
-      this.setState({spotlightOn: false, spotlight: ''});
-      this.props.changeSpotlight('')
+      // this.setState({spotlightOn: false, spotlight: ''});
+      this.props.changeSpotlight('');
     }
   },
 
@@ -112,15 +133,16 @@ var friendsAnnotationList = React.createClass({
     debugger;
     var ownId = window.localStorage.getItem('user_id');
     var friends = this.props.friends;
-    var annotations = this.props.annotations;
+    var annotations = this.state.annotations;
     var self = this;
 
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
       console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
         if (friends[user]) {
+          console.log('annotation is:', annotation);
           return (
-            <div>
+            <div key={index}>
               <li className="annotationListItem">
                 {user.toString() === ownId ? 
                   <AnnotationComment clickHandler={self.clickHandler} user={annotation.user_id} annotation={annotation} deleteAnn={self.deleteAnn} />
