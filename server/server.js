@@ -249,10 +249,8 @@ app.get('/api/search',function (req, res) {
       }
       res.set('Content-Type','application/JSON'); 
       res.json(returnObj);
+    });
   });
-
-
-});
 });
 
 
@@ -275,14 +273,85 @@ app.put('/api/annotations/:id', function (req, res) {
 app.delete('/api/annotations/:id',function (req, res) {
   var annotation_id = req.params.id;
 
-  pg.connect(connectionString, function(err, client, done) {
-    if (err) console.log('Connection error: ', err);
-    client.query(deleteQueries.deleteAnnotation(annotation_id), function(err, result) {
-      done();
-      res.sendStatus(204);
+  var deleteThatAnnotation = function(annotation_id) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) console.log('Connection error: ', err);
+        client.query(deleteQueries.deleteAnnotation(annotation_id), function(err, result) {
+          done();
+          if (!result) {
+            console.error('Error in query: ', err);
+            res.sendStatus(404);
+            reject(err);
+          }
+          else if (result.rows.length === 0) res.sendStatus(404);
+          else resolve(result.rows[0].uri_user_id);
+        })
+      });
+    });
+  }
+
+  var checkIfAnnotationsForThisURIUserIsEmpty = function(uri_user_id) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          done();
+          console.error('Connection error: ', err);
+          reject(err);
+        }
+        client.query(checkQueries.checkIfAnyAnnotationsForThisURIUser(uri_user_id), function(err, result) {
+          done();
+          if (!result) {
+            console.error('Error in query: ', err);
+            res.sendStatus(404);
+            reject(err);
+          }
+          else {
+            var obj = {
+              uri_user_id: uri_user_id,
+              exists: result.rows[0].exists
+            }  
+            resolve(obj);
+          }
+        })
+      })
     })
-  });
+  }
+
+  var deleteURIUserOrNot = function(obj) {
+    if (!obj.exists) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          done();
+          console.error('Connection error: ', err);
+          reject(err);
+        }
+        client.query(deleteQueries.deleteURIUser(obj.uri_user_id), function(err, result) {
+          done();
+          if (!result) {
+            console.error('Error in query: ', err);
+            res.sendStatus(404);
+            reject(err);
+          }
+          else {
+            res.sendStatus(204);
+          }
+        })
+      });
+    }
+    res.sendStatus(204);
+  }
+
+  deleteThatAnnotation(annotation_id)
+    .then(checkIfAnnotationsForThisURIUserIsEmpty)
+    .then(deleteURIUserOrNot)
+    .catch(function(err) {
+      console.error('Error in deleting annotation: ', err);
+    })
+
 });
+
+
 
 
 app.get('/api/homefeed', function (req, res) {
@@ -304,8 +373,8 @@ app.get('/api/homefeed', function (req, res) {
     });
   };
  
-  var getFullNameAndPicURL = function(person) {
-    console.log('getFullNameAndPicURL person: ', person);
+  var getFullNamePicURLAndID = function(person) {
+    console.log('getFullNamePicURLAndID person: ', person);
     return new Promise(function(resolve, reject) { 
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
@@ -313,7 +382,7 @@ app.get('/api/homefeed', function (req, res) {
           return reject(err);
         }
         client.query(selectQueries.selectFullNameAndPicURLBasedOnID(person.user_id), function(err, result) {
-          console.log('result in getFullNameAndPicURL: ', result);
+          console.log('result in getFullNamePicURLAndID: ', result);
           console.log('this was person.user_id: ', person.user_id);
           done();
           resolve(result.rows[0]);
@@ -385,12 +454,28 @@ app.get('/api/homefeed', function (req, res) {
       });
     });
   };
+
+  var getIsSharedProperty = function(uri, userId) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.error('Connection error: ', err);
+          return reject(err);
+        }
+        client.query(selectQueries.selectIsSharedProperty(uri.uri_link, userId), function(err, result) {
+          done();
+          resolve(result.rows[0].is_shared);
+        })
+      });
+    })
+  }
  
   var getGeneralPostCommentsLikes = function(uri, userId) {
     return Promise.all([
       getGeneralPost(uri, userId),
       getCommentsOnGeneralPost(uri, userId),
-      getLikesOnGeneralPost(uri, userId)
+      getLikesOnGeneralPost(uri, userId),
+      getIsSharedProperty(uri, userId)
     ]);
   };
  
@@ -398,16 +483,20 @@ app.get('/api/homefeed', function (req, res) {
     var generalPost = generalPostCommentsLikesArray[0];
     var comments = generalPostCommentsLikesArray[1];
     var likes = generalPostCommentsLikesArray[2];
+    var shared = generalPostCommentsLikesArray[3];
     return {
       uri_link: uriObj.uri_link,
       title: uriObj.title,
       general_post: generalPost,
+      is_shared: shared,
+      updated_at: uriObj.updated_at,
       commentsOnGeneralPost: comments,
       likes: likes
     };
   };
  
   var convertUriObjToArticleObj = function(uriObj, userId) {
+    console.log('show me the uriObj: ', uriObj)
     return getGeneralPostCommentsLikes(uriObj, userId)
       .then(function(generalPostCommentsLikesArray) {
         return assembleArticleObj(generalPostCommentsLikesArray, uriObj);
@@ -420,7 +509,7 @@ app.get('/api/homefeed', function (req, res) {
   var assemblePersonInfoWithArticlesObj = function(person) {
     // Promise.all these two promises
     return Promise.all([
-      getFullNameAndPicURL(person),
+      getFullNamePicURLAndID(person),
       getUriObjsOfPerson(person)
         .then(function(uriObjsArray) {
           // iterating through each uriObjsArray of each user ID
@@ -434,6 +523,7 @@ app.get('/api/homefeed', function (req, res) {
         var fullNameAndFBPicObj = fullNameFBPicAndUriObjs[0];
         var articleObjsOfPerson = fullNameFBPicAndUriObjs[1];
         return {
+          user_id: fullNameAndFBPicObj.id,
           full_name: fullNameAndFBPicObj.full_name,
           pic_url: fullNameAndFBPicObj.pic_url,
           articles: articleObjsOfPerson
@@ -581,6 +671,106 @@ app.get('/api/personalfeed', function (req, res) {
 });
 
 
+
+app.put('/api/personalfeed/share', function(req, res) {
+  var user_id = req.query.user_id;
+  var uri = req.query.uri;
+  var is_shared = req.query.is_shared;
+
+  var updateArticlesSharedStatusTo = function(is_shared, uri, user_id) {
+    return new Promise(function(resolve, reject) {
+      pg.connect(connectionString, function(err, client, done) {
+        if (err) {
+          console.error('Connection error: ', err);
+          resolve(err);
+        }
+        client.query(updateQueries.updateSharedStatusTo(is_shared, uri, user_id), function(err, result)  {
+          done();
+          if (!result) res.sendStatus(404)
+          else if (result.rows.length === 0) res.sendStatus(404);
+          else {
+            console.log('hey yo, the uri_user_id: ', result.rows[0].id);
+            resolve(result.rows[0].id);
+          }
+        })
+      })
+    })
+  }
+
+  var updateTimestampOnArticle = function(uri_user_id) {
+    console.log('what is uri_user_id: ', uri_user_id)
+    pg.connect(connectionString, function(err, client, done) {
+      if (err) console.error('Connection error: ', err);
+      client.query(updateQueries.updateTimestampOnURIUser(uri_user_id), function(err, result) {
+        done();
+        console.log('what is "result" in updateTimestampOnArticle: ', result);
+        if (!result) res.sendStatus(404);
+        else if (result.rows.length === 0) res.sendStatus(404);
+        else res.sendStatus(204);
+      })
+    })
+  }
+
+  updateArticlesSharedStatusTo(is_shared, uri, user_id) 
+  .then(updateTimestampOnArticle)
+  .catch(function(err) {
+    console.error('Error in updating the shared status of article: ', err);
+  })
+
+})
+
+
+  // app.post('/api/users/update', function(req,res){
+  //   var userInfo = req.body;
+
+  //   var updateUserFollowerRow = function(table,infoObj) {
+  //     return new Promise(function(resolve,reject){
+  //       pg.connect(connectionString, function(err,client,done){
+  //         if (err) console.error('Connection error: ', err);
+  //         client.query(updateQueries.updateUserRow(table, infoObj), function(err,result) {
+  //           if (err) console.error('Connection error: ', err);
+  //           console.log('the result in the query ', result)
+  //           done();
+  //           resolve(result);
+  //         });
+  //       }) 
+  //     });
+  //   };
+
+  //  var userFollowerArr = [updateUserFollowerRow("users",userInfo), updateUserFollowerRow("followers",userInfo)];
+   
+  //  Promise.all(userFollowerArr).then(function() {
+  //   res.set('Content-Type','application/JSON'); 
+  //   res.json(userInfo);
+  //  });
+
+  // });
+
+
+
+app.post('/api/users/update', function(req,res){
+  var userInfo = req.body;
+  var updateUserRow = function(infoObj) {
+    return new Promise(function(resolve,reject){
+      pg.connect(connectionString, function(err,client,done){
+        if (err) console.error('Connection error: ', err);
+        client.query(updateQueries.updateUserRow(infoObj), function(err,result) {
+          if (err) console.error('Connection error: ', err);
+          console.log('the result in the query ', result)
+          done();
+          resolve(result.rows);
+        });
+      }) 
+    });
+  };
+
+  updateUserRow(userInfo).then(function(result) {
+    res.set('Content-Type','application/JSON'); 
+    res.json(userInfo);     
+  })
+});
+
+
 app.get('/api/search/users', function(req, res) {
   var user_id = req.query.user_id;
   var full_name = req.query.full_name;
@@ -667,7 +857,22 @@ app.post('/api/users/follow', function(req, res) {
 
 })
 
-app.get('/api/users/uri/annotations', function(req, res) {
+app.delete('/api/users/unfollow', function(req, res) {
+  var user_id = req.query.user_id;
+  var follower_id = req.query.follower_id;
+
+  pg.connect(connectionString, function(err, client, done) {
+    if (err) console.error('Connection error: ', err);
+    client.query(deleteQueries.deleteUserFollowerRelationship(user_id, follower_id), function(err, result) {
+      done();
+      if (!result) res.sendStatus(404);
+      else res.sendStatus(204);
+    })
+  });
+})
+
+
+app.get('/api/users/uri/annotations', function (req, res) {
   var user_id = req.query.user_id; 
   var uri = req.query.uri;
 
@@ -706,7 +911,7 @@ app.get('/api/users/uri/annotations', function(req, res) {
   }
 
   var getFullNamePicURLAndID = function(person) {
-    console.log('getFullNameAndPicURL person: ', person);
+    console.log('getFullNamePicURLAndID person: ', person);
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
@@ -740,14 +945,113 @@ app.get('/api/users/uri/annotations', function(req, res) {
       res.json(fullNamesPicURLsAndIDsOfWhoAnnotatedPage);
     })
 
-
 })
 
 
-app.get('/api/personalfeed/share', function (req, res) {
-  var body = req.body;
+  app.post('/api/uri/gp', function(req,res) {
+    var gpObj = req.body;
+    var uri = req.body.uri;
+    var user_id = req.body.user_id;
+    var generalPost = req.body.generalPost;
 
-});
+    var updateGP = function(uri, user_id, generalPost) {
+      return new Promise(function(resolve,reject){
+        pg.connect(connectionString, function(err, client, done) {
+          if (err) {
+            console.log('Connection error: ', err);
+            return reject(err);
+          }
+          client.query(updateQueries.updateGeneralPost(uri, user_id, generalPost), function(err, result) {
+            if(err) console.log(err);
+            done();
+            resolve(result.rows[0]);
+          });
+        });
+      });
+      }; 
+    updateGP(uri, user_id, generalPost).then(function(){
+      res.set('Content-Type','application/JSON'); 
+      res.json(gpObj);  
+    });
+  });
+
+  app.post('/api/comments', function(req,res) {
+    var uri = req.body.uri;
+    var user_id = req.body.user_id;
+    var follower_id = req.body.follower_id;
+    var message = req.body.message;
+
+    var insertComments =  function(uri,user_id,follower_id,message){
+      return new Promise(function(resolve,reject){
+        pg.connect(connectionString,function(err,client,done) {
+          if (err) {
+            console.error('Connection error: ', err);
+            return reject(err);
+          }
+          client.query(insertQueries.insertGeneralPostComment(uri, user_id, follower_id, message), function(err,result){
+            if(err) console.log('connection error' ,err);
+            done()
+            resolve(result.row)
+          });  
+        });  
+      })
+    };
+  
+    insertComments(uri, user_id, follower_id, message)
+    .then(function(data){
+      res.set('Content-Type','application/JSON'); 
+      res.json(req.body);
+    })
+  });
+
+  app.post('/api/likes',function(req,res) {
+    var uri = req.body.uri;
+    var user_id = req.body.user_id;
+    var follower_id = req.body.follower_id;
+    var likeToggle = req.body.likeToggle
+
+    var insertLike = function(uri,user_id,follower_id) {
+      return new Promise(function(resolve,reject){
+        pg.connect(connectionString,function(err,client,done) {
+          if (err) {
+            console.error('Connection error: ', err);
+            return reject(err);
+          }
+          client.query(insertQueries.insertLikes(uri,user_id,follower_id),function(err,result){
+            done();
+            resolve(result);
+          });      
+        });
+      });  
+    };
+    var deleteLike = function(uri, user_id, follower_id){
+      return new Promise(function(resolve,reject){
+        pg.connect(connectionString,function(err,client,done) {
+          if (err) {
+            console.error('Connection error: ', err);
+            return reject(err);
+          }
+          client.query(deleteQueries.deleteLike(uri,user_id,follower_id),function(err,result){
+            done();
+            resolve(result);
+          });      
+        });
+      });     
+    };
+    console.log('the like toggle ', likeToggle, likeToggle.length);
+    if(likeToggle.length === 5) {
+      deleteLike(uri, user_id, follower_id).then(function(result){
+        res.set('Content-Type','application/JSON'); 
+        res.json(req.body);  
+      }) 
+    }else{
+      insertLike(uri, user_id, follower_id).then(function(results) {
+        res.set('Content-Type','application/JSON'); 
+        res.json(req.body);        
+      });  
+    }
+  });
+
 
 
 
