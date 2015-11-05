@@ -1,4 +1,7 @@
 var React = require('react');
+var ReactAddons = require('react/addons');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 var AnnotationComment = require('../annotator-view/annotationComment');
 var FriendAnnotationComment = require('./friends-annotationComment');
 
@@ -156,9 +159,11 @@ var friendsAnnotationList = React.createClass({
     });
 
     return (
-      <ul className="annotationList">
-        {annotationList}
-      </ul>
+      <ReactCSSTransitionGroup className="annotationList" transitionName="example" transitionEnterTimeout={500} transitionLeaveTimeout={300}>
+
+          {annotationList}
+
+      </ReactCSSTransitionGroup>
     )
   }
 });

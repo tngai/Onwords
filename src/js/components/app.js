@@ -1,4 +1,5 @@
 var React = require('react');
+
 var AnnotatorView = require('./annotator-view/annotator-view');
 var FeedView = require('./feed-view/feed-view');
 var AnnotatorButton = require('./annotator-view/annotator-button');
