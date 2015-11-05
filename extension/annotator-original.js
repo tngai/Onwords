@@ -14901,7 +14901,8 @@ Highlighter.prototype.draw = function (annotation) {
             .attr('data-annotation-id', annotation.id);
     }
 
-    $('.annotator-hl').on('click', function(event) {
+    $('.annotator-hl').unbind('click').bind('click', function(event) {
+      debugger;
       var annotations = $(event.target)
                     .parents('.annotator-hl')
                     .addBack()
@@ -14972,7 +14973,7 @@ exports.standalone = function standalone(element, options) {
         destroy: function () { widget.destroy(); },
         annotationsLoaded: function (anns) { widget.drawAll(anns); },
         annotationCreated: function (ann) { widget.draw(ann); },
-        annotationDeleted: function (ann) { widget.undraw(ann); },
+        // annotationDeleted: function (ann) { widget.undraw(ann); },
         annotationUpdated: function (ann) { widget.redraw(ann); }
     };
 };
@@ -15294,7 +15295,7 @@ function main(options) {
 
         annotationsLoaded: function (anns) { s.highlighter.drawAll(anns); },
         annotationCreated: function (ann) { s.highlighter.draw(ann); },
-        annotationDeleted: function (ann) { s.highlighter.undraw(ann); },
+        // annotationDeleted: function (ann) { s.highlighter.undraw(ann); },
         annotationUpdated: function (ann) { s.highlighter.redraw(ann); },
 
         beforeAnnotationCreated: function (annotation) {
