@@ -23384,6 +23384,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
+      debugger;
       console.log('e is : ', e);
       // highlighter click check
       if(getSelection().toString()) {
