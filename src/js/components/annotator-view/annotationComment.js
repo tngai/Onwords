@@ -22,7 +22,13 @@ var annotationComment = React.createClass({
     this.setState({shouldEditComment: false});
   },
 
-  componentDidMount: function(e) {
+  componentDidMount: function() {
+    var self = this;
+    // $('.comment-delete-button').unbind('click').bind('click', (function(e) {
+    //   debugger;
+    //   e.stopPropagation();
+    //   self.props.deleteAnn(self.props.annotation);
+    // }));
     // var THIS = this;
     // // esc and enter functionality
     // $(document).keypress(function(e) {
@@ -51,15 +57,22 @@ var annotationComment = React.createClass({
       borderLeft: '4px solid ' + userColor
     }
 
+    console.log('inside annotationcomment:', this.props.annotation);
     var annotation = this.props.annotation;
     var self = this;
-    var deleteAnn = function() {
-      self.props.deleteAnn(annotation);
+
+    var clickHandler = function(e) {
+      if (e.target.className !== 'comment-delete-button') {
+        self.props.clickHandler(annotation);
+      }
     };
 
-    var clickHandler = function() {
-      self.props.clickHandler(annotation);
-    };
+    var deleteAnn = function(e) {
+      debugger;
+      console.log(e.target);
+      e.stopPropagation();
+      self.props.deleteAnn(annotation);
+    }
 
     return (
       <div onClick={clickHandler} className="annotation" style={divStyle}>
