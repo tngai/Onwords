@@ -24,7 +24,7 @@
 
 
 #annotation-sidebar {
-  z-index: 10000;
+  z-index: 9999999;
   position: fixed; 
   top: 0; 
   width: 630px; 

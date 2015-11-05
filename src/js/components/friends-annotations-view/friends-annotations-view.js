@@ -20,6 +20,7 @@ var FriendsAnnotationsView = React.createClass({
     console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
+      debugger;
       console.log('e is : ', e);
       // highlighter click check
       if(getSelection().toString()) {
