@@ -20893,7 +20893,6 @@ var FeedView = React.createClass({displayName: "FeedView",
           React.createElement("div", {className: "button-container"}, 
             React.createElement(HomeButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
             React.createElement(FriendsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
-            React.createElement(ArchiveButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
             React.createElement(SearchButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
             React.createElement(SettingsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
           ), 

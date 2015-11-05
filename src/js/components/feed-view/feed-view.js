@@ -83,7 +83,6 @@ var FeedView = React.createClass({
           <div className='button-container'>
             <HomeButton {...this.props} updateBodyView={this.updateBodyView} />
             <FriendsButton {...this.props} updateBodyView={this.updateBodyView} />
-            <ArchiveButton {...this.props} updateBodyView={this.updateBodyView} />
             <SearchButton {...this.props} updateBodyView={this.updateBodyView} />
             <SettingsButton {...this.props} updateBodyView={this.updateBodyView} />
           </div>
