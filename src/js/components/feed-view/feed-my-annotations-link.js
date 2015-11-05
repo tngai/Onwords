@@ -11,9 +11,7 @@ var MyAnnotationsLink = React.createClass({
     var user = window.localStorage.user_id;
     var urls = info.map(function(annotation, index) {
       console.log('in MyAnnotationsLink', annotation);
-
-      // 
-
+      var numberOfLikes = annotation.likes.length;
       var redirectUri = annotation.uri_link + '#' + user + 'onwords1991';
       console.log(redirectUri)
       return (
@@ -22,7 +20,7 @@ var MyAnnotationsLink = React.createClass({
             <a href={redirectUri} target='blank' className='redirectLink'>{annotation.title}</a>
           </div>
           <div className='my-annotations-likes-container'>
-            {annotation.likes}
+            Likes : {numberOfLikes}
           </div>
           <div className='my-annotations-form-container'>
                 <textarea type='text' placeholder='Write a comment...'></textarea>
@@ -31,7 +29,6 @@ var MyAnnotationsLink = React.createClass({
         </div>
       )
     });
-
     return (
       <div className='my-annotations-links-container'>
         {urls}
