@@ -367,6 +367,24 @@ ul {
   width: 450px;
   height: 150px;
 }
+.post-header-container {
+  width: 450px;
+  height: 37.5px; 
+}
+.post-time-container {
+  width: 450px;
+  height: 37.5px; 
+}
+.post-title-container {
+  width: 450px;
+  height: 37.5px; 
+}
+.post-like-comment-container {
+  width: 450px;
+  height: 37.5px; 
+}
+
+
 /*FriendsButtonsContainer*/
 .friends-annotations-buttons-container {
   width: 300px;

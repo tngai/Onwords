@@ -4,7 +4,7 @@ var FriendsAnnotationLink = React.createClass({
   render: function() {
     var info = this.props.info
     var allSharedPost = [];
-    console.log('INFO!!!', info);
+    console.log('INFO FROM API CALL', info);
 
     // sort data based on isShared into an array(allSharedPost)
     info.forEach(function(user, key1) {
@@ -13,7 +13,6 @@ var FriendsAnnotationLink = React.createClass({
       var userId = user.user_id; 
     
       var allArticles = user.articles;
-
       allArticles.forEach(function(article, key2) {
         if(article.is_shared){
           var uriLink = article.uri_link;
@@ -29,7 +28,7 @@ var FriendsAnnotationLink = React.createClass({
           var likes = article.likes.map(function(like, key) {
             return like;
           });
-          console.log('COMMENTS AND LIKES', comments, likes);
+
           allSharedPost.push({
             picUrl: picUrl,
             userName: userName,
@@ -39,7 +38,9 @@ var FriendsAnnotationLink = React.createClass({
             generalPost: generalPost,
             redirectUri: redirectUri,
             isShared: isShared,
-            time: time
+            time: time,
+            comments: comments,
+            likes: likes
           });
         }
       });
@@ -57,21 +58,30 @@ var FriendsAnnotationLink = React.createClass({
           </div>
 
           <div className='post-body-container'>
-            <div className='post-name-container'>
-              {post.userName}
+            <div className='post-header-container'>
+              <div className='post-name-container'>
+                {post.userName}
+              </div>
+
+              <div className='post-time-container'>
+                {post.time}
+              </div>
             </div>
 
             <div className='post-title-container'>
-              {post.title}
+              <a href={post.redirectUri} target='blank' className='redirectLink'>{post.title}</a>
             </div>
 
-            <div className='post-likes-container'>
-              likes
+            <div className='post-like-comment-container'>
+              <div className='post-likes-container'>
+                likes : {post.likes.length}
+              </div>
+
+              <div className='post-comments-container'>
+                comments : {post.comments.length}
+              </div>
             </div>
 
-            <div className='post-comments-container'>
-              comments
-            </div>
           </div>
         </div>
       )

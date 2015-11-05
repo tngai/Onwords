@@ -20315,7 +20315,7 @@ var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLi
   render: function() {
     var info = this.props.info
     var allSharedPost = [];
-    console.log('INFO!!!', info);
+    console.log('INFO FROM API CALL', info);
 
     // sort data based on isShared into an array(allSharedPost)
     info.forEach(function(user, key1) {
@@ -20324,7 +20324,6 @@ var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLi
       var userId = user.user_id; 
     
       var allArticles = user.articles;
-
       allArticles.forEach(function(article, key2) {
         if(article.is_shared){
           var uriLink = article.uri_link;
@@ -20340,7 +20339,7 @@ var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLi
           var likes = article.likes.map(function(like, key) {
             return like;
           });
-          console.log('COMMENTS AND LIKES', comments, likes);
+
           allSharedPost.push({
             picUrl: picUrl,
             userName: userName,
@@ -20350,7 +20349,9 @@ var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLi
             generalPost: generalPost,
             redirectUri: redirectUri,
             isShared: isShared,
-            time: time
+            time: time,
+            comments: comments,
+            likes: likes
           });
         }
       });
@@ -20368,21 +20369,30 @@ var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLi
           ), 
 
           React.createElement("div", {className: "post-body-container"}, 
-            React.createElement("div", {className: "post-name-container"}, 
-              post.userName
+            React.createElement("div", {className: "post-header-container"}, 
+              React.createElement("div", {className: "post-name-container"}, 
+                post.userName
+              ), 
+
+              React.createElement("div", {className: "post-time-container"}, 
+                post.time
+              )
             ), 
 
             React.createElement("div", {className: "post-title-container"}, 
-              post.title
+              React.createElement("a", {href: post.redirectUri, target: "blank", className: "redirectLink"}, post.title)
             ), 
 
-            React.createElement("div", {className: "post-likes-container"}, 
-              "likes"
-            ), 
+            React.createElement("div", {className: "post-like-comment-container"}, 
+              React.createElement("div", {className: "post-likes-container"}, 
+                "likes : ", post.likes.length
+              ), 
 
-            React.createElement("div", {className: "post-comments-container"}, 
-              "comments"
+              React.createElement("div", {className: "post-comments-container"}, 
+                "comments : ", post.comments.length
+              )
             )
+
           )
         )
       )
@@ -20414,23 +20424,25 @@ var React = require('react');
 var AnnotationLink = require('./feed-friends-annotationlink');
 
 var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
-
   getInitialState: function() {
     return {
       info: []
     }
   },
-
   render: function() {
     return (
       React.createElement(AnnotationLink, {info: this.state.info})
     );
   },
-
+  componentWillUnmount: function() {
+    console.log('MyAnnotationsLink - componentWillUnmount');
+    $(document).off();
+  },
   componentDidMount: function() {
     console.log('FriendsAnnotations - componentDidMount');
     var user = window.localStorage.user_id;
     var completeUri = 'https://test2server.herokuapp.com/api/homefeed?user_id=' + user;
+
     $.get(completeUri, function(result) {
       console.log('RESULT FROM API: ',result);
       if (this.isMounted()) {
@@ -20440,8 +20452,12 @@ var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
       }
       console.log('FriendsAnnotations state:INFO = ', this.state.info);
     }.bind(this));
-  }
 
+    $(document).on('click', '.redirectLink', function(e) {
+      var url = $(this).attr('href');
+      window.open(url, '_blank');  
+    });
+  }
 });
 
 module.exports = FriendsAnnotations;
