@@ -25,8 +25,7 @@ var Settings = React.createClass({
       method: "post",
       data: options,
       dataType: 'json'
-  });
-    
+    });
   },
   handleSubmit: function(e){
     if(e.charCode == 13) { 
