@@ -11,7 +11,8 @@ var App = React.createClass({
       showAnnotatorView: false,
       showFeedView: false,
       showFriendsAnnotations: false,
-      spotlight: ''
+      spotlight: '',
+      annotations: []
     };
   },
   
@@ -64,7 +65,7 @@ var App = React.createClass({
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
             this.setState({showFeedView: true});
-            this.setState({spotlight: {}});
+            this.setState({spotlight: ''});
             $('.annotation-sidebar').animate({right: (0)}, duration);
             break;
         default:
@@ -79,13 +80,67 @@ var App = React.createClass({
     // $(document).on('click', '.annotator-hl', function() {
     //   THIS.updateView('showAnnotatorView');
     // });
-    debugger;
     var self = this;
     document.addEventListener('spotlightAnnotation', function(e) {
-      self.updateView('showAnnotatorView');
-      console.log('spotlight this annotation:', e.detail.targetAnnotation);
+      debugger;
       self.setState({spotlight: e.detail.targetAnnotation});
-    })
+      if (!self.state.showFriendsAnnotations) {
+        debugger;
+        self.updateView('showAnnotatorView');
+      }
+      console.log('spotlight this annotation:', e.detail.targetAnnotation);
+    });
+
+
+    debugger;
+
+    /////////////////////////
+    var uri = window.location.href.split("?")[0];
+    if (uri.substring(uri.length-11) === 'onwords1991') {
+      uri = uri.substring(0, uri.length-13);
+    } else {
+      uri = uri;
+    }
+
+    chrome.storage.onChanged.addListener(function(changes) {
+      debugger;
+      if (changes[uri].newValue) {
+        var newAnnotations = changes[uri].newValue;
+        var oldAnnotations = self.state.annotations;
+        var currentSpotlight = self.state.spotlight;
+
+        if (newAnnotations.length === 0) {
+          currentSpotlight = '';
+        } else {
+          var intersection = {};
+          for (var i = 0; i < oldAnnotations.length; i++) {
+            intersection[oldAnnotations[i].id] = false;
+          };
+          
+          for (var i = 0; i < newAnnotations.length; i++) {
+            // if (intersection[newAnnotations[i].id !== undefined]) {
+              intersection[newAnnotations[i].id] = true;
+            // }
+          }
+
+          if (intersection[currentSpotlight.id]) {
+            currentSpotlight = currentSpotlight;
+          } else {
+            currentSpotlight = '';
+          }
+        }
+
+        
+        self.setState({annotations: newAnnotations, spotlight: currentSpotlight});
+      }
+    });
+    /////////////////////////
+
+  },
+
+  changeSpotlight: function(annotation) {
+    debugger;
+    this.setState({spotlight: annotation});
   },
 
   render: function() {
@@ -95,7 +150,7 @@ var App = React.createClass({
         {this.state.showAnnotatorButton ? <AnnotatorButton updateView={this.updateView} /> : null}
         {this.state.showAnnotatorView ? <AnnotatorView updateView={this.updateView} /> : null}
         {this.state.showFeedView ? <FeedView updateView={this.updateView} /> : null} 
-        {this.state.showFriendsAnnotations ? <FriendsAnnotations spotlight={this.state.spotlight} updateView={this.updateView} /> : null} 
+        {this.state.showFriendsAnnotations ? <FriendsAnnotations annotations={this.state.annotations} changeSpotlight={this.changeSpotlight} spotlight={this.state.spotlight} updateView={this.updateView} /> : null} 
       </div>
     );
   }
