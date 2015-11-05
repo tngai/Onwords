@@ -33,6 +33,9 @@ function fetchToken() {
   });
 };
 
+      chrome.storage.sync.clear();
+      chrome.storage.local.clear();
+
 
 chrome.browserAction.onClicked.addListener(function() {
   debugger;
@@ -42,12 +45,12 @@ chrome.browserAction.onClicked.addListener(function() {
     if (!obj['access_token']) {
       fetchToken();
     } else {
-      chrome.storage.sync.clear();
-      chrome.storage.local.clear();
-      chrome.tabs.query({active: true}, function(tabs) {
-        debugger;
-        chrome.tabs.sendMessage(tabs[0].id, {message: 'destroyApp'});
-      })
+      // chrome.storage.sync.clear();
+      // chrome.storage.local.clear();
+      // chrome.tabs.query({active: true}, function(tabs) {
+      //   debugger;
+      //   chrome.tabs.sendMessage(tabs[0].id, {message: 'destroyApp'});
+      // })
     }
   });
 });
