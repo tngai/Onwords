@@ -33,7 +33,7 @@ var checkQueries = require('./db/queries/checkQueries.js');
 var tables = require('./db/config.js');
 
 pg.connect(connectionString, function (err, client, done) {
-  if (err) console.log('Connection error: ', err);
+  if (err) console.error('Connection error: ', err);
   for (var i = 0; i < tables.length; i++) {
     client.query(tables[i]);
   }
@@ -42,7 +42,7 @@ pg.connect(connectionString, function (err, client, done) {
 
 var checkAndInsertIfNotExists = function (checkQuery, insertQuery, callback) {
   pg.connect(connectionString, function (err, client, done) {
-    if (err) console.log('Connection error: ', err);
+    if (err) console.error('Connection error: ', err);
     var result = {};
     var check = client.query(checkQuery);
     check.on('row', function (row) { result = row });
@@ -79,7 +79,7 @@ app.post('/api/users', function (req, res) {
   (function() {
     return new Promise(function(resolve, reject){
       pg.connect(connectionString, function (err, client, done) {
-        if (err) console.log('Connection error: ', err);
+        if (err) console.error('Connection error: ', err);
         client.query(checkQueries.checkPerson(full_name), function(err, result) {
           if(result.rows.length > 0) {
             if (result.rows[0].id) {
@@ -113,7 +113,6 @@ app.post('/api/users', function (req, res) {
 
 
 app.post('/api/annotations', function (req, res) {
-  console.log(' the req body ', req.body)
   var user_id = req.body.user_id;
   var uri = req.body.uri;
   var title = req.body.title;
@@ -128,7 +127,7 @@ app.post('/api/annotations', function (req, res) {
   (function(){
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
-        if (err) console.log('Connection error: ', err);
+        if (err) console.error('Connection error: ', err);
         client.query(checkQueries.checkURI(uri), function(err, result) {
           done();
           resolve(result.rows[0].exists);
@@ -137,11 +136,10 @@ app.post('/api/annotations', function (req, res) {
     });
   })()
   .then(function(exists) {
-    console.log('just checked if uri exists: ', exists);
     return new Promise(function(resolve, reject) {
       if (!exists) {
         pg.connect(connectionString, function(err, client, done) {
-          if (err) console.log('Connection error: ', err);
+          if (err) console.error('Connection error: ', err);
           client.query(insertQueries.insertURI(uri, title), function(err, result) {
             done();
             resolve(result.rows[0].id);
@@ -150,7 +148,7 @@ app.post('/api/annotations', function (req, res) {
       }
       else {
         pg.connect(connectionString, function(err, client, done) {
-          if (err) console.log('Connection error: ', err);
+          if (err) console.error('Connection error: ', err);
           client.query(selectQueries.selectURIID(uri), function(err, result) {
             done();
             resolve(result.rows[0].id);
@@ -160,25 +158,22 @@ app.post('/api/annotations', function (req, res) {
     }); 
   })
   .then(function(uri_id) {
-    console.log('just got the uri_id: ', uri_id);
     return new Promise(function(resolve, reject) {
       (function(){
         return new Promise(function(resolveNested1, rejectNested1) {
           pg.connect(connectionString, function(err, client, done) {
-            if (err) console.log('Connection error: ', err);
+            if (err) console.error('Connection error: ', err);
             client.query(checkQueries.checkURIUser(uri_id, user_id), function(err, result) {
               done();
-              console.log('what is user_id: ', user_id)
               resolveNested1(result.rows[0].exists);
             });
           });
         })
       })()
       .then(function(exists) {
-        console.log('just checked if uri_id exists: ', exists);
         if (!exists) {
           pg.connect(connectionString, function(err, client, done) {
-            if (err) console.log('Connection error: ', err);
+            if (err) console.error('Connection error: ', err);
             client.query(insertQueries.insertURIUser(uri_id, user_id), function(err, result) {
               done();
               resolve(result.rows[0].id);
@@ -187,7 +182,7 @@ app.post('/api/annotations', function (req, res) {
         }
         else {
           pg.connect(connectionString, function(err, client, done) {
-            if (err) console.log('Connection error: ', err);
+            if (err) console.error('Connection error: ', err);
             client.query(selectQueries.selectURIUserID(uri_id, user_id), function(err, result) {
               done();
               resolve(result.rows[0].id);
@@ -198,9 +193,8 @@ app.post('/api/annotations', function (req, res) {
     });
   })
   .then(function(uri_user_id) {
-    console.log('just got the uri_user_id: ', uri_user_id);
     pg.connect(connectionString, function(err, client, done) {
-      if (err) console.log('Connection error: ', err);
+      if (err) console.error('Connection error: ', err);
       client.query(insertQueries.insertAnnotation(uri_user_id, text, quote, start, end, startOffset, endOffset), function(err, result) {
         done()
         ann.id = parseInt(result.rows[0].id);
@@ -218,7 +212,7 @@ app.get('/api/search',function (req, res) {
   var uri = req.query.uri;
 
   pg.connect(connectionString, function(err, client, done) {
-    if (err) console.log('Connection error: ', err);
+    if (err) console.error('Connection error: ', err);
     client.query(selectQueries.selectAnnotations(uri, user_id), function(err, result) {
       var returnObj = {}
       var finalAnnotationObjects;
@@ -259,7 +253,7 @@ app.put('/api/annotations/:id', function (req, res) {
   var text = req.body.text;
   var ann = req.body;
   pg.connect(connectionString, function(err, client, done) {
-    if(err) console.log('Connection error: ', err);
+    if(err) console.error('Connection error: ', err);
     client.query(updateQueries.updateAnnotationText(annotation_id, text), function(err, result) {
       done();
       req.body.id = annotation_id;
@@ -276,7 +270,7 @@ app.delete('/api/annotations/:id',function (req, res) {
   var deleteThatAnnotation = function(annotation_id) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
-        if (err) console.log('Connection error: ', err);
+        if (err) console.error('Connection error: ', err);
         client.query(deleteQueries.deleteAnnotation(annotation_id), function(err, result) {
           done();
           if (!result) {
@@ -339,7 +333,9 @@ app.delete('/api/annotations/:id',function (req, res) {
         })
       });
     }
-    res.sendStatus(204);
+    else {
+      res.sendStatus(204);
+    }
   }
 
   deleteThatAnnotation(annotation_id)
@@ -356,13 +352,12 @@ app.delete('/api/annotations/:id',function (req, res) {
 
 app.get('/api/homefeed', function (req, res) {
   var user_id = req.query.user_id;
-  console.log('dude, it does the changes')
   // returns an array of people (user ids) you follow
   var getPeopleYouFollow = function(user_id) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.selectPeopleYouFollow(user_id), function(err, result) {
@@ -374,16 +369,13 @@ app.get('/api/homefeed', function (req, res) {
   };
  
   var getFullNamePicURLAndID = function(person) {
-    console.log('getFullNamePicURLAndID person: ', person);
     return new Promise(function(resolve, reject) { 
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err); 
+          console.error('Connection error: ', err); 
           return reject(err);
         }
         client.query(selectQueries.selectFullNameAndPicURLBasedOnID(person.user_id), function(err, result) {
-          console.log('result in getFullNamePicURLAndID: ', result);
-          console.log('this was person.user_id: ', person.user_id);
           done();
           resolve(result.rows[0]);
         });
@@ -397,7 +389,7 @@ app.get('/api/homefeed', function (req, res) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.selectURIs(person.user_id), function(err, result) {
@@ -414,7 +406,7 @@ app.get('/api/homefeed', function (req, res) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.selectGeneralPost(uri.uri_link, userId), function(err, result) {
@@ -429,7 +421,7 @@ app.get('/api/homefeed', function (req, res) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.selectCommentsOnGeneralPost(uri.uri_link, userId), function(err, result) {
@@ -444,7 +436,7 @@ app.get('/api/homefeed', function (req, res) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.whoLikedThisPost(uri.uri_link, userId), function(err, result) {
@@ -496,7 +488,6 @@ app.get('/api/homefeed', function (req, res) {
   };
  
   var convertUriObjToArticleObj = function(uriObj, userId) {
-    console.log('show me the uriObj: ', uriObj)
     return getGeneralPostCommentsLikes(uriObj, userId)
       .then(function(generalPostCommentsLikesArray) {
         return assembleArticleObj(generalPostCommentsLikesArray, uriObj);
@@ -561,7 +552,7 @@ app.get('/api/personalfeed', function (req, res) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.selectURIs(user_id), function(err, result) {
@@ -577,12 +568,11 @@ app.get('/api/personalfeed', function (req, res) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.selectGeneralPost(uri.uri_link, userId), function(err, result) {
           done();
-          // console.log('glooooooow: ', general_post);
           resolve(result.rows[0].general_post);
         });
       });
@@ -593,12 +583,11 @@ app.get('/api/personalfeed', function (req, res) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.selectCommentsOnGeneralPost(uri.uri_link, userId), function(err, result) {
           done();
-          // console.log('dude, these are the comments: ', gpComments);
           resolve(result.rows);
         });
       });
@@ -609,12 +598,11 @@ app.get('/api/personalfeed', function (req, res) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.whoLikedThisPost(uri.uri_link, userId), function(err, result) {
           done();
-          // console.log('hey hey hey these likes: ', likes, gpComments);
           resolve(result.rows);
         });
       });
@@ -689,7 +677,6 @@ app.put('/api/personalfeed/share', function(req, res) {
           if (!result) res.sendStatus(404)
           else if (result.rows.length === 0) res.sendStatus(404);
           else {
-            console.log('hey yo, the uri_user_id: ', result.rows[0].id);
             resolve(result.rows[0].id);
           }
         })
@@ -698,12 +685,10 @@ app.put('/api/personalfeed/share', function(req, res) {
   }
 
   var updateTimestampOnArticle = function(uri_user_id) {
-    console.log('what is uri_user_id: ', uri_user_id)
     pg.connect(connectionString, function(err, client, done) {
       if (err) console.error('Connection error: ', err);
       client.query(updateQueries.updateTimestampOnURIUser(uri_user_id), function(err, result) {
         done();
-        console.log('what is "result" in updateTimestampOnArticle: ', result);
         if (!result) res.sendStatus(404);
         else if (result.rows.length === 0) res.sendStatus(404);
         else res.sendStatus(204);
@@ -729,7 +714,6 @@ app.put('/api/personalfeed/share', function(req, res) {
   //         if (err) console.error('Connection error: ', err);
   //         client.query(updateQueries.updateUserRow(table, infoObj), function(err,result) {
   //           if (err) console.error('Connection error: ', err);
-  //           console.log('the result in the query ', result)
   //           done();
   //           resolve(result);
   //         });
@@ -756,7 +740,6 @@ app.post('/api/users/update', function(req,res){
         if (err) console.error('Connection error: ', err);
         client.query(updateQueries.updateUserRow(infoObj), function(err,result) {
           if (err) console.error('Connection error: ', err);
-          console.log('the result in the query ', result)
           done();
           resolve(result.rows);
         });
@@ -774,8 +757,6 @@ app.post('/api/users/update', function(req,res){
 app.get('/api/search/users', function(req, res) {
   var user_id = req.query.user_id;
   var full_name = req.query.full_name;
-  console.log('user_id = ' + user_id);
-  console.log('full_name = ' + full_name);
 
   var getFullNamePicURLAndID = function(full_name) {
     return new Promise(function(resolve, reject) {
@@ -881,7 +862,7 @@ app.get('/api/users/uri/annotations', function (req, res) {
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.selectPeopleYouFollow(user_id), function(err, result) {
@@ -900,8 +881,6 @@ app.get('/api/users/uri/annotations', function (req, res) {
           return reject(err);
         }
         client.query(selectQueries.selectPersonIfPersonAnnotatedThisPage(uri, person.user_id), function(err, result) {
-          console.log('result after selectPersonIfPersonAnnotatedThisPage: ', result);
-          console.log('person.user_id after selectPersonIfPersonAnnotatedThisPage: ', person.user_id);
           done();
           if (result.rows.length > 0) resolve(true);
           else resolve(false)
@@ -911,11 +890,10 @@ app.get('/api/users/uri/annotations', function (req, res) {
   }
 
   var getFullNamePicURLAndID = function(person) {
-    console.log('getFullNamePicURLAndID person: ', person);
     return new Promise(function(resolve, reject) {
       pg.connect(connectionString, function(err, client, done) {
         if (err) {
-          console.log('Connection error: ', err);
+          console.error('Connection error: ', err);
           return reject(err);
         }
         client.query(selectQueries.selectFullNameAndPicURLBasedOnID(person.user_id), function(err, result) {
@@ -928,19 +906,16 @@ app.get('/api/users/uri/annotations', function (req, res) {
 
   getPeopleYouFollow(user_id) 
     .then(function(peopleYouFollow) {
-      console.log('peopleYouFollow in getPeopleYouFollow: ', peopleYouFollow);
       return Promise.filter(peopleYouFollow, function(personYouFollow) {
         return checkIfPersonAnnotatedThisArticle(uri, personYouFollow)
       })
     })
     .then(function(peopleYouFollowWhoAnnotatedPage) {
-      console.log('peopleYouFollowWhoAnnotatedPage right before getFullNamePicURLAndID: ', peopleYouFollowWhoAnnotatedPage);
       return Promise.map(peopleYouFollowWhoAnnotatedPage, function(personYouFollowWhoAnnotatedPage) {
         return getFullNamePicURLAndID(personYouFollowWhoAnnotatedPage);
       })
     })
     .then(function(fullNamesPicURLsAndIDsOfWhoAnnotatedPage) {
-      console.log('what we send back from /api/users/uri/annotations: '. fullNamesPicURLsAndIDsOfWhoAnnotatedPage);
       res.set('Content-Type','application/JSON'); 
       res.json(fullNamesPicURLsAndIDsOfWhoAnnotatedPage);
     })
@@ -958,11 +933,11 @@ app.get('/api/users/uri/annotations', function (req, res) {
       return new Promise(function(resolve,reject){
         pg.connect(connectionString, function(err, client, done) {
           if (err) {
-            console.log('Connection error: ', err);
+            console.error('Connection error: ', err);
             return reject(err);
           }
           client.query(updateQueries.updateGeneralPost(uri, user_id, generalPost), function(err, result) {
-            if(err) console.log(err);
+            if(err) console.error('Connection error: ', err);
             done();
             resolve(result.rows[0]);
           });
@@ -989,7 +964,7 @@ app.get('/api/users/uri/annotations', function (req, res) {
             return reject(err);
           }
           client.query(insertQueries.insertGeneralPostComment(uri, user_id, follower_id, message), function(err,result){
-            if(err) console.log('connection error' ,err);
+            if(err) console.error('Connection error' ,err);
             done()
             resolve(result.row)
           });  
@@ -1038,7 +1013,6 @@ app.get('/api/users/uri/annotations', function (req, res) {
         });
       });     
     };
-    console.log('the like toggle ', likeToggle, likeToggle.length);
     if(likeToggle.length === 5) {
       deleteLike(uri, user_id, follower_id).then(function(result){
         res.set('Content-Type','application/JSON'); 
