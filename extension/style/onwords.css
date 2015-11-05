@@ -347,7 +347,6 @@ ul {
   width: 600px;
   height: 150px;
   text-align: center;
-  border-top: 1px solid black;
   border-bottom: 1px solid black;
 }
 .post-pic-container {
@@ -368,12 +367,16 @@ ul {
   height: 150px;
 }
 .post-header-container {
+  margin-top: 12.5px;
   width: 450px;
   height: 37.5px; 
 }
+.post-name-container {
+  display: inline-block;
+  margin-right: 10px;
+}
 .post-time-container {
-  width: 450px;
-  height: 37.5px; 
+  display: inline-block;
 }
 .post-title-container {
   width: 450px;
@@ -383,7 +386,13 @@ ul {
   width: 450px;
   height: 37.5px; 
 }
-
+.post-likes-container {
+  display: inline-block;
+  margin-right: 10px;
+}
+.post-comments-container {
+  display: inline-block;
+}
 
 /*FriendsButtonsContainer*/
 .friends-annotations-buttons-container {
