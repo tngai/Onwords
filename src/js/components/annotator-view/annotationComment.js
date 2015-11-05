@@ -61,7 +61,7 @@ var annotationComment = React.createClass({
     var annotation = this.props.annotation;
     var self = this;
 
-    var clickHandler = function() {
+    var clickHandler = function(e) {
       if (e.target.className !== 'comment-delete-button') {
         self.props.clickHandler(annotation);
       }
