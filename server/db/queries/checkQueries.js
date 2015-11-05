@@ -51,6 +51,13 @@ var checkQueries = {
 						 "AND uri.id = uuf.uri_id " +
 						 "AND uri.uri_link = '" + uri + "' " +
 					 ");";
+	},
+
+	checkIfAnyAnnotationsForThisURIUser: function (uri_user_id) {
+		return "SELECT EXISTS (" +
+							"SELECT 1 FROM annotations " +
+							"WHERE uri_user_id = " + uri_user_id + 
+					 ");"
 	}
 	
 }
