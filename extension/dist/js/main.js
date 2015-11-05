@@ -20382,15 +20382,98 @@ var React = require('react');
 var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLink",
   render: function() {
     var info = this.props.info
-    var redirectUri = info.uri + '#' + info.user_id + 'onwords1991';
-    console.log(redirectUri)
+    var allSharedPost = [];
+    console.log('INFO FROM API CALL', info);
+
+    // sort data based on isShared into an array(allSharedPost)
+    info.forEach(function(user, key1) {
+      var userName = user.full_name;
+      var picUrl = user.pic_url ? user.pic_url : 'http://register.adviceiq.com/img/empty_profile.png';
+      var userId = user.user_id; 
+    
+      var allArticles = user.articles;
+      allArticles.forEach(function(article, key2) {
+        if(article.is_shared){
+          var uriLink = article.uri_link;
+          var title = article.title;
+          var generalPost = article.general_post;
+          var redirectUri = article.uri_link + '#' + userId + 'onwords1991';
+          var isShared = article.is_shared;
+          var time = article.updated_at;
+
+          var comments = article.commentsOnGeneralPost.map(function(comment, key) {
+            return comment;
+          });
+          var likes = article.likes.map(function(like, key) {
+            return like;
+          });
+
+          allSharedPost.push({
+            picUrl: picUrl,
+            userName: userName,
+            userId: userId,
+            uriLink: uriLink,
+            title: title,
+            generalPost: generalPost,
+            redirectUri: redirectUri,
+            isShared: isShared,
+            time: time,
+            comments: comments,
+            likes: likes
+          });
+        }
+      });
+    });
+
+    console.log('allSharedPost', allSharedPost);
+
+    // creating react elements for all allSharedPost
+    var allPost = allSharedPost.map(function(post, key) {
+      console.log('POST: ', post, key);
+      return (
+        React.createElement("div", {className: "feed-friends-annotations-post", key: key}, 
+          React.createElement("div", {className: "post-pic-container"}, 
+            React.createElement("img", {src: post.picUrl, className: "post-pic"})
+          ), 
+
+          React.createElement("div", {className: "post-body-container"}, 
+            React.createElement("div", {className: "post-header-container"}, 
+              React.createElement("div", {className: "post-name-container"}, 
+                post.userName
+              ), 
+
+              React.createElement("div", {className: "post-time-container"}, 
+                post.time
+              )
+            ), 
+
+            React.createElement("div", {className: "post-title-container"}, 
+              React.createElement("a", {href: post.redirectUri, target: "blank", className: "redirectLink"}, post.title)
+            ), 
+
+            React.createElement("div", {className: "post-like-comment-container"}, 
+              React.createElement("div", {className: "post-likes-container"}, 
+                "likes : ", post.likes.length
+              ), 
+
+              React.createElement("div", {className: "post-comments-container"}, 
+                "comments : ", post.comments.length
+              )
+            )
+
+          )
+        )
+      )
+    });
+
+
+
     return (
-      React.createElement("div", null, 
-        React.createElement("img", {className: "friends-pic", src: info.profPic}), 
-        React.createElement("p", null, info.name), 
-        React.createElement("a", {href: redirectUri, target: "blank", className: "redirectLink"}, info.title)
+      React.createElement("div", {className: "feed-friends-annotations-container"}, 
+        allPost
       )
     )
+
   },
 
   componentDidMount: function() {
@@ -20409,29 +20492,40 @@ var React = require('react');
 var AnnotationLink = require('./feed-friends-annotationlink');
 
 var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
-
   getInitialState: function() {
     return {
-      info: {
-        uri: 'http://blogs.scientificamerican.com/guest-blog/presidential-candidates-who-believes-in-climate-change/',
-        title: 'Presidential Candidates: Who Believes in Climate Change?',
-        profPic: 'https://scontent-lax3-1.xx.fbcdn.net/hphotos-xpa1/t31.0-8/q87/s960x960/980347_10201703421134973_1425263140_o.jpg',
-        name: 'Irving Barajas',
-        user_id: '2'
-      }
+      info: []
     }
   },
-
   render: function() {
     return (
       React.createElement(AnnotationLink, {info: this.state.info})
     );
   },
-
+  componentWillUnmount: function() {
+    console.log('MyAnnotationsLink - componentWillUnmount');
+    $(document).off();
+  },
   componentDidMount: function() {
-    // AJAX calls
-  }
+    console.log('FriendsAnnotations - componentDidMount');
+    var user = window.localStorage.user_id;
+    var completeUri = 'https://test2server.herokuapp.com/api/homefeed?user_id=' + user;
 
+    $.get(completeUri, function(result) {
+      console.log('RESULT FROM API: ',result);
+      if (this.isMounted()) {
+        this.setState({
+          info: result
+        });
+      }
+      console.log('FriendsAnnotations state:INFO = ', this.state.info);
+    }.bind(this));
+
+    $(document).on('click', '.redirectLink', function(e) {
+      var url = $(this).attr('href');
+      window.open(url, '_blank');  
+    });
+  }
 });
 
 module.exports = FriendsAnnotations;
@@ -20486,9 +20580,7 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
     var user = window.localStorage.user_id;
     var urls = info.map(function(annotation, index) {
       console.log('in MyAnnotationsLink', annotation);
-
-      // 
-
+      var numberOfLikes = annotation.likes.length;
       var redirectUri = annotation.uri_link + '#' + user + 'onwords1991';
       console.log(redirectUri)
       return (
@@ -20497,7 +20589,7 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
             React.createElement("a", {href: redirectUri, target: "blank", className: "redirectLink"}, annotation.title)
           ), 
           React.createElement("div", {className: "my-annotations-likes-container"}, 
-            annotation.likes
+            "Likes : ", numberOfLikes
           ), 
           React.createElement("div", {className: "my-annotations-form-container"}, 
                 React.createElement("textarea", {type: "text", placeholder: "Write a comment..."}), 
@@ -20506,7 +20598,6 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
         )
       )
     });
-
     return (
       React.createElement("div", {className: "my-annotations-links-container"}, 
         urls
