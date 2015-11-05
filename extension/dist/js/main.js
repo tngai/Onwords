@@ -22642,7 +22642,7 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
     var urls = info.map(function(annotation, index) {
       console.log('in MyAnnotationsLink', annotation);
       var numberOfLikes = annotation.likes.length;
-      var redirectUri = annotation.uri_link + '#' + user + 'onwords1991';
+      var redirectUri = annotation.uri_link;
       console.log(redirectUri)
       return (
         React.createElement("div", {key: index, className: "my-annotations-link-container"}, 
