@@ -32,12 +32,8 @@ var Settings = React.createClass({
         data: { picUrl: user.picUrl, description: user.description, user_id: user.id }
       }) 
     });
-
-
-
   },
   handleSubmit: function(e) {
-
     if(e.charCode == 13) { 
       console.log('this is what is entered ',e.target.value)
       switch (e.target.dataset.setting) {
