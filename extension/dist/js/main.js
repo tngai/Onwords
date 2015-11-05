@@ -22234,7 +22234,7 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
 
 module.exports = AnnotatorView;
 
-},{"../header/header":203,"./annotator-body":178,"./annotator-minimize-button":180,"./friends-annotations-button":182,"./home-button":183,"react":174}],182:[function(require,module,exports){
+},{"../header/header":204,"./annotator-body":178,"./annotator-minimize-button":180,"./friends-annotations-button":182,"./home-button":183,"react":174}],182:[function(require,module,exports){
 var React = require('react');
 
 var FriendsAnnotationsButton = React.createClass({displayName: "FriendsAnnotationsButton",
@@ -22437,7 +22437,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App;
 
-},{"./annotator-view/annotator-button":179,"./annotator-view/annotator-view":181,"./feed-view/feed-view":196,"./friends-annotations-view/friends-annotations-view":201,"react":174,"react/addons":2}],185:[function(require,module,exports){
+},{"./annotator-view/annotator-button":179,"./annotator-view/annotator-view":181,"./feed-view/feed-view":197,"./friends-annotations-view/friends-annotations-view":202,"react":174,"react/addons":2}],185:[function(require,module,exports){
 var React = require('react');
 
 var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLink",
@@ -22630,34 +22630,83 @@ module.exports = FeedHomeButton;
 },{"react":174}],189:[function(require,module,exports){
 var React = require('react');
 
-var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
-  handleClick: function() {
-    console.log('Posting!!!!');
+var MyLink = React.createClass({displayName: "MyLink",
+  getInitialState: function() {
+    return {
+      showComments: false,
+      showLikes: false, 
+      annotation: [] 
+    };
   },
+  handleClick: function(e) {
+    e.preventDefault();
+    // console.log('stuff',this);
+    var message = this.refs.postContent.getDOMNode().value;
+    var uri = this.refs.uri.getDOMNode('a').href;
+    var user = window.localStorage.user_id;
+    console.log('USER ID!!!', user, message, uri);
+    var generalPost = {
+      uri: uri,
+      user_id: user,
+      generalPost: message 
+    };
 
+    // making it shared.
+    $.ajax({
+      url: 'https://test2server.herokuapp.com/api/personalfeed/share?user_id='+ user +' &uri='+ uri +'&is_shared='+'true',
+      method: "put",
+      dataType: 'json'
+    });
+
+    // updating general post.
+    $.ajax({
+      url: 'https://test2server.herokuapp.com/api/uri/gp',
+      method: "post",
+      data: generalPost,
+      dataType: 'json'
+    });
+// /api/personalfeed/share?user_id=INTEGER&uri=STRING&is_shared=BOOLEAN
+  },
+  render: function() {
+    console.log('in MyAnnotationsLink', this.props.annotation);
+    var annotation = this.props.annotation;
+    var numberOfLikes = annotation.likes.length;
+    var redirectUri = annotation.uri_link;
+    console.log(redirectUri);
+    return (
+      React.createElement("div", {key: this.props.index, className: "my-annotations-link-container"}, 
+        React.createElement("div", {className: "my-annotations-title-container"}, 
+          React.createElement("a", {href: redirectUri, ref: "uri", target: "blank", className: "redirectLink"}, annotation.title)
+        ), 
+        React.createElement("div", {className: "my-annotations-likes-container"}, 
+          "Likes : ", numberOfLikes
+        ), 
+        React.createElement("div", {className: "my-annotations-form-container"}, 
+          React.createElement("form", {onSubmit: this.handleClick}, 
+              React.createElement("input", {id: "inputContent", type: "text", placeholder: "Write a comment...", ref: "postContent"}), 
+              React.createElement("button", {type: "submit"}, "Post")
+          )
+        )
+      )
+    )
+  }
+});
+
+module.exports = MyLink;
+
+},{"react":174}],190:[function(require,module,exports){
+var React = require('react');
+var MyLink = require('./feed-my-annotation-link');
+
+var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
   render: function() {
     var handleClick = this.handleClick;
     var info = this.props.info;
     var user = window.localStorage.user_id;
     var urls = info.map(function(annotation, index) {
-      console.log('in MyAnnotationsLink', annotation);
-      var numberOfLikes = annotation.likes.length;
-      var redirectUri = annotation.uri_link;
-      console.log(redirectUri)
       return (
-        React.createElement("div", {key: index, className: "my-annotations-link-container"}, 
-          React.createElement("div", {className: "my-annotations-title-container"}, 
-            React.createElement("a", {href: redirectUri, target: "blank", className: "redirectLink"}, annotation.title)
-          ), 
-          React.createElement("div", {className: "my-annotations-likes-container"}, 
-            "Likes : ", numberOfLikes
-          ), 
-          React.createElement("div", {className: "my-annotations-form-container"}, 
-                React.createElement("textarea", {type: "text", placeholder: "Write a comment..."}), 
-                React.createElement("button", {onClick: handleClick}, "Post")
-          )
-        )
-      )
+        React.createElement(MyLink, {annotation: annotation, info: info, user: user, index: this.index})
+      );
     });
     return (
       React.createElement("div", {className: "my-annotations-links-container"}, 
@@ -22680,7 +22729,7 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
 
 module.exports = MyAnnotationsLink;
 
-},{"react":174}],190:[function(require,module,exports){
+},{"./feed-my-annotation-link":189,"react":174}],191:[function(require,module,exports){
 var React = require('react');
 var MyAnnotationsLink = require('./feed-my-annotations-link');
 
@@ -22718,7 +22767,7 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
 
 module.exports = MyAnnotations;
 
-},{"./feed-my-annotations-link":189,"react":174}],191:[function(require,module,exports){
+},{"./feed-my-annotations-link":190,"react":174}],192:[function(require,module,exports){
 var React = require('react');
 
 var FeedSearchButton = React.createClass({displayName: "FeedSearchButton",
@@ -22736,7 +22785,7 @@ var FeedSearchButton = React.createClass({displayName: "FeedSearchButton",
 
 module.exports = FeedSearchButton;
 
-},{"react":174}],192:[function(require,module,exports){
+},{"react":174}],193:[function(require,module,exports){
 var React = require('react');
 
 var FeedSearchFollowButton = React.createClass({displayName: "FeedSearchFollowButton",
@@ -22780,7 +22829,7 @@ var FeedSearchFollowButton = React.createClass({displayName: "FeedSearchFollowBu
 
 module.exports = FeedSearchFollowButton;
 
-},{"react":174}],193:[function(require,module,exports){
+},{"react":174}],194:[function(require,module,exports){
 var React = require('react');
 var FeedSearchFollowButton = require('./feed-search-follow-button');
 
@@ -22861,7 +22910,7 @@ var FeedSearchList = React.createClass({displayName: "FeedSearchList",
 
 module.exports = FeedSearchList;
 
-},{"./feed-search-follow-button":192,"react":174}],194:[function(require,module,exports){
+},{"./feed-search-follow-button":193,"react":174}],195:[function(require,module,exports){
 var React = require('react');
 var FeedSearchList = require('./feed-search-list');
 
@@ -22896,7 +22945,7 @@ var FeedSearchView = React.createClass({displayName: "FeedSearchView",
 
 module.exports = FeedSearchView;
 
-},{"./feed-search-list":193,"react":174}],195:[function(require,module,exports){
+},{"./feed-search-list":194,"react":174}],196:[function(require,module,exports){
 var React = require('react');
 
 var Settings = React.createClass({displayName: "Settings",
@@ -22924,8 +22973,7 @@ var Settings = React.createClass({displayName: "Settings",
       method: "post",
       data: options,
       dataType: 'json'
-  });
-    
+    });
   },
   handleSubmit: function(e){
     if(e.charCode == 13) { 
@@ -23009,7 +23057,7 @@ var Settings = React.createClass({displayName: "Settings",
 
 module.exports = Settings;
 
-},{"react":174}],196:[function(require,module,exports){
+},{"react":174}],197:[function(require,module,exports){
 var React = require('react');
 var MinimizeButton = require('./minimize-button');
 var Header = require('../header/header');
@@ -23110,7 +23158,7 @@ var FeedView = React.createClass({displayName: "FeedView",
 
 module.exports = FeedView;
 
-},{"../header/header":203,"../mixins/annotatormixin":204,"./feed-friends-annotations":186,"./feed-friends-button":187,"./feed-home-button":188,"./feed-my-annotations":190,"./feed-search-button":191,"./feed-search-view":194,"./feed-settings":195,"./minimize-button":197,"./settings-button":198,"react":174}],197:[function(require,module,exports){
+},{"../header/header":204,"../mixins/annotatormixin":205,"./feed-friends-annotations":186,"./feed-friends-button":187,"./feed-home-button":188,"./feed-my-annotations":191,"./feed-search-button":192,"./feed-search-view":195,"./feed-settings":196,"./minimize-button":198,"./settings-button":199,"react":174}],198:[function(require,module,exports){
 var React = require('react');
 
 var MinimizeButton = React.createClass({displayName: "MinimizeButton",
@@ -23128,7 +23176,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
 
 module.exports = MinimizeButton;
 
-},{"react":174}],198:[function(require,module,exports){
+},{"react":174}],199:[function(require,module,exports){
 var React = require('react');
 
 var SettingsButton = React.createClass({displayName: "SettingsButton",
@@ -23146,7 +23194,7 @@ var SettingsButton = React.createClass({displayName: "SettingsButton",
 
 module.exports = SettingsButton;
 
-},{"react":174}],199:[function(require,module,exports){
+},{"react":174}],200:[function(require,module,exports){
 var React = require('react');
 
 var friendAnnotationComment = React.createClass({displayName: "friendAnnotationComment",
@@ -23179,7 +23227,7 @@ var friendAnnotationComment = React.createClass({displayName: "friendAnnotationC
 
 module.exports = friendAnnotationComment;
 
-},{"react":174}],200:[function(require,module,exports){
+},{"react":174}],201:[function(require,module,exports){
 var React = require('react');
 var ReactAddons = require('react/addons');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
@@ -23361,7 +23409,7 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
 
 module.exports = friendsAnnotationList;
 
-},{"../annotator-view/annotationComment":176,"./friends-annotationComment":199,"react":174,"react/addons":2}],201:[function(require,module,exports){
+},{"../annotator-view/annotationComment":176,"./friends-annotationComment":200,"react":174,"react/addons":2}],202:[function(require,module,exports){
 var React = require('react');
 var ReactAddons = require('react/addons');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
@@ -23615,7 +23663,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
 module.exports = FriendsAnnotationsView;
 
-},{"../annotator-view/annotator-minimize-button":180,"../annotator-view/home-button":183,"./friends-annotationList":200,"./my-annotations-button":202,"react":174,"react/addons":2}],202:[function(require,module,exports){
+},{"../annotator-view/annotator-minimize-button":180,"../annotator-view/home-button":183,"./friends-annotationList":201,"./my-annotations-button":203,"react":174,"react/addons":2}],203:[function(require,module,exports){
 var React = require('react');
 
 var MyAnnotationsButton = React.createClass({displayName: "MyAnnotationsButton",
@@ -23648,7 +23696,7 @@ var MyAnnotationsButton = React.createClass({displayName: "MyAnnotationsButton",
 
 module.exports = MyAnnotationsButton;
 
-},{"react":174}],203:[function(require,module,exports){
+},{"react":174}],204:[function(require,module,exports){
 var React = require('react');
 
 var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
@@ -23683,7 +23731,7 @@ var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
 
 module.exports = AnnotatorHead;
 
-},{"react":174}],204:[function(require,module,exports){
+},{"react":174}],205:[function(require,module,exports){
 var React = require('react');
 
 var AnnotatorMixin = {
@@ -23700,7 +23748,7 @@ var AnnotatorMixin = {
 
 module.exports = AnnotatorMixin;
 
-},{"react":174}],205:[function(require,module,exports){
+},{"react":174}],206:[function(require,module,exports){
 var App = require('./components/app');
 var React = require('react');
 var test = require('./test');
@@ -23747,7 +23795,7 @@ chrome.storage.sync.get('user', function(obj) {
   }
 });
 
-},{"./components/app":184,"./test":206,"react":174}],206:[function(require,module,exports){
+},{"./components/app":184,"./test":207,"react":174}],207:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
 
 exports.annotate = function(userId) {
@@ -23811,4 +23859,4 @@ exports.annotate = function(userId) {
   });
 };
 
-},{"./annotationRender":175}]},{},[205]);
+},{"./annotationRender":175}]},{},[206]);
