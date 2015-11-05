@@ -20314,50 +20314,88 @@ var React = require('react');
 var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLink",
   render: function() {
     var info = this.props.info
+    var allSharedPost = [];
     console.log('INFO!!!', info);
 
-    // mapping data without timestamps
-    //    info : users
-    var allPosts = [];
+    // sort data based on isShared into an array(allSharedPost)
     info.forEach(function(user, key1) {
       var userName = user.full_name;
       var picUrl = user.pic_url ? user.pic_url : 'http://register.adviceiq.com/img/empty_profile.png';
+      var userId = user.user_id; 
+    
       var allArticles = user.articles;
-      var userId = user.user_id;
-      console.log('Users', user, userName, picUrl);
 
-      // render all annotations for each user.
-      var post = allArticles.map(function(article, key2) {
-        var title = article.title;
-        var likes = article.likes.length;
-        // var general_post = article.general_post;
-        // var comments = article.commentsOnGeneralPost.forEach(function(){});
+      allArticles.forEach(function(article, key2) {
+        if(article.is_shared){
+          var uriLink = article.uri_link;
+          var title = article.title;
+          var generalPost = article.general_post;
+          var redirectUri = article.uri_link + '#' + userId + 'onwords1991';
+          var isShared = article.is_shared;
+          var time = article.updated_at;
 
-        var redirectUri = article.uri_link + '#' + userId + 'onwords1991';
-        console.log('Article', redirectUri, likes, title);
-
-        return (
-          React.createElement("div", {key: key1 + key2}, 
-            "hello"
-          )
-        ); 
+          var comments = article.commentsOnGeneralPost.map(function(comment, key) {
+            return comment;
+          });
+          var likes = article.likes.map(function(like, key) {
+            return like;
+          });
+          console.log('COMMENTS AND LIKES', comments, likes);
+          allSharedPost.push({
+            picUrl: picUrl,
+            userName: userName,
+            userId: userId,
+            uriLink: uriLink,
+            title: title,
+            generalPost: generalPost,
+            redirectUri: redirectUri,
+            isShared: isShared,
+            time: time
+          });
+        }
       });
-
-      allPosts.concat(post);
-      console.log('ALL POST',allPosts);
     });
-    // var redirectUri = info.uri + '#' + info.user_id + 'onwords1991';
-    // console.log('REDIRECT LINK',redirectUri)
-    // return (
-    //   <div>
-    //     <img className='friends-pic' src={info.profPic}/>
-    //     <p>{info.name}</p>
-    //     <a href={redirectUri} target='blank' className='redirectLink'>{info.title}</a>
-    //   </div>
-    // )
+
+    console.log('allSharedPost', allSharedPost);
+
+    // creating react elements for all allSharedPost
+    var allPost = allSharedPost.map(function(post, key) {
+      console.log('POST: ', post, key);
+      return (
+        React.createElement("div", {className: "feed-friends-annotations-post", key: key}, 
+          React.createElement("div", {className: "post-pic-container"}, 
+            React.createElement("img", {src: post.picUrl, className: "post-pic"})
+          ), 
+
+          React.createElement("div", {className: "post-body-container"}, 
+            React.createElement("div", {className: "post-name-container"}, 
+              post.userName
+            ), 
+
+            React.createElement("div", {className: "post-title-container"}, 
+              post.title
+            ), 
+
+            React.createElement("div", {className: "post-likes-container"}, 
+              "likes"
+            ), 
+
+            React.createElement("div", {className: "post-comments-container"}, 
+              "comments"
+            )
+          )
+        )
+      )
+    });
+
+
+
     return (
-      React.createElement("div", null, "hello")
+      React.createElement("div", {className: "feed-friends-annotations-container"}, 
+        allPost
+      )
     )
+
   },
 
   componentDidMount: function() {
