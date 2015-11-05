@@ -22293,7 +22293,7 @@ var App = React.createClass({displayName: "App",
   },
   
   // componentDidUpdate: function() {
-  //   debugger;
+  //   
   //     console.log('App componentDidUpdate', this.state.showFriendsAnnotations);
   //     var THIS = this;
   //     $(document).on('click', '.annotator-hl', function() {
@@ -22329,7 +22329,7 @@ var App = React.createClass({displayName: "App",
         //     $('.annotation-sidebar').animate({right: -(300)}, 50);
         //     break;
         case 'showAnnotatorView':
-          debugger;
+          
             this.setState({showFriendsAnnotations: true});
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
@@ -22351,24 +22351,24 @@ var App = React.createClass({displayName: "App",
 
   componentDidMount: function() {
     // console.log('App componentWillMount');
-    // debugger;
+    // 
     // var THIS = this;
     // $(document).on('click', '.annotator-hl', function() {
     //   THIS.updateView('showAnnotatorView');
     // });
     var self = this;
     document.addEventListener('spotlightAnnotation', function(e) {
-      debugger;
+      
       self.setState({spotlight: e.detail.targetAnnotation});
       if (!self.state.showFriendsAnnotations) {
-        debugger;
+        
         self.updateView('showAnnotatorView');
       }
       console.log('spotlight this annotation:', e.detail.targetAnnotation);
     });
 
 
-    debugger;
+    
 
     /////////////////////////
     var uri = window.location.href.split("?")[0];
@@ -22379,7 +22379,7 @@ var App = React.createClass({displayName: "App",
     }
 
     chrome.storage.onChanged.addListener(function(changes) {
-      debugger;
+      
       if (changes[uri] && changes[uri].newValue !== undefined) {
         var newAnnotations = changes[uri].newValue;
         var oldAnnotations = self.state.annotations;
@@ -22415,12 +22415,12 @@ var App = React.createClass({displayName: "App",
   },
 
   changeSpotlight: function(annotation) {
-    debugger;
+    
     this.setState({spotlight: annotation});
   },
 
   render: function() {
-    debugger;
+    
     return (
       React.createElement("div", {className: "app-container"}, 
 
@@ -23428,11 +23428,11 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     }
   },
   componentWillMount: function() {
-    debugger;
+    
     console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
-      debugger;
+      
       console.log('e is : ', e);
       // highlighter click check
       if(getSelection().toString()) {
@@ -23449,7 +23449,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
       THIS.props.updateView('showAnnotatorButton');
     });
 
-    // debugger;
+    // 
     // console.log('friend annotations view mounted');
     // var self = this;
     // var ownId = window.localStorage.getItem('user_id');
@@ -23465,10 +23465,10 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
     // $.get('https://test2server.herokuapp.com/api/users/uri/annotations', {uri: uri, user_id: ownId})
     //   .done(function(data) { 
-    //     debugger;
+    //     
     //     // chrome.storage.local.get(uri, function(obj) {
     //       var oldAnnotations = self.props.annotations;
-    //       debugger;
+    //       
     //       if(oldAnnotations) {
     //         for (var i = 0; i < oldAnnotations.length; i++) {
     //           friendsShown[oldAnnotations[i].user_id] = { shown: true };
@@ -23497,7 +23497,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
   componentWillReceiveProps: function(nextProps) {
 
-    debugger;
+    
     // this.setState({annotations: nextProps.annotations});
     if (nextProps.annotations !== this.props.annotations) {
       var newFriends = {};
@@ -23531,7 +23531,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   },
 
   toggleFriendAnnotations: function(id) {
-    debugger;
+    
     console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friendsShown;
 
@@ -23569,7 +23569,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         )
       }
     })
-    debugger;
+    
     console.log('inside-friendsview, annotations:', this.state.annotations)
 
     return (
@@ -23594,7 +23594,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   },
 
   componentDidMount: function() {
-    debugger;
+    
     console.log('friend annotations view mounted');
     var self = this;
     var ownId = window.localStorage.getItem('user_id');
@@ -23610,10 +23610,10 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
     $.get('https://test2server.herokuapp.com/api/users/uri/annotations', {uri: uri, user_id: ownId})
       .done(function(data) { 
-        debugger;
+        
         // chrome.storage.local.get(uri, function(obj) {
           var oldAnnotations = self.props.annotations;
-          debugger;
+          
           if(oldAnnotations) {
             for (var i = 0; i < oldAnnotations.length; i++) {
               friendsShown[oldAnnotations[i].user_id] = { shown: true };
@@ -23636,7 +23636,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
 
     // chrome.storage.onChanged.addListener(function(changes) {
-    //   debugger;
+    //   
     //   if (changes[uri]) {
     //     var newFriends = {};
     //     var oldFriends = self.state.friendsShown;

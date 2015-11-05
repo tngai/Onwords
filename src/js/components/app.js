@@ -20,7 +20,7 @@ var App = React.createClass({
   },
   
   // componentDidUpdate: function() {
-  //   debugger;
+  //   
   //     console.log('App componentDidUpdate', this.state.showFriendsAnnotations);
   //     var THIS = this;
   //     $(document).on('click', '.annotator-hl', function() {
@@ -56,7 +56,7 @@ var App = React.createClass({
         //     $('.annotation-sidebar').animate({right: -(300)}, 50);
         //     break;
         case 'showAnnotatorView':
-          debugger;
+          
             this.setState({showFriendsAnnotations: true});
             this.setState({showAnnotatorButton: false});
             this.setState({showAnnotatorView: false});
@@ -78,24 +78,24 @@ var App = React.createClass({
 
   componentDidMount: function() {
     // console.log('App componentWillMount');
-    // debugger;
+    // 
     // var THIS = this;
     // $(document).on('click', '.annotator-hl', function() {
     //   THIS.updateView('showAnnotatorView');
     // });
     var self = this;
     document.addEventListener('spotlightAnnotation', function(e) {
-      debugger;
+      
       self.setState({spotlight: e.detail.targetAnnotation});
       if (!self.state.showFriendsAnnotations) {
-        debugger;
+        
         self.updateView('showAnnotatorView');
       }
       console.log('spotlight this annotation:', e.detail.targetAnnotation);
     });
 
 
-    debugger;
+    
 
     /////////////////////////
     var uri = window.location.href.split("?")[0];
@@ -106,7 +106,7 @@ var App = React.createClass({
     }
 
     chrome.storage.onChanged.addListener(function(changes) {
-      debugger;
+      
       if (changes[uri] && changes[uri].newValue !== undefined) {
         var newAnnotations = changes[uri].newValue;
         var oldAnnotations = self.state.annotations;
@@ -142,12 +142,12 @@ var App = React.createClass({
   },
 
   changeSpotlight: function(annotation) {
-    debugger;
+    
     this.setState({spotlight: annotation});
   },
 
   render: function() {
-    debugger;
+    
     return (
       <div className='app-container'>      
 
