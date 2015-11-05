@@ -5,6 +5,7 @@ var AnnotatorMixin = require('../mixins/annotatormixin');
 var SettingsButton = require('./settings-button');
 var HomeButton = require('./feed-home-button');
 var FriendsButton = require('./feed-friends-button');
+var ArchiveButton = require('./feed-archive-button');
 var SearchButton = require('./feed-search-button');
 var Settings = require('./feed-settings');
 var MyAnnotations = require('./feed-my-annotations');
@@ -82,6 +83,7 @@ var FeedView = React.createClass({
           <div className='button-container'>
             <HomeButton {...this.props} updateBodyView={this.updateBodyView} />
             <FriendsButton {...this.props} updateBodyView={this.updateBodyView} />
+            <ArchiveButton {...this.props} updateBodyView={this.updateBodyView} />
             <SearchButton {...this.props} updateBodyView={this.updateBodyView} />
             <SettingsButton {...this.props} updateBodyView={this.updateBodyView} />
           </div>
