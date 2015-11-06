@@ -22973,10 +22973,10 @@ var Settings = React.createClass({displayName: "Settings",
     var user = this.state.userObj; 
         user[property] = value;
     console.log('here is the pulled user obj after changes',user.description,user); 
-    chrome.storage.sync.set({'user': user}, function(data){
+    chrome.storage.sync.set({'user': user}, function(){
       $.ajax({
         method: "POST",
-        url: "http://localhost:9000/api/users/update",
+        url: "https://test2server.herokuapp.com/api/users/update",
         data: { picUrl: user.picUrl, description: user.description, user_id: user.id }
       }) 
     });
