@@ -22358,8 +22358,6 @@ var App = React.createClass({displayName: "App",
       console.log('spotlight this annotation:', e.detail.targetAnnotation);
     });
 
-
-
     var uri = window.location.href.split("?")[0];
     if (uri.substring(uri.length-11) === 'onwords1991') {
       uri = uri.substring(0, uri.length-13);
@@ -22556,6 +22554,7 @@ var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
     var user = window.localStorage.user_id;
     var completeUri = 'https://test2server.herokuapp.com/api/homefeed?user_id=' + user;
 
+    // get FriendsAnnotations info from database
     $.get(completeUri, function(result) {
       console.log('RESULT FROM API: ',result);
       if (this.isMounted()) {
@@ -22739,6 +22738,15 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
       }
       console.log('MyAnnotations state:INFO = ', this.state.info);
     }.bind(this));
+
+    $(document).on('click', '.redirectLink', function(e) {
+      var url = $(this).attr('href');
+      window.open(url, '_blank');  
+    });
+  },
+  componentWillUnmount: function() {
+    console.log('MyAnnotationsLink - componentWillUnmount');
+    $(document).off();
   },
   render: function() {
     return (
@@ -23071,16 +23079,51 @@ var FeedView = React.createClass({displayName: "FeedView",
     console.log('FeedView mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
-        if($(e.target).attr('data-reactid')){
-            e.preventDefault();
-            return;
-        }
-        THIS.props.updateView('showAnnotatorButton');
+      console.log('e is : ', e);
+      if (e.target.className === 'annotator-button') {
+        return;
+      }
+      // highlighter click check
+      if(getSelection().toString()) {
+        return;
+      }
+      if($(e.target).attr('data-reactid')) {
+        e.preventDefault();
+        return;
+      }
+      if($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
+          e.preventDefault();
+          return;
+      }
+      THIS.props.updateView('showAnnotatorButton');
     });
   },
   componentWillUnmount: function() {
     console.log('FeedView componentWillUnmount');
     $(document).off();
+  },
+  componentDidUpdate: function(prevProps, prevState) {
+    console.log('FeedView componentDidUpdate');
+    var THIS = this;
+    $(document).on('click', 'body', function(e) { 
+      console.log('e is : ', e);
+      if (e.target.className === 'annotator-button') {
+        return;
+      }
+      // highlighter click check
+      if(getSelection().toString()) {
+        return;
+      }
+      if($(e.target).attr('data-reactid')) {
+        e.preventDefault();
+        return;
+      }
+      if($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
+          e.preventDefault();
+          return;
+      }
+      THIS.props.updateView('showAnnotatorButton');
+    });
   },
   updateBodyView: function(action) {
     switch(action) {
@@ -23375,11 +23418,11 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   },
 
   componentWillMount: function() {
-    debugger;
+    
     console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
-      debugger;
+      
       console.log('e is : ', e);
       if (e.target.className === 'annotator-button') {
         return;
@@ -23432,7 +23475,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   },
 
   toggleFriendAnnotations: function(id) {
-    debugger;
+    
     console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friendsShown;
 
@@ -23474,7 +23517,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         )
       }
     })
-    debugger;
+    
     console.log('inside-friendsview, annotations:', this.state.annotations)
 
     return (
@@ -23499,7 +23542,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   },
 
   componentDidMount: function() {
-    debugger;
+    
     console.log('friend annotations view mounted');
     var self = this;
     var ownId = window.localStorage.getItem('user_id');
@@ -23536,7 +23579,6 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         }
         self.setState({annotations: annotations, friendsShown: friendsShown});
       }) 
-
     $('.friends-pic').hover(function() {
       $('.friend-name').show();
     })

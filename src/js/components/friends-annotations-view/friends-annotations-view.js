@@ -17,11 +17,11 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   componentWillMount: function() {
-    debugger;
+    
     console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
-      debugger;
+      
       console.log('e is : ', e);
       if (e.target.className === 'annotator-button') {
         return;
@@ -74,7 +74,7 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   toggleFriendAnnotations: function(id) {
-    debugger;
+    
     console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friendsShown;
 
@@ -116,7 +116,7 @@ var FriendsAnnotationsView = React.createClass({
         )
       }
     })
-    debugger;
+    
     console.log('inside-friendsview, annotations:', this.state.annotations)
 
     return (
@@ -141,7 +141,7 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   componentDidMount: function() {
-    debugger;
+    
     console.log('friend annotations view mounted');
     var self = this;
     var ownId = window.localStorage.getItem('user_id');
@@ -178,7 +178,6 @@ var FriendsAnnotationsView = React.createClass({
         }
         self.setState({annotations: annotations, friendsShown: friendsShown});
       }) 
-
     $('.friends-pic').hover(function() {
       $('.friend-name').show();
     })

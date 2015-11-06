@@ -27,16 +27,51 @@ var FeedView = React.createClass({
     console.log('FeedView mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
-        if($(e.target).attr('data-reactid')){
-            e.preventDefault();
-            return;
-        }
-        THIS.props.updateView('showAnnotatorButton');
+      console.log('e is : ', e);
+      if (e.target.className === 'annotator-button') {
+        return;
+      }
+      // highlighter click check
+      if(getSelection().toString()) {
+        return;
+      }
+      if($(e.target).attr('data-reactid')) {
+        e.preventDefault();
+        return;
+      }
+      if($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
+          e.preventDefault();
+          return;
+      }
+      THIS.props.updateView('showAnnotatorButton');
     });
   },
   componentWillUnmount: function() {
     console.log('FeedView componentWillUnmount');
     $(document).off();
+  },
+  componentDidUpdate: function(prevProps, prevState) {
+    console.log('FeedView componentDidUpdate');
+    var THIS = this;
+    $(document).on('click', 'body', function(e) { 
+      console.log('e is : ', e);
+      if (e.target.className === 'annotator-button') {
+        return;
+      }
+      // highlighter click check
+      if(getSelection().toString()) {
+        return;
+      }
+      if($(e.target).attr('data-reactid')) {
+        e.preventDefault();
+        return;
+      }
+      if($(e.target).is('[class^="annotator-"]') || $(e.target).is('[id^="annotator-"]')) {
+          e.preventDefault();
+          return;
+      }
+      THIS.props.updateView('showAnnotatorButton');
+    });
   },
   updateBodyView: function(action) {
     switch(action) {
