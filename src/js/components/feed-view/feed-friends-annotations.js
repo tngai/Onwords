@@ -26,6 +26,7 @@ var FriendsAnnotations = React.createClass({
     var user = window.localStorage.user_id;
     var completeUri = 'https://test2server.herokuapp.com/api/homefeed?user_id=' + user;
 
+    // get FriendsAnnotations info from database
     $.get(completeUri, function(result) {
       console.log('RESULT FROM API: ',result);
       if (this.isMounted()) {

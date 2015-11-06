@@ -38,6 +38,17 @@ var FeedView = React.createClass({
     console.log('FeedView componentWillUnmount');
     $(document).off();
   },
+  componentDidUpdate: function(prevProps, prevState) {
+    console.log('FeedView componentDidUpdate');
+    var THIS = this;
+    $(document).on('click', 'body', function(e) {
+      if($(e.target).attr('data-reactid')){
+          e.preventDefault();
+          return;
+      }
+      THIS.props.updateView('showAnnotatorButton');
+    });
+  },
   updateBodyView: function(action) {
     switch(action) {
       case 'showSettingsPage':

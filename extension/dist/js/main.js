@@ -22554,6 +22554,7 @@ var FriendsAnnotations = React.createClass({displayName: "FriendsAnnotations",
     var user = window.localStorage.user_id;
     var completeUri = 'https://test2server.herokuapp.com/api/homefeed?user_id=' + user;
 
+    // get FriendsAnnotations info from database
     $.get(completeUri, function(result) {
       console.log('RESULT FROM API: ',result);
       if (this.isMounted()) {
@@ -22737,6 +22738,15 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
       }
       console.log('MyAnnotations state:INFO = ', this.state.info);
     }.bind(this));
+
+    $(document).on('click', '.redirectLink', function(e) {
+      var url = $(this).attr('href');
+      window.open(url, '_blank');  
+    });
+  },
+  componentWillUnmount: function() {
+    console.log('MyAnnotationsLink - componentWillUnmount');
+    $(document).off();
   },
   render: function() {
     return (
@@ -23079,6 +23089,17 @@ var FeedView = React.createClass({displayName: "FeedView",
   componentWillUnmount: function() {
     console.log('FeedView componentWillUnmount');
     $(document).off();
+  },
+  componentDidUpdate: function(prevProps, prevState) {
+    console.log('FeedView componentDidUpdate');
+    var THIS = this;
+    $(document).on('click', 'body', function(e) {
+      if($(e.target).attr('data-reactid')){
+          e.preventDefault();
+          return;
+      }
+      THIS.props.updateView('showAnnotatorButton');
+    });
   },
   updateBodyView: function(action) {
     switch(action) {
