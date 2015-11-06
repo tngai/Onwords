@@ -1,43 +1,55 @@
-/* Transition */
-/*.sidebar-enter {
-  opacity: 0.01;
-  transition: all .15s ease-in;
-  transform: translateX(300px);
-
+.annotationList-appear {
+  opacity: 0.7;
+  transform: translateY(-50px);
 }
 
-.sidebar-enter.sidebar-enter-active {
-  transform: translateX(0px);
+.annotationList-appear.annotationList-appear-active {
   opacity: 1;
-}*/
+  transition: opacity .1s ease-in;
+  transform: translateY(0px);
+}
 
-.sidebar-leave {
+.feedview-leave {
   opacity: 1;
-  transition: all .15s ease-in;
-  transform: translateX(0px);
+  transform: translateY(0px);
 }
 
-.sidebar-leave.sidebar-leave-active {
+.feedview-leave.feedview-leave-active {
   opacity: 0.01;
-  transform: translateX(300px);
+  transition: opacity .1s ease-in;
+  transform: translateY(500px);
 }
-
 
 #annotation-sidebar {
   z-index: 9999999;
   position: fixed; 
   top: 0; 
   width: 630px; 
-  right: -580px;  
+  right: -610px;  
   height: 100%; 
+  text-decoration: none;
+  list-style-type: none;
 }
+
+#annotation-header {
+  height: 38px;
+  background: rgb(42, 67, 83);
+  position: absolute;
+  left: 30px;
+  width: 0px;
+  border-top: 1px solid #e6e6e6;
+  border-left: 1px solid #e6e6e6;
+  border-right: 1px solid #e6e6e6;
+
+}
+
 #scrollview {
   color: black; 
 }
 /* React */
 .app-container {
   background: none;
-  margin-left: 20px;
+  margin-left: 29px;
 }
 .annotator-body-container {
   height: 1000px;
@@ -47,6 +59,8 @@
   margin-top: 7px;
   width: 25px;
   height: 25px;
+  position: absolute;
+  left: -15px;
 }
 .annotator-button {
   width: 25px;
@@ -156,7 +170,7 @@
   height: 1000px;
   text-align: center;
   /*background-color: rgb(42, 67, 83);*/
-  background-color: rgb(157, 189, 198);
+  background-color: #fbfbfb;
 }
 .header-container {
   margin-bottom: 10px;
@@ -334,13 +348,25 @@
   background-color: black;
   display: inline-block;
 }
+.friends-pic-container{
+  margin: 3px 5px 3px 5px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.friend-name {
+  visibility: hidden;
+}
 .redirectLink {
   z-index: 1000;
 }
 .friends-annotations-header {
   z-index: 99999;
   background: #fbfbfb;
-  border: 1px solid #e6e6e6;
+  border-top: 1px solid #e6e6e6;
+  border-left: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
   position: fixed;
 }
 .annotation {
@@ -426,6 +452,7 @@ ul {
 .friends-annotations-buttons-container {
   width: 300px;
   height: 38px;
+  background: rgb(42, 67, 83);
 }
 .my-annotations-button-container {
   float: right;

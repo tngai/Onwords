@@ -23,6 +23,15 @@ var MyAnnotations = React.createClass({
       }
       console.log('MyAnnotations state:INFO = ', this.state.info);
     }.bind(this));
+
+    $(document).on('click', '.redirectLink', function(e) {
+      var url = $(this).attr('href');
+      window.open(url, '_blank');  
+    });
+  },
+  componentWillUnmount: function() {
+    console.log('MyAnnotationsLink - componentWillUnmount');
+    $(document).off();
   },
   render: function() {
     return (

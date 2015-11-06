@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var http = require('http');
 var morgan = require('morgan');
 var Promise = require('bluebird');
+var validator = require('validator');
 
 var app = express();
 var server = http.Server(app);
@@ -32,31 +33,13 @@ var checkQueries = require('./db/queries/checkQueries.js');
 
 var tables = require('./db/config.js');
 
-pg.connect(connectionString, function (err, client, done) {
-  if (err) console.error('Connection error: ', err);
+pg.connect(connectionString, function (error, client, done) {
+  if (error) console.error('Connection error: ', error);
   for (var i = 0; i < tables.length; i++) {
     client.query(tables[i]);
   }
   done();
 });
-
-var checkAndInsertIfNotExists = function (checkQuery, insertQuery, callback) {
-  pg.connect(connectionString, function (err, client, done) {
-    if (err) console.error('Connection error: ', err);
-    var result = {};
-    var check = client.query(checkQuery);
-    check.on('row', function (row) { result = row });
-    check.on('end', function () {
-      done();
-      if (result.exists === false) {
-        client.query(insertQuery);
-      }
-    });
-  });
-  if (callback) {
-    callback();
-  }
-}
 
 
 
@@ -78,19 +61,21 @@ app.post('/api/users', function (req, res) {
 
   (function() {
     return new Promise(function(resolve, reject){
-      pg.connect(connectionString, function (err, client, done) {
-        if (err) console.error('Connection error: ', err);
+      pg.connect(connectionString, function (error, client, done) {
+        if (error) console.error('Connection error: ', error);
         client.query(checkQueries.checkPerson(full_name), function(err, result) {
-          if(result.rows.length > 0) {
+          if (err) {
+            console.error('Error in handling data within /api/users');
+            reject(err);
+          }
+          else if(result.rows.length > 0) {
             if (result.rows[0].id) {
-            done();
+              done();
               req.body.user_id = result.rows[0].id;
               res.set('Content-Type','application/JSON'); 
               res.json(req.body);
             }
-          
           }
-          
           resolve(result.rows[0]);
         });
       });
@@ -98,13 +83,20 @@ app.post('/api/users', function (req, res) {
   })()
   .then(function(exists) {
     if (!exists) {
-      pg.connect(connectionString, function (err, client, done) {
+      pg.connect(connectionString, function (error, client, done) {
+        if (error) console.error('Connection error: ', error);
         client.query(insertQueries.insertPerson('users', full_name, username, pic_url, uploaded_pic, facebook_id, email, description));
         client.query(insertQueries.insertPerson('followers', full_name, username, pic_url, uploaded_pic, facebook_id, email, description), function(err, result) {
           done();
-          req.body.user_id = result.rows[0].id;
-          res.set('Content-Type','application/JSON'); 
-          res.json(req.body);
+          if (err) {
+            console.error('Error in handling data within /api/users');
+            res.sendStatus(404);
+          }
+          else {
+            req.body.user_id = result.rows[0].id;
+            res.set('Content-Type','application/JSON'); 
+            res.json(req.body);
+          }
         });
       });
     }
@@ -113,11 +105,12 @@ app.post('/api/users', function (req, res) {
 
 
 app.post('/api/annotations', function (req, res) {
+  console.log('what is happening: ', req.body);
   var user_id = req.body.user_id;
   var uri = req.body.uri;
   var title = req.body.title;
-  var text = req.body.text;
-  var quote = req.body.quote;
+  var text = validator.escape(validator.toString(req.body.text));
+  var quote = validator.escape(validator.toString(req.body.quote));
   var start = req.body.ranges[0].start;
   var end = req.body.ranges[0].end;
   var startOffset = req.body.ranges[0].startOffset;
@@ -126,10 +119,14 @@ app.post('/api/annotations', function (req, res) {
  
   (function(){
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) console.error('Connection error: ', error);
         client.query(checkQueries.checkURI(uri), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/annotations');
+            reject(err);
+          }
           resolve(result.rows[0].exists);
         });
       }); 
@@ -138,19 +135,30 @@ app.post('/api/annotations', function (req, res) {
   .then(function(exists) {
     return new Promise(function(resolve, reject) {
       if (!exists) {
-        pg.connect(connectionString, function(err, client, done) {
-          if (err) console.error('Connection error: ', err);
+        pg.connect(connectionString, function(error, client, done) {
+          if (error) {
+            console.error('Connection error: ', error);
+            reject(err)
+          }
           client.query(insertQueries.insertURI(uri, title), function(err, result) {
             done();
+            if (err) {
+              console.error('Error in handling data within /api/annotations');
+              reject(err);
+            }
             resolve(result.rows[0].id);
           });
         });
       }
       else {
-        pg.connect(connectionString, function(err, client, done) {
-          if (err) console.error('Connection error: ', err);
+        pg.connect(connectionString, function(error, client, done) {
+          if (error) console.error('Connection error: ', error);
           client.query(selectQueries.selectURIID(uri), function(err, result) {
             done();
+            if (err) {
+              console.error('Error in handling data within /api/annotations');
+              reject(err);
+            }
             resolve(result.rows[0].id);
           });
         });
@@ -161,10 +169,14 @@ app.post('/api/annotations', function (req, res) {
     return new Promise(function(resolve, reject) {
       (function(){
         return new Promise(function(resolveNested1, rejectNested1) {
-          pg.connect(connectionString, function(err, client, done) {
-            if (err) console.error('Connection error: ', err);
+          pg.connect(connectionString, function(error, client, done) {
+            if (error) console.error('Connection error: ', error);
             client.query(checkQueries.checkURIUser(uri_id, user_id), function(err, result) {
               done();
+              if (err) {
+                console.error('Error in handling data within /api/annotations');
+                rejectNested1(err);
+              }
               resolveNested1(result.rows[0].exists);
             });
           });
@@ -172,19 +184,27 @@ app.post('/api/annotations', function (req, res) {
       })()
       .then(function(exists) {
         if (!exists) {
-          pg.connect(connectionString, function(err, client, done) {
-            if (err) console.error('Connection error: ', err);
+          pg.connect(connectionString, function(error, client, done) {
+            if (error) console.error('Connection error: ', error);
             client.query(insertQueries.insertURIUser(uri_id, user_id), function(err, result) {
               done();
+              if (err) {
+                console.error('Error in handling data within /api/annotations');
+                reject(err);
+              }
               resolve(result.rows[0].id);
             });
           });
         }
         else {
-          pg.connect(connectionString, function(err, client, done) {
-            if (err) console.error('Connection error: ', err);
+          pg.connect(connectionString, function(error, client, done) {
+            if (error) console.error('Connection error: ', error);
             client.query(selectQueries.selectURIUserID(uri_id, user_id), function(err, result) {
               done();
+              if (err) {
+                console.error('Error in handling data within /api/annotations');
+                reject(err);
+              }
               resolve(result.rows[0].id);
             });
           });
@@ -193,14 +213,20 @@ app.post('/api/annotations', function (req, res) {
     });
   })
   .then(function(uri_user_id) {
-    pg.connect(connectionString, function(err, client, done) {
-      if (err) console.error('Connection error: ', err);
+    console.log('uri_user_id: ', uri_user_id);
+    pg.connect(connectionString, function(error, client, done) {
+      if (error) console.error('Connection error: ', error);
       client.query(insertQueries.insertAnnotation(uri_user_id, text, quote, start, end, startOffset, endOffset), function(err, result) {
         done()
-        ann.id = parseInt(result.rows[0].id);
-        res.set('Content-Type','application/JSON'); 
-        res.json(ann);
-        res.end();
+        if (err) {
+          console.error('Error in handling data within /api/annotations');
+          res.sendStatus(404);
+        }
+        else {
+          ann.id = parseInt(result.rows[0].id);
+          res.set('Content-Type','application/JSON'); 
+          res.json(ann);
+        }
       });
     });
   });
@@ -211,8 +237,8 @@ app.get('/api/search',function (req, res) {
   var user_id = req.query.user;
   var uri = req.query.uri;
 
-  pg.connect(connectionString, function(err, client, done) {
-    if (err) console.error('Connection error: ', err);
+  pg.connect(connectionString, function(error, client, done) {
+    if (error) console.error('Connection error: ', error);
     client.query(selectQueries.selectAnnotations(uri, user_id), function(err, result) {
       var returnObj = {}
       var finalAnnotationObjects;
@@ -252,13 +278,19 @@ app.put('/api/annotations/:id', function (req, res) {
   var annotation_id = req.params.id;
   var text = req.body.text;
   var ann = req.body;
-  pg.connect(connectionString, function(err, client, done) {
-    if(err) console.error('Connection error: ', err);
+  pg.connect(connectionString, function(error, client, done) {
+    if (error) console.error('Connection error: ', error);
     client.query(updateQueries.updateAnnotationText(annotation_id, text), function(err, result) {
       done();
-      req.body.id = annotation_id;
-      res.set('Content-Type','application/JSON'); 
-      res.json(req.body);
+      if (err) {
+        console.error('Error in handling data within PUT /api/annotations/:id');
+        res.send(404);
+      }
+      else {
+        req.body.id = annotation_id;
+        res.set('Content-Type','application/JSON'); 
+        res.json(req.body);
+      }
     });
   });
 });
@@ -269,12 +301,12 @@ app.delete('/api/annotations/:id',function (req, res) {
 
   var deleteThatAnnotation = function(annotation_id) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) console.error('Connection error: ', error);
         client.query(deleteQueries.deleteAnnotation(annotation_id), function(err, result) {
           done();
-          if (!result) {
-            console.error('Error in query: ', err);
+          if (err) {
+            console.error('Error in handling data within DELETE /api/annotations/:id ');
             res.sendStatus(404);
             reject(err);
           }
@@ -287,15 +319,15 @@ app.delete('/api/annotations/:id',function (req, res) {
 
   var checkIfAnnotationsForThisURIUserIsEmpty = function(uri_user_id) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
           done();
-          console.error('Connection error: ', err);
-          reject(err);
+          console.error('Connection error: ', error);
+          reject(error);
         }
         client.query(checkQueries.checkIfAnyAnnotationsForThisURIUser(uri_user_id), function(err, result) {
           done();
-          if (!result) {
+          if (err) {
             console.error('Error in query: ', err);
             res.sendStatus(404);
             reject(err);
@@ -314,15 +346,15 @@ app.delete('/api/annotations/:id',function (req, res) {
 
   var deleteURIUserOrNot = function(obj) {
     if (!obj.exists) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
           done();
-          console.error('Connection error: ', err);
-          reject(err);
+          console.error('Connection error: ', error);
+          reject(error);
         }
         client.query(deleteQueries.deleteURIUser(obj.uri_user_id), function(err, result) {
           done();
-          if (!result) {
+          if (err) {
             console.error('Error in query: ', err);
             res.sendStatus(404);
             reject(err);
@@ -355,14 +387,18 @@ app.get('/api/homefeed', function (req, res) {
   // returns an array of people (user ids) you follow
   var getPeopleYouFollow = function(user_id) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(error);
         }
         client.query(selectQueries.selectPeopleYouFollow(user_id), function(err, result) {
           done();
-          resolve(result.rows);
+          if (err) {
+            console.error('Error in handling data within /api/homefeed');
+            reject(err);
+          }
+          else resolve(result.rows);
         });
       });
     });
@@ -370,14 +406,22 @@ app.get('/api/homefeed', function (req, res) {
  
   var getFullNamePicURLAndID = function(person) {
     return new Promise(function(resolve, reject) { 
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err); 
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error); 
+          reject(error);
         }
         client.query(selectQueries.selectFullNameAndPicURLBasedOnID(person.user_id), function(err, result) {
           done();
-          resolve(result.rows[0]);
+          if (err) {
+            console.error('Error in handling data within /api/homefeed');
+            reject(err);
+          }
+          else if (result.rows.length === 0) {
+            console.log('No user with this id');
+            resolve({id: null, full_name: null, pic_url: null});
+          }
+          else resolve(result.rows[0]);
         });
       });
     });
@@ -387,13 +431,17 @@ app.get('/api/homefeed', function (req, res) {
   //    uri objs have 2 properties: url_link and title
   var getUriObjsOfPerson = function(person) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
         }
         client.query(selectQueries.selectURIs(person.user_id), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/homefeed');
+            reject(err);
+          }
           resolve(result.rows);
         });
       });
@@ -404,13 +452,17 @@ app.get('/api/homefeed', function (req, res) {
   // returns the general post for a specific uri
   var getGeneralPost = function(uri, userId) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
           return reject(err);
         }
         client.query(selectQueries.selectGeneralPost(uri.uri_link, userId), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/homefeed');
+            reject(err);
+          }
           resolve(result.rows[0].general_post);
         });
       });
@@ -419,13 +471,17 @@ app.get('/api/homefeed', function (req, res) {
  
   var getCommentsOnGeneralPost = function(uri, userId) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
           return reject(err);
         }
         client.query(selectQueries.selectCommentsOnGeneralPost(uri.uri_link, userId), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/homefeed');
+            reject(err);
+          }
           resolve(result.rows);
         });
       });
@@ -434,13 +490,17 @@ app.get('/api/homefeed', function (req, res) {
  
   var getLikesOnGeneralPost = function(uri, userId) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
           return reject(err);
         }
         client.query(selectQueries.whoLikedThisPost(uri.uri_link, userId), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/homefeed');
+            reject(err);
+          }
           resolve(result.rows);
         });
       });
@@ -449,13 +509,17 @@ app.get('/api/homefeed', function (req, res) {
 
   var getIsSharedProperty = function(uri, userId) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
           return reject(err);
         }
         client.query(selectQueries.selectIsSharedProperty(uri.uri_link, userId), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/homefeed');
+            reject(err);
+          }
           resolve(result.rows[0].is_shared);
         })
       });
@@ -550,13 +614,17 @@ app.get('/api/personalfeed', function (req, res) {
   //    uri objs have 2 properties: url_link and title
   var getUriObjsOfUser = function(user_id) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
         }
         client.query(selectQueries.selectURIs(user_id), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/personalfeed');
+            reject(err);
+          }
           resolve(result.rows);
         });
       });
@@ -566,13 +634,17 @@ app.get('/api/personalfeed', function (req, res) {
   // returns the general post for a specific uri
   var getGeneralPost = function(uri, userId) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
         }
         client.query(selectQueries.selectGeneralPost(uri.uri_link, userId), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/personalfeed');
+            reject(err);
+          }
           resolve(result.rows[0].general_post);
         });
       });
@@ -581,13 +653,17 @@ app.get('/api/personalfeed', function (req, res) {
  
   var getCommentsOnGeneralPost = function(uri, userId) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
         }
         client.query(selectQueries.selectCommentsOnGeneralPost(uri.uri_link, userId), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/personalfeed');
+            reject(err);
+          }
           resolve(result.rows);
         });
       });
@@ -596,13 +672,17 @@ app.get('/api/personalfeed', function (req, res) {
  
   var getLikesOnGeneralPost = function(uri, userId) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
         }
         client.query(selectQueries.whoLikedThisPost(uri.uri_link, userId), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/personalfeed');
+            reject(err);
+          }
           resolve(result.rows);
         });
       });
@@ -667,15 +747,21 @@ app.put('/api/personalfeed/share', function(req, res) {
 
   var updateArticlesSharedStatusTo = function(is_shared, uri, user_id) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
           resolve(err);
         }
         client.query(updateQueries.updateSharedStatusTo(is_shared, uri, user_id), function(err, result)  {
           done();
-          if (!result) res.sendStatus(404)
-          else if (result.rows.length === 0) res.sendStatus(404);
+          if (err) {
+            console.error('Error in handling data within /api/personalfeed/share');
+            reject(err);
+          }
+          else if (result.rows.length === 0) {
+            console.error('Error in handling data within /api/personalfeed/share');
+            reject(err);
+          }
           else {
             resolve(result.rows[0].id);
           }
@@ -685,12 +771,18 @@ app.put('/api/personalfeed/share', function(req, res) {
   }
 
   var updateTimestampOnArticle = function(uri_user_id) {
-    pg.connect(connectionString, function(err, client, done) {
-      if (err) console.error('Connection error: ', err);
+    pg.connect(connectionString, function(error, client, done) {
+      if (error) console.error('Connection error: ', error);
       client.query(updateQueries.updateTimestampOnURIUser(uri_user_id), function(err, result) {
         done();
-        if (!result) res.sendStatus(404);
-        else if (result.rows.length === 0) res.sendStatus(404);
+        if (err) {
+          console.error('Error in handling data within /api/personalfeed/share');
+          reject(err);
+        }
+        else if (result.rows.length === 0) {
+          console.error('Error in handling data within /api/personalfeed/share');
+          reject(err);
+        }
         else res.sendStatus(204);
       })
     })
@@ -705,52 +797,47 @@ app.put('/api/personalfeed/share', function(req, res) {
 })
 
 
-  // app.post('/api/users/update', function(req,res){
-  //   var userInfo = req.body;
-
-  //   var updateUserFollowerRow = function(table,infoObj) {
-  //     return new Promise(function(resolve,reject){
-  //       pg.connect(connectionString, function(err,client,done){
-  //         if (err) console.error('Connection error: ', err);
-  //         client.query(updateQueries.updateUserRow(table, infoObj), function(err,result) {
-  //           if (err) console.error('Connection error: ', err);
-  //           done();
-  //           resolve(result);
-  //         });
-  //       }) 
-  //     });
-  //   };
-
-  //  var userFollowerArr = [updateUserFollowerRow("users",userInfo), updateUserFollowerRow("followers",userInfo)];
-   
-  //  Promise.all(userFollowerArr).then(function() {
-  //   res.set('Content-Type','application/JSON'); 
-  //   res.json(userInfo);
-  //  });
-
-  // });
-
-
-
 app.post('/api/users/update', function(req,res){
   var userInfo = req.body;
+  
   var updateUserRow = function(infoObj) {
     return new Promise(function(resolve,reject){
       pg.connect(connectionString, function(err,client,done){
         if (err) console.error('Connection error: ', err);
-        client.query(updateQueries.updateUserRow(infoObj), function(err,result) {
-          if (err) console.error('Connection error: ', err);
+        client.query(updateQueries.updateUserRow('users',infoObj), function(err,result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/users/update');
+            reject(err);
+          }
           resolve(result.rows);
         });
       }) 
     });
   };
+  var updateUserFollowerRow = function(table,infoObj) {
+    return new Promise(function(resolve,reject){
+      pg.connect(connectionString, function(err,client,done){
+        if (err) console.error('Connection error: ', err);
+        client.query(updateQueries.updateUserRow('followers', infoObj), function(err,result) {
+          done();
+          if (err) {
+            console.error('Error in handling data within /api/users/update');
+            reject(err);
+          }
+          resolve(result);
+        });
+      }) 
+    });
+  }
 
-  updateUserRow(userInfo).then(function(result) {
+   var userFollowerArr = [updateUserFollowerRow("users",userInfo), updateUserFollowerRow("followers",userInfo)];
+   
+   Promise.all(userFollowerArr).then(function() {
     res.set('Content-Type','application/JSON'); 
-    res.json(userInfo);     
-  })
+    res.json(userInfo);
+   });
+
 });
 
 
@@ -760,11 +847,15 @@ app.get('/api/search/users', function(req, res) {
 
   var getFullNamePicURLAndID = function(full_name) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) console.error('Connection error: ', error);
         client.query(selectQueries.selectFullNamePicURLAndID(full_name), function(err, result) {
           done();
-          resolve(result.rows);
+          if (err) {
+            console.error('Error in handling data within /api/search/users ', err);
+            reject(err);
+          }
+          else resolve(result.rows);
         });
       });
     });
@@ -772,11 +863,15 @@ app.get('/api/search/users', function(req, res) {
 
   var getCheckIfYoureFollowingThem = function(personYouSearchedForID) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) console.error('Connection error: ', error);
         client.query(checkQueries.checkUserFollower(personYouSearchedForID, user_id), function(err, result) {
           done();
-          resolve(result.rows[0].exists);
+          if (err) {
+            console.error('Error in handling data within /api/search/users ', err);
+            reject(err);
+          }
+          else resolve(result.rows[0].exists);
         });
       });
     });
@@ -811,11 +906,15 @@ app.post('/api/users/follow', function(req, res) {
 
   var getCheckIfYoureFollowingThem = function(user_id) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) console.error('Connection error: ', error);
         client.query(checkQueries.checkUserFollower(user_id, follower_id), function(err, result) {
           done();
-          resolve(result.rows[0].exists);
+          if (err) {
+            console.error('Error in handling data within /api/users/follow', err);
+            reject(err);
+          }
+          else resolve(result.rows[0].exists);
         });
       });
     });
@@ -823,11 +922,15 @@ app.post('/api/users/follow', function(req, res) {
 
   var insertUserFollowerOrNot = function(exists) {
     if (!exists) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) console.error('Connection error: ', err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) console.error('Connection error: ', error);
         client.query(insertQueries.insertUserFollowerRelationship(user_id, follower_id), function(err, result) {
           done();
-          res.sendStatus(201);
+          if (err) {
+            console.error('Error in handling data within /api/users/follow', err);
+            sendStatus(404);
+          }
+          else res.sendStatus(201);
         });
       })
     }
@@ -842,11 +945,11 @@ app.delete('/api/users/unfollow', function(req, res) {
   var user_id = req.query.user_id;
   var follower_id = req.query.follower_id;
 
-  pg.connect(connectionString, function(err, client, done) {
-    if (err) console.error('Connection error: ', err);
+  pg.connect(connectionString, function(error, client, done) {
+    if (error) console.error('Connection error: ', error);
     client.query(deleteQueries.deleteUserFollowerRelationship(user_id, follower_id), function(err, result) {
       done();
-      if (!result) res.sendStatus(404);
+      if (err) res.sendStatus(404);
       else res.sendStatus(204);
     })
   });
@@ -860,14 +963,18 @@ app.get('/api/users/uri/annotations', function (req, res) {
 
   var getPeopleYouFollow = function(user_id) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
         }
         client.query(selectQueries.selectPeopleYouFollow(user_id), function(err, result) {
           done();
-          resolve(result.rows);
+          if (err) {
+            console.error('Error in handling data within /api/users/uri/annotations', err);
+            reject(err);
+          }
+          else resolve(result.rows);
         });
       });
     });
@@ -875,13 +982,17 @@ app.get('/api/users/uri/annotations', function (req, res) {
   
   var checkIfPersonAnnotatedThisArticle = function(uri, person) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
         }
         client.query(selectQueries.selectPersonIfPersonAnnotatedThisPage(uri, person.user_id), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/users/uri/annotations', err);
+            reject(err);
+          }
           if (result.rows.length > 0) resolve(true);
           else resolve(false)
         })
@@ -891,13 +1002,17 @@ app.get('/api/users/uri/annotations', function (req, res) {
 
   var getFullNamePicURLAndID = function(person) {
     return new Promise(function(resolve, reject) {
-      pg.connect(connectionString, function(err, client, done) {
-        if (err) {
-          console.error('Connection error: ', err);
-          return reject(err);
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(error);
         }
         client.query(selectQueries.selectFullNameAndPicURLBasedOnID(person.user_id), function(err, result) {
           done();
+          if (err) {
+            console.error('Error in handling data within /api/users/uri/annotations', err);
+            reject(err);
+          }
           resolve(result.rows[0]);
         });
       });
@@ -923,108 +1038,125 @@ app.get('/api/users/uri/annotations', function (req, res) {
 })
 
 
-  app.post('/api/uri/gp', function(req,res) {
-    var gpObj = req.body;
-    var uri = req.body.uri;
-    var user_id = req.body.user_id;
-    var generalPost = req.body.generalPost;
+app.post('/api/uri/gp', function(req,res) {
+  var gpObj = req.body;
+  var uri = req.body.uri;
+  var user_id = req.body.user_id;
+  var generalPost = validator.escape(validator.toString(req.body.generalPost));
 
-    var updateGP = function(uri, user_id, generalPost) {
-      return new Promise(function(resolve,reject){
-        pg.connect(connectionString, function(err, client, done) {
+  var updateGP = function(uri, user_id, generalPost) {
+    return new Promise(function(resolve,reject){
+      pg.connect(connectionString, function(error, client, done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(error);
+        }
+        client.query(updateQueries.updateGeneralPost(uri, user_id, generalPost), function(err, result) {
+          done();
           if (err) {
-            console.error('Connection error: ', err);
-            return reject(err);
+            console.error('Error handling data within /api/uri/gp');
+            reject(err);
           }
-          client.query(updateQueries.updateGeneralPost(uri, user_id, generalPost), function(err, result) {
-            if(err) console.error('Connection error: ', err);
-            done();
-            resolve(result.rows[0]);
-          });
+          else resolve(result.rows[0]);
         });
       });
-      }; 
-    updateGP(uri, user_id, generalPost).then(function(){
-      res.set('Content-Type','application/JSON'); 
-      res.json(gpObj);  
     });
-  });
+    }; 
+  updateGP(uri, user_id, generalPost).then(function(){
+    res.set('Content-Type','application/JSON'); 
+    res.json(gpObj);  
+  })
+  .catch(function(error) {
+    console.error('Error in loading comments on general posts ', error);
+  })
+});
 
-  app.post('/api/comments', function(req,res) {
-    var uri = req.body.uri;
-    var user_id = req.body.user_id;
-    var follower_id = req.body.follower_id;
-    var message = req.body.message;
+app.post('/api/comments', function(req,res) {
+  var uri = req.body.uri;
+  var user_id = req.body.user_id;
+  var follower_id = req.body.follower_id;
+  var message = validator.escape(validator.toString(req.body.message));
 
-    var insertComments =  function(uri,user_id,follower_id,message){
-      return new Promise(function(resolve,reject){
-        pg.connect(connectionString,function(err,client,done) {
+  var insertComments =  function(uri,user_id,follower_id,message){
+    return new Promise(function(resolve,reject){
+      pg.connect(connectionString,function(error,client,done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
+        }
+        client.query(insertQueries.insertGeneralPostComment(uri, user_id, follower_id, message), function(err,result){
+          done();
           if (err) {
-            console.error('Connection error: ', err);
-            return reject(err);
+            console.error('Error in handling data within /api/comments ');
+            resolve(error);
           }
-          client.query(insertQueries.insertGeneralPostComment(uri, user_id, follower_id, message), function(err,result){
-            if(err) console.error('Connection error' ,err);
-            done()
-            resolve(result.row)
-          });  
+          else resolve(result.row)
         });  
-      })
-    };
-  
-    insertComments(uri, user_id, follower_id, message)
-    .then(function(data){
-      res.set('Content-Type','application/JSON'); 
-      res.json(req.body);
+      });  
     })
-  });
+  };
 
-  app.post('/api/likes',function(req,res) {
-    var uri = req.body.uri;
-    var user_id = req.body.user_id;
-    var follower_id = req.body.follower_id;
-    var likeToggle = req.body.likeToggle
+  insertComments(uri, user_id, follower_id, message)
+  .then(function(data){
+    res.set('Content-Type','application/JSON'); 
+    res.json(req.body);
+  })
+});
 
-    var insertLike = function(uri,user_id,follower_id) {
-      return new Promise(function(resolve,reject){
-        pg.connect(connectionString,function(err,client,done) {
+app.post('/api/likes',function(req,res) {
+  var uri = req.body.uri;
+  var user_id = req.body.user_id;
+  var follower_id = req.body.follower_id;
+  var likeToggle = req.body.likeToggle
+
+  var insertLike = function(uri,user_id,follower_id) {
+    return new Promise(function(resolve,reject){
+      pg.connect(connectionString,function(error,client,done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
+        }
+        client.query(insertQueries.insertLikes(uri,user_id,follower_id),function(err,result){
+          done();
           if (err) {
-            console.error('Connection error: ', err);
-            return reject(err);
+            console.error('Error in handling data within /api/likes', err);
+            reject(err);
           }
-          client.query(insertQueries.insertLikes(uri,user_id,follower_id),function(err,result){
-            done();
-            resolve(result);
-          });      
-        });
-      });  
-    };
-    var deleteLike = function(uri, user_id, follower_id){
-      return new Promise(function(resolve,reject){
-        pg.connect(connectionString,function(err,client,done) {
+          else resolve(result);
+        });      
+      });
+    });  
+  };
+  var deleteLike = function(uri, user_id, follower_id){
+    return new Promise(function(resolve,reject){
+      pg.connect(connectionString,function(error,client,done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
+        }
+        client.query(deleteQueries.deleteLike(uri,user_id,follower_id),function(err,result){
+          done();
           if (err) {
-            console.error('Connection error: ', err);
-            return reject(err);
+            console.error('Error in handling data within /api/likes', err);
+            reject(err);
           }
-          client.query(deleteQueries.deleteLike(uri,user_id,follower_id),function(err,result){
-            done();
-            resolve(result);
-          });      
-        });
-      });     
-    };
-    if(likeToggle.length === 5) {
-      deleteLike(uri, user_id, follower_id).then(function(result){
-        res.set('Content-Type','application/JSON'); 
-        res.json(req.body);  
-      }) 
-    }else{
-      insertLike(uri, user_id, follower_id).then(function(results) {
-        res.set('Content-Type','application/JSON'); 
-        res.json(req.body);        
-      });  
-    }
-  });
+          resolve(result);
+        });      
+      });
+    });     
+  };
+  if(likeToggle.length === 5) {
+    deleteLike(uri, user_id, follower_id).then(function(result){
+      res.set('Content-Type','application/JSON'); 
+      res.json(req.body);  
+    }) 
+  }else{
+    insertLike(uri, user_id, follower_id).then(function(results) {
+      res.set('Content-Type','application/JSON'); 
+      res.json(req.body);        
+    });  
+  }
+});
 
 
 
