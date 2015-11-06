@@ -124,7 +124,7 @@ var friendsAnnotationList = React.createClass({
 
 
     return (
-        <ReactCSSTransitionGroup transitionName='annotationList' transitionAppear={true} transitionAppearTimeout={500}>
+        <ReactCSSTransitionGroup transitionName='annotationList' transitionAppear={true} transitionAppearTimeout={100}>
           <div className="annotationList">
             {annotationList}
           </div>

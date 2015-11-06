@@ -22293,18 +22293,21 @@ var App = React.createClass({displayName: "App",
   },
   
   updateView: function(action){
-    var duration = 200;
     var self = this;
 
     switch(action) {
         case 'showAnnotatorButton':
             console.log('showAnnotatorButton!!');
-            $('#annotation-sidebar').animate({right: -(610)}, 200, function() {
+            $(function() {
+              $('#annotation-header').animate({width: '0px'}, {queue: false, duration: 200});
+              $('#annotation-sidebar').animate({right: -(610)}, {queue: false, duration: 200});
+            })
+            .promise().done(function() {
               self.setState({showFriendsAnnotations: false});
               self.setState({showAnnotatorView: false});
               self.setState({showFeedView: false});
               self.setState({spotlight: ''});
-            });
+            })
             break;
         case 'showAnnotatorView':
             if (!this.state.showFeedView) {
@@ -22320,12 +22323,15 @@ var App = React.createClass({displayName: "App",
               $(function () {
                 $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
                 $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
+                setTimeout(function() {
+                  self.setState({showFeedView: false})
+                }, 100);
+              
               })
               .promise().done(function() {
                 debugger;
                 setTimeout(function() {
                   self.setState({showAnnotatorView: false});
-                  self.setState({showFeedView: false});
                   self.setState({showFriendsAnnotations: true});
                 }, 200)
               });
@@ -23132,7 +23138,7 @@ var FeedView = React.createClass({displayName: "FeedView",
             React.createElement(SearchButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
             React.createElement(SettingsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
           ), 
-            React.createElement("div", {className: "feed-container"}, 
+            React.createElement(ReactCSSTransitionGroup, {transitionName: "feedview", transitionLeaveTimeout: 100}, 
               this.state.showFriendsAnnotations ? React.createElement(FriendsAnnotations, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null, 
               this.state.showMyAnnotations ? React.createElement(MyAnnotations, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null, 
               this.state.showSearchView ? React.createElement(SearchView, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null, 
@@ -23344,7 +23350,7 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
 
 
     return (
-        React.createElement(ReactCSSTransitionGroup, {transitionName: "annotationList", transitionAppear: true, transitionAppearTimeout: 500}, 
+        React.createElement(ReactCSSTransitionGroup, {transitionName: "annotationList", transitionAppear: true, transitionAppearTimeout: 100}, 
           React.createElement("div", {className: "annotationList"}, 
             annotationList
           )
@@ -23467,10 +23473,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
     var friendCarousel = friendsArray.map(function(friend, index) {
       if (friend !== ownId) {
         return (
-
-
-            React.createElement("img", {key: index, "data-id": friend, onClick: self.toggleFriendAnnotations.bind(null, friend), className: "friends-pic", src: friendsObject[friend].pic})
-
+          React.createElement("img", {key: index, "data-id": friend, onClick: self.toggleFriendAnnotations.bind(null, friend), className: "friends-pic", src: friendsObject[friend].pic})
         )
       }
     })
@@ -23536,10 +23539,6 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
         }
         self.setState({annotations: annotations, friendsShown: friendsShown});
       }) 
-
-    $('.friends-pic').hover(function() {
-      $('.friend-name').show();
-    })
   }
 });
 

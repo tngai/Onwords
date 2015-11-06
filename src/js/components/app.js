@@ -19,18 +19,21 @@ var App = React.createClass({
   },
   
   updateView: function(action){
-    var duration = 200;
     var self = this;
 
     switch(action) {
         case 'showAnnotatorButton':
             console.log('showAnnotatorButton!!');
-            $('#annotation-sidebar').animate({right: -(610)}, 200, function() {
+            $(function() {
+              $('#annotation-header').animate({width: '0px'}, {queue: false, duration: 200});
+              $('#annotation-sidebar').animate({right: -(610)}, {queue: false, duration: 200});
+            })
+            .promise().done(function() {
               self.setState({showFriendsAnnotations: false});
               self.setState({showAnnotatorView: false});
               self.setState({showFeedView: false});
               self.setState({spotlight: ''});
-            });
+            })
             break;
         case 'showAnnotatorView':
             if (!this.state.showFeedView) {
@@ -46,12 +49,15 @@ var App = React.createClass({
               $(function () {
                 $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
                 $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
+                setTimeout(function() {
+                  self.setState({showFeedView: false})
+                }, 100);
+              
               })
               .promise().done(function() {
                 debugger;
                 setTimeout(function() {
                   self.setState({showAnnotatorView: false});
-                  self.setState({showFeedView: false});
                   self.setState({showFriendsAnnotations: true});
                 }, 200)
               });

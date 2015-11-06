@@ -11,13 +11,11 @@
 
 .feedview-leave {
   opacity: 1;
-  transform: translateY(0px);
 }
 
 .feedview-leave.feedview-leave-active {
   opacity: 0.01;
   transition: opacity .1s ease-in;
-  transform: translateY(500px);
 }
 
 #annotation-sidebar {

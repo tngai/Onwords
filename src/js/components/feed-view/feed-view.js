@@ -88,12 +88,12 @@ var FeedView = React.createClass({
             <SearchButton {...this.props} updateBodyView={this.updateBodyView} />
             <SettingsButton {...this.props} updateBodyView={this.updateBodyView} />
           </div>
-            <div className='feed-container'>
+            <ReactCSSTransitionGroup transitionName='feedview' transitionLeaveTimeout={100}>
               {this.state.showFriendsAnnotations ? <FriendsAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
               {this.state.showMyAnnotations ? <MyAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
               {this.state.showSearchView ? <SearchView {...this.props}  updateBodyView={this.updateBodyView} /> : null}
               {this.state.showSettingsPage ? <Settings {...this.props}  updateBodyView={this.updateBodyView} /> : null}
-            </div>
+            </ReactCSSTransitionGroup>
         </div>
       </div>
     );

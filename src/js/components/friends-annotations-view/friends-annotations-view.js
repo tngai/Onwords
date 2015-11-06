@@ -109,10 +109,7 @@ var FriendsAnnotationsView = React.createClass({
     var friendCarousel = friendsArray.map(function(friend, index) {
       if (friend !== ownId) {
         return (
-
-
-            <img key={index} data-id={friend} onClick={self.toggleFriendAnnotations.bind(null, friend)} className='friends-pic' src={friendsObject[friend].pic} />
-
+          <img key={index} data-id={friend} onClick={self.toggleFriendAnnotations.bind(null, friend)} className='friends-pic' src={friendsObject[friend].pic} />
         )
       }
     })
@@ -178,10 +175,6 @@ var FriendsAnnotationsView = React.createClass({
         }
         self.setState({annotations: annotations, friendsShown: friendsShown});
       }) 
-
-    $('.friends-pic').hover(function() {
-      $('.friend-name').show();
-    })
   }
 });
 
