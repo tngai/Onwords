@@ -36,8 +36,8 @@ var updateQueries = {
 	updateUserRow: function(table,newInfo){
 		var info = [];
 		var rString;
-		if(newInfo.pic_url) {
-			info.push(" pic_url='"+newInfo.pic_url+"'");
+		if(newInfo.picUrl) {
+			info.push(" pic_url='"+newInfo.picUrl+"'");
 		}
 		if(newInfo.description) {
 			info.push(" description='"+newInfo.description+"'");

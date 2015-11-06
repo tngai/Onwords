@@ -4,7 +4,8 @@ var friendAnnotationComment = React.createClass({
 
 
   render: function() {
-
+    var userpic = this.props.userpic;
+    console.log(userpic);
     var annotation = this.props.annotation;
     var self = this;
     var clickHandler = function() {
@@ -22,6 +23,7 @@ var friendAnnotationComment = React.createClass({
 
     return (
       <div onClick={clickHandler} className="annotation" style={divStyle}>
+        <img className='friends-pic' src={userpic} />
         <p>{annotation.text}</p>
       </div>
     )

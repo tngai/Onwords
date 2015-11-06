@@ -1,4 +1,7 @@
 var React = require('react');
+var ReactAddons = require('react/addons');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 var AnnotationLink = require('./feed-friends-annotationlink');
 
 var FriendsAnnotations = React.createClass({
@@ -9,7 +12,9 @@ var FriendsAnnotations = React.createClass({
   },
   render: function() {
     return (
-      <AnnotationLink info={this.state.info} />
+      <ReactCSSTransitionGroup transitionName='feedview' transitionLeaveTimeout={200}>
+        <AnnotationLink info={this.state.info} />
+      </ReactCSSTransitionGroup>
     );
   },
   componentWillUnmount: function() {
@@ -21,6 +26,7 @@ var FriendsAnnotations = React.createClass({
     var user = window.localStorage.user_id;
     var completeUri = 'https://test2server.herokuapp.com/api/homefeed?user_id=' + user;
 
+    // get FriendsAnnotations info from database
     $.get(completeUri, function(result) {
       console.log('RESULT FROM API: ',result);
       if (this.isMounted()) {
