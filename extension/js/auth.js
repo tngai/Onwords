@@ -3,7 +3,6 @@ function fetchToken() {
 
   var clientID = '';
 
-
   var redirectUri = 'https://' + chrome.runtime.id + '.chromiumapp.org/provider_cb';
 
   var options = {
@@ -31,7 +30,7 @@ function fetchToken() {
 
     chrome.storage.sync.set({'access_token': access_token});
   });
-};
+}
 
       chrome.storage.sync.clear();
       chrome.storage.local.clear();
@@ -77,7 +76,7 @@ function fetchFbProfile(accessToken) {
     }
   };
   xhr.send();
-};
+}
 
 function sendFbProfile(data) {
   debugger;
@@ -100,4 +99,4 @@ function sendFbProfile(data) {
     }
   };
   xhr.send(JSON.stringify(data));
-};
+}
