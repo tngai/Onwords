@@ -1,4 +1,7 @@
 var React = require('react');
+var ReactAddons = require('react/addons');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 var MinimizeButton = require('./minimize-button');
 var Header = require('../header/header');
 var AnnotatorMixin = require('../mixins/annotatormixin');
@@ -85,11 +88,12 @@ var FeedView = React.createClass({
             <SearchButton {...this.props} updateBodyView={this.updateBodyView} />
             <SettingsButton {...this.props} updateBodyView={this.updateBodyView} />
           </div>
-
-          {this.state.showFriendsAnnotations ? <FriendsAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
-          {this.state.showMyAnnotations ? <MyAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
-          {this.state.showSearchView ? <SearchView {...this.props}  updateBodyView={this.updateBodyView} /> : null}
-          {this.state.showSettingsPage ? <Settings {...this.props}  updateBodyView={this.updateBodyView} /> : null}
+            <div className='feed-container'>
+              {this.state.showFriendsAnnotations ? <FriendsAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
+              {this.state.showMyAnnotations ? <MyAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
+              {this.state.showSearchView ? <SearchView {...this.props}  updateBodyView={this.updateBodyView} /> : null}
+              {this.state.showSettingsPage ? <Settings {...this.props}  updateBodyView={this.updateBodyView} /> : null}
+            </div>
         </div>
       </div>
     );

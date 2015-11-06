@@ -1,4 +1,7 @@
 var React = require('react');
+var ReactAddons = require('react/addons');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 var AnnotationLink = require('./feed-friends-annotationlink');
 
 var FriendsAnnotations = React.createClass({
@@ -9,7 +12,9 @@ var FriendsAnnotations = React.createClass({
   },
   render: function() {
     return (
-      <AnnotationLink info={this.state.info} />
+      <ReactCSSTransitionGroup transitionName='feedview' transitionLeaveTimeout={200}>
+        <AnnotationLink info={this.state.info} />
+      </ReactCSSTransitionGroup>
     );
   },
   componentWillUnmount: function() {
