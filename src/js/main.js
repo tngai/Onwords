@@ -5,9 +5,9 @@ var test = require('./test');
 console.log('inside main');
 var renderComponents = function() {
   $('body').append("<div id='annotation-sidebar'></div>");
-  $('#annotation-sidebar').append("<div id=scrollview></div>");
-
-  React.render(<App />, document.getElementById('scrollview'));
+  $('#annotation-sidebar').append("<div id='annotation-header'></div>")
+  $('#annotation-sidebar').append("<div id='annotation-scroll'></div>")
+  React.render(<App />, document.getElementById('annotation-scroll'));
 };
 
 var code = window.location.hash.substring(1);
