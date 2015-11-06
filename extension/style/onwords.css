@@ -390,17 +390,17 @@ ul {
   list-style-type: none;
 }
 
-  /*FriendsAnnotationsLink*/
+  /*FeedFriendsAnnotationsLink*/
 .feed-friends-annotations-container {
   width: 600px;
   height: 1000px;
-  text-align: center;
+  text-align: left;
   overflow-y: scroll;
 }
 .feed-friends-annotations-post {
   width: 600px;
   height: 150px;
-  text-align: center;
+  /*text-align: center;*/
   border-bottom: 1px solid black;
 }
 .post-pic-container {
@@ -416,14 +416,15 @@ ul {
   border-radius: 50%;
 }
 .post-body-container {
+  padding: 12.5px 0px 12.5px 0px;
   float: right;
   width: 450px;
-  height: 150px;
+  height: 125px;
 }
 .post-header-container {
   margin-top: 12.5px;
   width: 450px;
-  height: 37.5px; 
+  /*height: 25px; */
 }
 .post-name-container {
   display: inline-block;
@@ -434,11 +435,11 @@ ul {
 }
 .post-title-container {
   width: 450px;
-  height: 37.5px; 
+  /*height: 25px; */
 }
 .post-like-comment-container {
   width: 450px;
-  height: 37.5px; 
+  /*height: 25px; */
 }
 .post-likes-container {
   display: inline-block;
