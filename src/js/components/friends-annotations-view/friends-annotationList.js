@@ -43,7 +43,7 @@ var friendsAnnotationList = React.createClass({
     debugger;
     $('html, body').animate({
       scrollTop: annotation.offsetTop - 200
-    }, 325);
+    }, 350);
 
     var newSpotlightColor = $('span[data-annotation-id="' + annotation.id + '"]').css('background-color'); 
 
@@ -53,27 +53,12 @@ var friendsAnnotationList = React.createClass({
       color: "black"
     }
     $('span[data-annotation-id="' + annotation.id + '"]').css(styles);  
-    // this.setState({spotlight: annotation});
   },
 
   clickHandler: function(annotation) {
     debugger;
     this.props.changeSpotlight(annotation);
     
-
-    // if (this.state.spotlight !== '' && this.state.spotlight.id !== annotation.id) {
-    //   this.unhighlight();
-    // }
-
-    // if (this.state.spotlight.id === annotation.id) {
-    //   if (!this.state.spotlightOn) {
-    //     this.highlight(annotation);
-    //   }
-    // } else {
-    //   this.highlight(annotation);
-    // }
-    // this.setState({spotlightOn: true});
-
   },
 
   componentWillMount: function() {
@@ -86,28 +71,8 @@ var friendsAnnotationList = React.createClass({
     this.setState({annotations: this.props.annotations, spotlight: newSpotlight});
   },
 
-  // componentDidMount: function() {
-  //   debugger;
-  //   if (this.state.spotlight !== '') {
-  //     this.clickHandler(this.state.spotlight);
-  //   }
-  // },
-
   componentWillReceiveProps: function(nextProps) {
     debugger;
-    // if (nextProps.spotlight !== this.state.spotlight && nextProps.spotlight !== '') {
-    //   this.clickHandler(nextProps.spotlight);
-    // } else if (nextProps.spotlight === '') {
-    //   for (var i = 0; i < nextProps.annotations.length; i++) {
-    //     if (nextProps.annotations[i].id === this.state.spotlight.id) {
-    //       this.setState({spotlightOn: true});
-    //       return;
-    //     }
-    //   }
-    //   this.setState({spotlightOn: false, spotlight: ''});
-    // } else if (nextProps.spotlight === this.state.spotlight) {
-    //   this.props.changeSpotlight('');
-    // }
 
     if (nextProps.spotlight !== this.state.spotlight) {
       if (this.state.spotlight !== '') {
@@ -118,16 +83,13 @@ var friendsAnnotationList = React.createClass({
       }
 
     }
-
     this.setState({annotations: nextProps.annotations, spotlight: nextProps.spotlight});
-
   },
 
   componentWillUnmount: function() {
     debugger;
     if (this.state.spotlight !== '') {
       this.unhighlight();
-      // this.setState({spotlightOn: false, spotlight: ''});
       this.props.changeSpotlight('');
     }
   },
@@ -141,39 +103,33 @@ var friendsAnnotationList = React.createClass({
     var self = this;
 
 
-      var annotationList = annotations.map(function(annotation, index) {
-        var user = annotation.user_id;
-        console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
-          if (friends[user]) {
-            console.log('annotation is:', annotation);
-            return (
-              <div key={index}>
-                <li className="annotationListItem">
-                  {user.toString() === ownId ? 
-                    <AnnotationComment clickHandler={self.clickHandler} user={annotation.user_id} annotation={annotation} deleteAnn={self.deleteAnn} />
-                  : <FriendAnnotationComment spotlight={self.state.spotlight} clickHandler={self.clickHandler} user={annotation.user} annotation={annotation}/>
-                  }
-                </li>
-                <br></br>
-              </div>
-            )
-          }
-      });
+    var annotationList = annotations.map(function(annotation, index) {
+      var user = annotation.user_id;
+      console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
+        if (friends[user]) {
+          console.log('friend is', friends[user]);
+          return (
+            <div key={index}>
+              <li className="annotationListItem">
+                {user.toString() === ownId ? 
+                  <AnnotationComment clickHandler={self.clickHandler} user={annotation.user_id} annotation={annotation} deleteAnn={self.deleteAnn} />
+                : <FriendAnnotationComment userpic={friends[user].pic} spotlight={self.state.spotlight} clickHandler={self.clickHandler} user={annotation.user} annotation={annotation}/>
+                }
+              </li>
+              <br></br>
+            </div>
+          )
+        }
+    });
 
 
     return (
-      <div className="annotationList">
-
-          
-          {annotationList}
-
-
-      </div>
+        <ReactCSSTransitionGroup transitionName='annotationList' transitionAppear={true} transitionAppearTimeout={500}>
+          <div className="annotationList">
+            {annotationList}
+          </div>
+        </ReactCSSTransitionGroup>
     )
-  },
-
-  componentDidMount: function() {
-
   }
 });
 
