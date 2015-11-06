@@ -63,18 +63,23 @@ var Settings = React.createClass({
     }
   },
   handleClick: function(e) {  
+    var inputToggle;
+    console.log( 'the click event ', e, e.target.dataset.setting)
     switch (e.target.dataset.setting) {
       case 'pic':
-        console.log('pic was chosen');
-        this.setState({editPicUrl: true});
+        inputToggle = this.state.editPicUrl;
+        console.log('pic was chosen', inputToggle);
+        this.setState({editPicUrl: !inputToggle});
         break;
       case 'username':
-        console.log('username was chosen');
-        this.setState({editUsername: true});
+        inputToggle = this.state.editUsername;
+        console.log('username was chosen', inputToggle);
+        this.setState({editUsername: !inputToggle});
         break;
       case 'description':
-        console.log('description was chosen');
-        this.setState({editDescription: true});
+        inputToggle = this.state.editDescription;
+        console.log('description was chosen', inputToggle);
+        this.setState({editDescription: !inputToggle});
         break;
     }  
   },
@@ -82,20 +87,15 @@ var Settings = React.createClass({
     return (
       <div className="settings-view-container">
         <div className="picture-settings">
-          <img id="profile-pic" src={this.state.pic_url} /> 
-          <button type="submit" onClick={this.handleClick} >
-            <img data-setting="pic" className= "settings-profile-edit-icon" src="https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png" alt="profile pic" />
-          </button>
+          <img id="profile-pic" src={this.state.pic_url} onClick={this.handleClick} data-setting="pic"/> 
           {this.state.editPicUrl ? <input type="text" placeholder={this.state.pic_url} data-setting="picUrl" onKeyPress={this.handleSubmit} /> : null}
         </div>
         <div className="username-settings">
           {this.state.username} 
-          
         </div>
-
         <div className="settingsdescription-settings">
           Description: {this.state.description} 
-          <button  type="submit" onClick={this.handleClick}>
+          <button  type="submit" onClick={this.handleClick} id="submit-button" >
             <img data-setting="description" className="settings-profile-edit-icon" src="https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png" />
           </button> 
           {this.state.editDescription ? <input type="text" placeholder={this.state.description} data-setting="description" onKeyPress={this.handleSubmit} /> : null}

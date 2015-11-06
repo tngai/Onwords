@@ -243,8 +243,17 @@
   height: 16px;
   width: 16px;
 }
+
+#submit-button {
+  margin-left: 10px;
+}
+
+#profile-pic:hover{
+  background: rgb(42, 67, 83); /* make this whatever you want */
+}
 #profile-pic {
-  height:300px;
+  margin-top: 18px;
+  height:230px;
   width:auto;
   border-radius: 50%;
   padding: 5px;
