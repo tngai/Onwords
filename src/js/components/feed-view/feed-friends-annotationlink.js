@@ -1,4 +1,5 @@
 var React = require('react');
+var AnnotationLikeComment = require('./feed-friends-annotationlink-like-comment');
 
 var FriendsAnnotationLink = React.createClass({
   render: function() {
@@ -25,9 +26,22 @@ var FriendsAnnotationLink = React.createClass({
           var comments = article.commentsOnGeneralPost.map(function(comment, key) {
             return comment;
           });
+          console.log('COMMENTS!!', comments);
+
           var likes = article.likes.map(function(like, key) {
             return like;
           });
+
+          // check if its liked by me
+          // if(likes.length >= 1){
+          //   var isLikedByMe = article.likes.reduce(function(previousValue, currId, i) {
+          //     console.log(currId.follower_id, userId, previousValue);
+          //     if(currId.follower_id === userId && previousValue.follower_id === false){
+          //       return true;
+          //     }
+          //   }, false);
+          //   console.log('is it liked!?', isLikedByMe);
+          // }
 
           allSharedPost.push({
             picUrl: picUrl,
@@ -50,7 +64,8 @@ var FriendsAnnotationLink = React.createClass({
 
     // creating react elements for all allSharedPost
     var allPost = allSharedPost.map(function(post, key) {
-      console.log('POST: ', post, key);
+      console.log('POST: ', post, key, this.handleCommentClick);
+      // var THIS = this;
       return (
         <div className='feed-friends-annotations-post' key={key}>
           <div className='post-pic-container'>
@@ -72,31 +87,25 @@ var FriendsAnnotationLink = React.createClass({
               <a href={post.redirectUri} target='blank' className='redirectLink'>{post.title}</a>
             </div>
 
-            <div className='post-like-comment-container'>
-              <div className='post-likes-container'>
-                likes : {post.likes.length}
-              </div>
-
-              <div className='post-comments-container'>
-                comments : {post.comments.length}
-              </div>
+            <div className='post-general-post-container'>
+              {post.generalPost}
             </div>
 
+            <div className='post-like-comment-container'>
+              <AnnotationLikeComment post={post} key={key} />            
+            </div>
           </div>
+
         </div>
       )
-    });
-
-
+    }, this);
 
     return (
       <div className='feed-friends-annotations-container'>
         {allPost}
       </div>
     )
-
   },
-
   componentDidMount: function() {
     $('.redirectLink').click(function(e) {
       e.preventDefault();
