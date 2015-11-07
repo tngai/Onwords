@@ -111,25 +111,26 @@ var FeedView = React.createClass({
   render: function() {
     return (
       <div className='feed-view-container'>
-        <div className='header-container'>
-          <MinimizeButton {...this.props} />
-          <div className='app-name' >ONWORDS</div>
-        </div>
-
         <div className='body-container'>
-
-          <div className='button-container'>
-            <HomeButton {...this.props} updateBodyView={this.updateBodyView} />
-            <FriendsButton {...this.props} updateBodyView={this.updateBodyView} />
-            <SearchButton {...this.props} updateBodyView={this.updateBodyView} />
-            <SettingsButton {...this.props} updateBodyView={this.updateBodyView} />
-          </div>
-            <ReactCSSTransitionGroup transitionName='feedview' transitionLeaveTimeout={100}>
+          <MinimizeButton {...this.props} />
+          <ul className='button-container'>
+            <li>
+              <HomeButton {...this.props} updateBodyView={this.updateBodyView} />
+            </li>
+            <li>
+              <FriendsButton {...this.props} updateBodyView={this.updateBodyView} />
+            </li>
+            <li>  
+              <SearchButton {...this.props} updateBodyView={this.updateBodyView} />
+            </li>
+            <li>
+              <SettingsButton {...this.props} updateBodyView={this.updateBodyView} />
+            </li>
+          </ul>
               {this.state.showFriendsAnnotations ? <FriendsAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
               {this.state.showMyAnnotations ? <MyAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}
               {this.state.showSearchView ? <SearchView {...this.props}  updateBodyView={this.updateBodyView} /> : null}
               {this.state.showSettingsPage ? <Settings {...this.props}  updateBodyView={this.updateBodyView} /> : null}
-            </ReactCSSTransitionGroup>
         </div>
       </div>
     );

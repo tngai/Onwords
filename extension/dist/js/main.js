@@ -22685,7 +22685,7 @@ var FeedFriendsButton = React.createClass({displayName: "FeedFriendsButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
-        React.createElement("img", {className: "feed-button", src: "http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png"})
+        "FEED"
       )
     );
   }
@@ -22703,7 +22703,7 @@ var FeedHomeButton = React.createClass({displayName: "FeedHomeButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
-        React.createElement("img", {className: "feed-button", src: "https://cdn3.iconfinder.com/data/icons/black-easy/512/535106-user_512x512.png"})
+        "PROFILE"
       )
     );
   }
@@ -22820,24 +22820,37 @@ var MyAnnotationsLink = require('./feed-my-annotations-link');
 var MyAnnotations = React.createClass({displayName: "MyAnnotations",
   getInitialState: function() {
     return {
-      info: []
+      info: [],
+      user: {},
+      showHeader: false
     };
-  },
-  componentWillMount: function() {
-
   },
   componentDidMount: function() {
     console.log('MyAnnotations - componentDidMount');
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
     var completeUri = 'https://test2server.herokuapp.com/api/personalfeed?user_id=' + user;
-    $.get(completeUri, function(result) {
-      if (this.isMounted()) {
-        this.setState({
-          info: result
-        });
-      }
-      console.log('MyAnnotations state:INFO = ', this.state.info);
+    var self = this;
+    $('#annotation-header').slideUp('fast', function() {
+      $.get(completeUri, function(result) {
+        if (self.isMounted()) {
+          self.setState({
+            info: result
+          });
+        }
+        console.log('MyAnnotations state:INFO = ', self.state.info);
+        self.setState({showHeader: true});
+      });
+    });
+
+
+    chrome.storage.sync.get('user',function(data){
+      var userInfo = {
+        pic_url: data.user.picUrl,
+        username: data.user.fullName,
+        description: data.user.description || 'OnWords  !!  '
+      };
+      this.setState({user: userInfo});
     }.bind(this));
 
     $(document).on('click', '.redirectLink', function(e) {
@@ -22846,12 +22859,17 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
     });
   },
   componentWillUnmount: function() {
+    $('#annotation-header').slideDown('fast');
     console.log('MyAnnotationsLink - componentWillUnmount');
     $(document).off();
   },
   render: function() {
     return (
       React.createElement("div", {className: "feed-my-annotations-container"}, 
+       
+        React.createElement("div", {className: "banner-pic-container"}, 
+          React.createElement("img", {className: "banner-pic", src: this.state.user.pic_url})
+        ), 
         React.createElement(MyAnnotationsLink, {info: this.state.info})
       )
     );
@@ -23264,25 +23282,26 @@ var FeedView = React.createClass({displayName: "FeedView",
   render: function() {
     return (
       React.createElement("div", {className: "feed-view-container"}, 
-        React.createElement("div", {className: "header-container"}, 
-          React.createElement(MinimizeButton, React.__spread({},  this.props)), 
-          React.createElement("div", {className: "app-name"}, "ONWORDS")
-        ), 
-
         React.createElement("div", {className: "body-container"}, 
-
-          React.createElement("div", {className: "button-container"}, 
-            React.createElement(HomeButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
-            React.createElement(FriendsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
-            React.createElement(SearchButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
-            React.createElement(SettingsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+          React.createElement(MinimizeButton, React.__spread({},  this.props)), 
+          React.createElement("ul", {className: "button-container"}, 
+            React.createElement("li", null, 
+              React.createElement(HomeButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+            ), 
+            React.createElement("li", null, 
+              React.createElement(FriendsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+            ), 
+            React.createElement("li", null, 
+              React.createElement(SearchButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+            ), 
+            React.createElement("li", null, 
+              React.createElement(SettingsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+            )
           ), 
-            React.createElement(ReactCSSTransitionGroup, {transitionName: "feedview", transitionLeaveTimeout: 100}, 
               this.state.showFriendsAnnotations ? React.createElement(FriendsAnnotations, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null, 
               this.state.showMyAnnotations ? React.createElement(MyAnnotations, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null, 
               this.state.showSearchView ? React.createElement(SearchView, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null, 
               this.state.showSettingsPage ? React.createElement(Settings, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null
-            )
         )
       )
     );
@@ -23301,7 +23320,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "minimize-button-container"}, 
-        React.createElement("img", {className: "minimize-button", src: chrome.extension.getURL('/assets/right-copy.png')})
+        React.createElement("img", {className: "minimize-button", src: chrome.extension.getURL('/assets/arrow_right.png')})
       )
     );
   }
@@ -23794,8 +23813,12 @@ console.log('inside main');
 var renderComponents = function() {
   var element = "<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300' rel='stylesheet' type='text/css'>";
   var element2 = "<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>";
+  var element3 = "<link href='https://fonts.googleapis.com/css?family=Libre+Baskerville' rel='stylesheet' type='text/css'>";
+  var element4 = "<link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>";
   $('head').after(element);
-  $('head').after(element2)
+  $('head').after(element2);
+  $('head').after(element3);
+  $('head').after(element4);
 
   $('body').append("<div id='annotation-sidebar'></div>");
   $('#annotation-sidebar').append("<div id='annotation-header'></div>")
