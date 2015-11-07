@@ -1,12 +1,7 @@
 var React = require('react');
-var AnnotationComment = require('./feed-friends-annotationlink-like-comment');
+var AnnotationLikeComment = require('./feed-friends-annotationlink-like-comment');
 
 var FriendsAnnotationLink = React.createClass({
-  getInitialState: function() {
-    return {
-      showComments: false
-    };
-  },
   render: function() {
     var info = this.props.info
     var allSharedPost = [];
@@ -32,7 +27,7 @@ var FriendsAnnotationLink = React.createClass({
             return comment;
           });
           console.log('COMMENTS!!', comments);
-          
+
           var likes = article.likes.map(function(like, key) {
             return like;
           });
@@ -69,7 +64,8 @@ var FriendsAnnotationLink = React.createClass({
 
     // creating react elements for all allSharedPost
     var allPost = allSharedPost.map(function(post, key) {
-      console.log('POST: ', post, key);
+      console.log('POST: ', post, key, this.handleCommentClick);
+      // var THIS = this;
       return (
         <div className='feed-friends-annotations-post' key={key}>
           <div className='post-pic-container'>
@@ -96,25 +92,20 @@ var FriendsAnnotationLink = React.createClass({
             </div>
 
             <div className='post-like-comment-container'>
-              <AnnotationComment post={post} key={key}/>            
+              <AnnotationLikeComment post={post} key={key} />            
             </div>
-
           </div>
 
         </div>
       )
-    });
-
-
+    }, this);
 
     return (
       <div className='feed-friends-annotations-container'>
         {allPost}
       </div>
     )
-
   },
-
   componentDidMount: function() {
     $('.redirectLink').click(function(e) {
       e.preventDefault();
