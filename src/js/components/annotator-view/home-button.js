@@ -2,6 +2,7 @@ var React = require('react');
 
 var HomeButton = React.createClass({
   handleClick: function() {
+    debugger;
     this.props.updateView('showFeedView');
   }, 
   render: function() {   

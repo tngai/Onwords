@@ -1,39 +1,59 @@
 .annotationList-appear {
   opacity: 0.7;
-  transform: translateY(-50px);
+  /*transform: translateY(-50px);*/
 }
 
 .annotationList-appear.annotationList-appear-active {
   opacity: 1;
   transition: opacity .1s ease-in;
-  transform: translateY(0px);
+  /*transform: translateY(0px);*/
 }
 
 .feedview-leave {
   opacity: 1;
-  transform: translateY(0px);
 }
 
 .feedview-leave.feedview-leave-active {
   opacity: 0.01;
   transition: opacity .1s ease-in;
-  transform: translateY(500px);
 }
 
-#annotation-sidebar {
+.annotation-text {
+  width: 83%;
+  margin-left: 17%;
+}
+
+.modify-comment-container {
+  float: right;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+
+.annotation-friends-pic {
+  margin: 6px 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #e6e6e6;
+  background-color: black;
+  float: left;
+}
+
+#annotation-sidebar { 
   z-index: 9999999;
   position: fixed; 
   top: 0; 
-  width: 630px; 
-  right: -610px;  
+  width: 630px;
+  right: -600px;
   height: 100%; 
   text-decoration: none;
   list-style-type: none;
+  overflow-y: auto;
 }
 
 #annotation-header {
   height: 38px;
-  background: rgb(42, 67, 83);
+  background: #445878;
   position: absolute;
   left: 30px;
   width: 0px;
@@ -43,9 +63,6 @@
 
 }
 
-#scrollview {
-  color: black; 
-}
 /* React */
 .app-container {
   background: none;
@@ -60,7 +77,7 @@
   width: 25px;
   height: 25px;
   position: absolute;
-  left: -15px;
+  left: 0px;
 }
 .annotator-button {
   width: 25px;
@@ -100,14 +117,14 @@
 }
 .annotator-my-view-button-container {
   float: left;
-  width: 25px; 
-  height: 25px;
-  margin: 7px 0 0 7px;
+  width: 20px; 
+  height: 20px;
+  margin: 10px 5px;
   display: inline-block;
 } 
 .annotator-my-view-button {
-  width: 25px; 
-  height: 25px;
+  width: 20px; 
+  height: 20px;
   border-radius: 50%;
 }
 
@@ -169,7 +186,7 @@
   width: 600px;
   height: 1000px;
   text-align: center;
-  /*background-color: rgb(42, 67, 83);*/
+  /*background-color: #445878;*/
   background-color: #fbfbfb;
 }
 .header-container {
@@ -179,8 +196,8 @@
 }
 .minimize-button-container {
   float: left;
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
 }
 .posts-container {
   border-right: 2px solid black;
@@ -328,38 +345,41 @@
   /*FriendsAnnotationsView*/
 .friends-annotations-view-container {
   width: 300px;
-  height: 700px;
-  text-align: center;
+  /*height: 700px;*/
   overflow-y: scroll;
 }
 .friends-container {
   width: 300px;
-  height: 36px;
-  margin-top: 30px;
+  height: 40px;
+  margin-top: 5px;
   margin-bottom: 10px;
   overflow-x: scroll;
+  text-align: center;
 
 }
 .friends-pic {
   margin: 3px 5px 3px 5px;
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   background-color: black;
   display: inline-block;
 }
-.friends-pic-container{
-  margin: 3px 5px 3px 5px;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: inline-block;
-}
+
 .friend-name {
   visibility: hidden;
 }
 .redirectLink {
   z-index: 1000;
+}
+.friends-heading {
+  text-align: center;
+  width: 90%;
+  border-bottom: 1px solid #b6b6b6;
+  margin: 10px auto 0px;
+  padding-bottom: 5px;
+  font-size: 14px;
+  font-family: 'Lato', sans-serif;
 }
 .friends-annotations-header {
   z-index: 99999;
@@ -369,16 +389,42 @@
   border-bottom: 1px solid #e6e6e6;
   position: fixed;
 }
+
+.annotations-title {
+  position: absolute;
+  width: 50%;
+  font-family: 'lato', sans-serif;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  margin: 10px 25%;
+}
+
 .annotation {
+  color: #31353D;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
   background: #fbfbfb;
-  min-height: 75px;
+  min-height: 55px;
   max-height: 300px;
   overflow: scroll;
-  padding-bottom: 10px;
+  padding-bottom: 7px;
   border-right:1px solid #e6e6e6;
   border-top:1px solid #e6e6e6;
   border-bottom:1px solid #e6e6e6;
   overflow-x: visible;
+  text-align: left;
+}
+#annotationEdit {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
+}
+.username {
+  font-family: 'Lato', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  margin-top: 7px;
+  margin-bottom: 5px;
 }
 .annotationList {
   height: 1000px;
@@ -390,17 +436,17 @@ ul {
   list-style-type: none;
 }
 
-  /*FriendsAnnotationsLink*/
+  /*FeedFriendsAnnotationsLink*/
 .feed-friends-annotations-container {
   width: 600px;
   height: 1000px;
-  text-align: center;
+  text-align: left;
   overflow-y: scroll;
 }
 .feed-friends-annotations-post {
   width: 600px;
   height: 150px;
-  text-align: center;
+  /*text-align: center;*/
   border-bottom: 1px solid black;
 }
 .post-pic-container {
@@ -416,14 +462,15 @@ ul {
   border-radius: 50%;
 }
 .post-body-container {
+  padding: 12.5px 0px 12.5px 0px;
   float: right;
   width: 450px;
-  height: 150px;
+  height: 125px;
 }
 .post-header-container {
   margin-top: 12.5px;
   width: 450px;
-  height: 37.5px; 
+  /*height: 25px; */
 }
 .post-name-container {
   display: inline-block;
@@ -434,11 +481,11 @@ ul {
 }
 .post-title-container {
   width: 450px;
-  height: 37.5px; 
+  /*height: 25px; */
 }
 .post-like-comment-container {
   width: 450px;
-  height: 37.5px; 
+  /*height: 25px; */
 }
 .post-likes-container {
   display: inline-block;
@@ -452,13 +499,13 @@ ul {
 .friends-annotations-buttons-container {
   width: 300px;
   height: 38px;
-  background: rgb(42, 67, 83);
+  background: #445878;
 }
 .my-annotations-button-container {
   float: right;
   height: 25px;
   width: 25px;
-  margin: 7px 0 0 7px;
+  margin: 7px 5px 0 7px;
 }
 .my-annotations-button {
   height: 25px;

@@ -4,6 +4,11 @@ var test = require('./test');
 
 console.log('inside main');
 var renderComponents = function() {
+  var element = "<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300' rel='stylesheet' type='text/css'>";
+  var element2 = "<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>";
+  $('head').after(element);
+  $('head').after(element2)
+
   $('body').append("<div id='annotation-sidebar'></div>");
   $('#annotation-sidebar').append("<div id='annotation-header'></div>")
   $('#annotation-sidebar').append("<div id='annotation-scroll'></div>")
