@@ -2,7 +2,7 @@ var React = require('react');
 
 var AnnotatorMinimizeButton = React.createClass({
   handleClick: function() {
-    this.props.updateView('showAnnotatorButton');
+    this.props.updateView('showFeedView');
 
     // image rendering from files
     // src={chrome.extension.getURL('/assets/right-copy.png')} 
@@ -10,7 +10,7 @@ var AnnotatorMinimizeButton = React.createClass({
   render: function() {
     return (
       <div onClick={this.handleClick} className='annotator-my-view-button-container' >
-        <img className='annotator-my-view-button' src={chrome.extension.getURL('/assets/right-copy.png')} />
+        <img className='annotator-my-view-button' src={chrome.extension.getURL('/assets/arrow_left.png')} />
       </div>
     );
   }
