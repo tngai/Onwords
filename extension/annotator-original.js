@@ -12327,7 +12327,6 @@ App.prototype.destroy = function () {
  * :rtype: Promise
  */
 App.prototype.runHook = function (name, args) {
-  
     var results = [];
     for (var i = 0, len = this.modules.length; i < len; i++) {
         var mod = this.modules[i];
@@ -12977,7 +12976,6 @@ HttpStorage.prototype.setHeader = function (key, value) {
  * :rtype: jqXHR
  */
 HttpStorage.prototype._apiRequest = function (action, obj) {
-    //
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
@@ -13257,10 +13255,11 @@ StorageAdapter.prototype.create = function (obj) {
     );
 };
 
+// Onwords method
 StorageAdapter.prototype.deleteRender = function(arr) {
   console.log(arr);
   this.runHook('beforeRenderDeleted', [arr]);
-}
+};
 
 /**
  * function:: StorageAdapter.prototype.update(obj)
@@ -13357,14 +13356,14 @@ StorageAdapter.prototype.load = function (query) {
     var self = this;
     return this.query(query)
         .then(function (data) {
-
             self.runHook('annotationsLoaded', [data.results]);
         });
 };
 
+// Onwords method
 StorageAdapter.prototype.loadRender = function(arr) {
   this.runHook('annotationsLoaded', [arr]);
-}
+};
 
 // Cycle a store event, keeping track of the annotation object and updating it
 // as necessary.
@@ -13375,10 +13374,8 @@ StorageAdapter.prototype._cycle = function (
     afterEvent
 ) {
     var self = this;
-
     return this.runHook(beforeEvent, [obj])
         .then(function () {
-          // 
             var safeCopy = $.extend(true, {}, obj);
             delete safeCopy._local;
 
@@ -13388,7 +13385,6 @@ StorageAdapter.prototype._cycle = function (
             return Promise.resolve(result);
         })
         .then(function (ret) {
-          // 
             // Empty obj without changing identity
             for (var k in obj) {
                 if (obj.hasOwnProperty(k)) {
@@ -13837,7 +13833,6 @@ var Editor = exports.Editor = Widget.extend({
                 self._onSaveClick(e);
             })
             .on("click." + NS, '.annotator-cancel', function (e) {
-              // 
                 self._onCancelClick(e);
             })
             .on("mouseover." + NS, '.annotator-cancel', function (e) {
@@ -14664,9 +14659,11 @@ var util = require('../util');
 var $ = util.$;
 var Promise = util.Promise;
 
-/////////////////////////////////////////////////////////////////////////////////
+// Onwords
 var userColor = {};
 var colors = ['rgba(255,153,153, 0.25)', 'rgba(255,204,153, 0.25)', 'rgba(204,255,153, 0.25)', 'rgba(153,255,153, 0.25)', 'rgba(153,255,204, 0.25)', 'rgba(153,255,255, 0.25)', 'rgba(153,204,255, 0.25)', 'rgba(255,153,255, 0.25)', 'rgba(255,153,204, 0.25)'];
+// /Onwords
+
 // highlightRange wraps the DOM Nodes within the provided range with a highlight
 // element of the specified class and returns the highlight Elements.
 //
@@ -14674,8 +14671,7 @@ var colors = ['rgba(255,153,153, 0.25)', 'rgba(255,204,153, 0.25)', 'rgba(204,25
 // cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
 //
 // Returns an array of highlight Elements.
-function highlightRange(normedRange, cssClass, userId) {
-  
+function highlightRange(normedRange, cssClass, userId) { // Onwords
     if (typeof cssClass === 'undefined' || cssClass === null) {
         cssClass = 'annotator-hl';
     }
@@ -14687,14 +14683,14 @@ function highlightRange(normedRange, cssClass, userId) {
     // may be the odd abandoned whitespace node in a paragraph that is skipped
     // but better than breaking table layouts.
 
-/////////////////////////////////////////////////////////////////////////////////
+// Onwords
     var index = Math.floor(Math.random() * 9);
 
     if (!userColor[userId]) {
       userColor[userId] = colors[index];
       colors.splice(index, 1);
     }
-/////////////////////////////////////////////////////////////////////////////////
+// /Onwords
 
     var nodes = normedRange.textNodes(),
         results = [];
@@ -14703,7 +14699,7 @@ function highlightRange(normedRange, cssClass, userId) {
         if (!white.test(node.nodeValue)) {
             var hl = global.document.createElement('span');
             hl.className = cssClass;
-            hl.style.backgroundColor = userColor[userId];
+            hl.style.backgroundColor = userColor[userId]; // Onwords
             node.parentNode.replaceChild(hl, node);
             hl.appendChild(node);
             results.push(hl);
@@ -14771,12 +14767,9 @@ Highlighter.prototype.drawAll = function (annotations) {
             var now = annList.splice(0, self.options.chunkSize);
             for (var i = 0, len = now.length; i < len; i++) {
                 highlights = highlights.concat(self.draw(now[i]));
-                // now[i]['offsetTop'] = now[i]._local.highlights[0].offsetTop;
-                // now[i]['offsetLeft'] = now[i]._local.highlights[0].offsetLeft;
             }
             
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// Onwords
             var sortAnnotations = function(arr) {
               arr.sort(function(a,b) {
                   if (a.offsetTop < b.offsetTop) {
@@ -14790,9 +14783,9 @@ Highlighter.prototype.drawAll = function (annotations) {
                       return 1;
                      }
                   }
-                })
+                });
               return arr;
-            }
+            };
             
             
             var uri = window.location.href.split("?")[0];
@@ -14812,7 +14805,7 @@ Highlighter.prototype.drawAll = function (annotations) {
                     uniqueArr.push(item);
                     unique[item.id] = item;
                   }
-                })
+                });
                 var sorted = sortAnnotations(uniqueArr);
                 console.log(sorted);
                 var newObj = {};
@@ -14829,9 +14822,8 @@ Highlighter.prototype.drawAll = function (annotations) {
               } else {
                 return;
               }
-            })
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
+            });
+// /Onwords
 
             // If there are more to do, do them after a delay
             if (annList.length > 0) {
@@ -14856,7 +14848,6 @@ Highlighter.prototype.drawAll = function (annotations) {
 //
 // Returns an Array of drawn highlight elements.
 Highlighter.prototype.draw = function (annotation) {
-  
     var normedRanges = [];
 
     for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
@@ -14881,16 +14872,14 @@ Highlighter.prototype.draw = function (annotation) {
         var normed = normedRanges[j];
         $.merge(
             annotation._local.highlights,
-            highlightRange(normed, this.options.highlightClass, annotation.user_id)
+            highlightRange(normed, this.options.highlightClass, annotation.user_id) // Onwords
         );
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// Onwords
     annotation['offsetTop'] = $(annotation._local.highlights[0]).offset().top;
     annotation['offsetLeft'] = $(annotation._local.highlights[0]).offset().left;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
+// /Onwords
 
     // Save the annotation data on each highlighter element.
     $(annotation._local.highlights).data('annotation', annotation);
@@ -14901,6 +14890,7 @@ Highlighter.prototype.draw = function (annotation) {
             .attr('data-annotation-id', annotation.id);
     }
 
+// Onwords
     $('.annotator-hl').unbind('click').bind('click', function(event) {
       
       var annotations = $(event.target)
@@ -14915,7 +14905,8 @@ Highlighter.prototype.draw = function (annotation) {
         targetAnnotation: annotations[0]
       }});
       document.dispatchEvent(ev);
-    })
+    });
+// /Onwords
 
     return annotation._local.highlights;
 };
@@ -14973,7 +14964,7 @@ exports.standalone = function standalone(element, options) {
         destroy: function () { widget.destroy(); },
         annotationsLoaded: function (anns) { widget.drawAll(anns); },
         annotationCreated: function (ann) { widget.draw(ann); },
-        // annotationDeleted: function (ann) { widget.undraw(ann); },
+        // annotationDeleted: function (ann) { widget.undraw(ann); }, // Onwords
         annotationUpdated: function (ann) { widget.redraw(ann); }
     };
 };
@@ -15237,8 +15228,7 @@ function main(options) {
             }
         });
 
-//////////////////////////////////////////////////////////////////////////////////////////
-
+// Onwords
         document.addEventListener('deleteAnnotation', function(e) {
           console.log('delete this annotation:', e.detail.targetAnnotation);
           app.annotations['delete'](e.detail.targetAnnotation);
@@ -15252,33 +15242,36 @@ function main(options) {
         document.addEventListener('deleteRender', function(e) {
           console.log('get rid of these renders:', e.detail.targetAnnotations);
           app.annotations.deleteRender(e.detail.targetAnnotations);
-        })
+        });
+// /Onwords
 
-//////////////////////////////////////////////////////////////////////////////////////////
+// Onwords: removed s.viewer
+/*
+        s.viewer = new viewer.Viewer({
+            onEdit: function (ann) {
+                // Copy the interaction point from the shown viewer:
+                s.interactionPoint = util.$(s.viewer.element)
+                                         .css(['top', 'left']);
 
-        // s.viewer = new viewer.Viewer({
-        //     onEdit: function (ann) {
-        //         // Copy the interaction point from the shown viewer:
-        //         s.interactionPoint = util.$(s.viewer.element)
-        //                                  .css(['top', 'left']);
+                app.annotations.update(ann);
+            },
+            onDelete: function (ann) {
+                app.annotations['delete'](ann);
+            },
+            permitEdit: function (ann) {
+                return authz.permits('update', ann, ident.who());
+            },
+            permitDelete: function (ann) {
+                return authz.permits('delete', ann, ident.who());
+            },
+            autoViewHighlights: options.element,
+            extensions: options.viewerExtensions
+        });
+        s.viewer.attach();
 
-        //         app.annotations.update(ann);
-        //     },
-        //     onDelete: function (ann) {
-        //         app.annotations['delete'](ann);
-        //     },
-        //     permitEdit: function (ann) {
-        //         return authz.permits('update', ann, ident.who());
-        //     },
-        //     permitDelete: function (ann) {
-        //         return authz.permits('delete', ann, ident.who());
-        //     },
-        //     autoViewHighlights: options.element,
-        //     extensions: options.viewerExtensions
-        // });
-        // s.viewer.attach();
-
-        // injectDynamicStyle();
+        injectDynamicStyle();
+*/
+// /Onwords
     }
 
     return {
@@ -15295,7 +15288,7 @@ function main(options) {
 
         annotationsLoaded: function (anns) { s.highlighter.drawAll(anns); },
         annotationCreated: function (ann) { s.highlighter.draw(ann); },
-        // annotationDeleted: function (ann) { s.highlighter.undraw(ann); },
+        // annotationDeleted: function (ann) { s.highlighter.undraw(ann); }, // Onwords
         annotationUpdated: function (ann) { s.highlighter.redraw(ann); },
 
         beforeAnnotationCreated: function (annotation) {
@@ -15305,10 +15298,13 @@ function main(options) {
             // done.
             return s.editor.load(annotation, s.interactionPoint);
         }
-
-        // beforeAnnotationUpdated: function (annotation) {
-        //     // return s.editor.load(annotation, s.interactionPoint);
-        // }
+// Onwords: removed beforeAnnotationUpdated
+/*
+        beforeAnnotationUpdated: function (annotation) {
+            return s.editor.load(annotation, s.interactionPoint);
+        }
+*/
+// /Onwords
     };
 }
 
@@ -15782,12 +15778,12 @@ var Viewer = exports.Viewer = Widget.extend({
                     }
                 });
         }
+
         this.element
             .on("click." + NS, '.annotator-edit', function (e) {
                 self._onEditClick(e);
             })
             .on("click." + NS, '.annotator-delete', function (e) {
-              // 
                 self._onDeleteClick(e);
             })
             .on("mouseenter." + NS, function () {
