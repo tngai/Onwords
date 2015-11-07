@@ -28,7 +28,7 @@ var Settings = React.createClass({
     chrome.storage.sync.set({'user': user}, function(){
       $.ajax({
         method: "POST",
-        url: "https://test2server.herokuapp.com/api/users/update",
+        url: "http://localhost:9000/api/users/update",
         data: { picUrl: user.picUrl, description: user.description, user_id: user.id }
       }) 
     });
