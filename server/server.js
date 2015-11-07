@@ -23,7 +23,7 @@ var pg = require('pg');
 var Pg = Promise.promisifyAll(require('pg'))
 Promise.promisifyAll(pg.Client.prototype)
 
-var connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/test1';
+var connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/onwords_backend_test';
 
 var selectQueries = require('./db/queries/selectQueries.js'); 
 var insertQueries = require('./db/queries/insertQueries.js');

@@ -111,8 +111,6 @@ var App = React.createClass({
       console.log('spotlight this annotation:', e.detail.targetAnnotation);
     });
 
-
-
     var uri = window.location.href.split("?")[0];
     if (uri.substring(uri.length-11) === 'onwords1991') {
       uri = uri.substring(0, uri.length-13);
