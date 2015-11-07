@@ -121,10 +121,11 @@ var FriendsAnnotationsView = React.createClass({
         <div className='friends-annotations-header'>
           <div className='friends-annotations-buttons-container'>
             <AnnotatorMinimizeButton {...this.props} />
+            <div className='annotations-title'>ANNOTATIONS</div>
             <MyAnnotationsButton toggleFriendAnnotations={this.toggleFriendAnnotations} />
-            <HomeButton {...this.props} />
           </div>
 
+          <div className='friends-heading'>People You Follow</div>
           <div className='friends-container'>
             {friendCarousel}
           </div>

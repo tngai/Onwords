@@ -22,36 +22,9 @@ var annotationComment = React.createClass({
     this.setState({shouldEditComment: false});
   },
 
-  componentDidMount: function() {
-    var self = this;
-    // $('.comment-delete-button').unbind('click').bind('click', (function(e) {
-    //   debugger;
-    //   e.stopPropagation();
-    //   self.props.deleteAnn(self.props.annotation);
-    // }));
-    // var THIS = this;
-    // // esc and enter functionality
-    // $(document).keypress(function(e) {
-    //   var key = e.which;
-    //   console.log('inside!!!!!!');
-    //   if (key == 13) {
-    //     console.log('Enter was pushed!', this);
-    //     THIS.submitChange(e);
-    //     return false;
-    //   }
-    // });
-
-    // $(document).on('keyup', function(e){
-    //   if (e.which == 27) { 
-    //     console.log('ESCAPE KEY PRESSED!');
-    //     // rerender the annotator view?
-    //     $('.annotator-cancel').trigger('click.annotator-editor');
-    //   }    
-    // }); 
-  },
-
 
   render: function() {
+    var userInfo = this.props.userInfo;
     var userColor = $('span[data-annotation-id="' + this.props.annotation.id + '"]').css('background-color'); 
     var divStyle = {
       borderLeft: '4px solid ' + userColor
@@ -76,16 +49,20 @@ var annotationComment = React.createClass({
 
     return (
       <div onClick={clickHandler} className="annotation" style={divStyle}>
-        {!this.state.shouldEditComment ? <p>{annotation.text}</p> : 
+        <img className='annotation-friends-pic' src={userInfo.pic_url} />
+        <p className='username'> Me </p>
+        {!this.state.shouldEditComment ? <p className='annotation-text'>{annotation.text}</p> : 
           <form>
             <textArea id="annotationEdit" style={{height: 100+"px", width: 300+"px"}}>
               {annotation.text}
             </textArea>
             <button className='comment-submit-button' onClick={this.submitChange}>Submit</button>
           </form>
-          }
-        <button className='comment-delete-button' onClick={deleteAnn}>Remove</button>
-        <button className='comment-edit-button' onClick={this.editComment}>Edit</button>
+        }
+        <div className='modify-comment-container'>
+          <button className='comment-delete-button' onClick={deleteAnn}>Remove</button>
+          <button className='comment-edit-button' onClick={this.editComment}>Edit</button>
+        </div>
       </div>
     )
   }

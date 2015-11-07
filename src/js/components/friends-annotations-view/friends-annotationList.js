@@ -12,7 +12,8 @@ var friendsAnnotationList = React.createClass({
       annotations: [],
       spotlight: '',
       spotlightOn: false,
-      mounted: false
+      mounted: false,
+      userInfo: {}
     }
   },
 
@@ -94,6 +95,17 @@ var friendsAnnotationList = React.createClass({
     }
   },
 
+  componentDidMount: function () {
+    chrome.storage.sync.get('user',function(data){
+      var info = {
+        pic_url: data.user.picUrl,
+        username: data.user.fullName,
+        description: data.user.description || 'OnWords  !!  '
+      }
+      this.setState({userInfo: info});  
+    }.bind(this));
+  },
+
   render: function() {
     console.log('hellloooooo, friendsAnnotationList:', this.props.friends);
     debugger;
@@ -112,8 +124,8 @@ var friendsAnnotationList = React.createClass({
             <div key={index}>
               <li className="annotationListItem">
                 {user.toString() === ownId ? 
-                  <AnnotationComment clickHandler={self.clickHandler} user={annotation.user_id} annotation={annotation} deleteAnn={self.deleteAnn} />
-                : <FriendAnnotationComment userpic={friends[user].pic} spotlight={self.state.spotlight} clickHandler={self.clickHandler} user={annotation.user} annotation={annotation}/>
+                  <AnnotationComment userInfo={self.state.userInfo} clickHandler={self.clickHandler} user={annotation.user_id} annotation={annotation} deleteAnn={self.deleteAnn} />
+                : <FriendAnnotationComment username={friends[user].name} userpic={friends[user].pic} spotlight={self.state.spotlight} clickHandler={self.clickHandler} user={annotation.user} annotation={annotation}/>
                 }
               </li>
               <br></br>

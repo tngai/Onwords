@@ -27,11 +27,17 @@ var FeedView = React.createClass({
     console.log('FeedView mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
-        if($(e.target).attr('data-reactid')){
-            e.preventDefault();
-            return;
-        }
-        THIS.props.updateView('showAnnotatorButton');
+      debugger;
+      if($(e.target).attr('data-reactid')){
+          e.preventDefault();
+          return;
+      }
+      if (e.target.id === 'annotation-header') {
+        e.preventDefault();
+        return;
+      }
+
+      THIS.props.updateView('showAnnotatorButton');
     });
   },
   componentWillUnmount: function() {

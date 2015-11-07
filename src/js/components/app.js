@@ -10,6 +10,7 @@ var FriendsAnnotations = require('./friends-annotations-view/friends-annotations
 var App = React.createClass({
   getInitialState: function() {
     return {
+      showAnnotatorButton: true,
       showAnnotatorView: false,
       showFeedView: false,
       showFriendsAnnotations: false,
@@ -26,25 +27,42 @@ var App = React.createClass({
             console.log('showAnnotatorButton!!');
             $(function() {
               $('#annotation-header').animate({width: '0px'}, {queue: false, duration: 200});
-              $('#annotation-sidebar').animate({right: -(610)}, {queue: false, duration: 200});
-            })
+              $('#annotation-sidebar').animate({right: -(600)}, {queue: false, duration: 200});  
+            })       
             .promise().done(function() {
-              self.setState({showFriendsAnnotations: false});
-              self.setState({showAnnotatorView: false});
-              self.setState({showFeedView: false});
-              self.setState({spotlight: ''});
+              setTimeout(function() {
+                self.setState({showFeedView: false})
+                self.setState({showFriendsAnnotations: false});
+                self.setState({showAnnotatorView: false});
+                self.setState({showAnnotatorButton: true});
+                self.setState({spotlight: ''});
+              }, 200)
             })
             break;
         case 'showAnnotatorView':
             if (!this.state.showFeedView) {
-              this.setState({showAnnotatorView: false});
-              this.setState({showFeedView: false});
-              this.setState({showFriendsAnnotations: true}, function() {
-                $(function () {
-                  $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
-                  $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
-                })
+              self.setState({showFriendsAnnotations: true});
+              self.setState({showAnnotatorView: false});
+              self.setState({showFeedView: false}, function() {
+                setTimeout(function() {
+                  $(function () {
+                    self.setState({showAnnotatorButton: false});
+                    $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
+                    $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
+                  })
+                }, 130)
               });
+              // $(function () {
+              //   $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
+              //   $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
+              // })
+              // .promise().done(function() {
+              //   setTimeout(function() {
+              //     self.setState({showAnnotatorView: false});
+              //     self.setState({showFeedView: false});
+              //     self.setState({showFriendsAnnotations: true});
+              //   }, 180)
+              // })
             } else {
               $(function () {
                 $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
@@ -58,6 +76,7 @@ var App = React.createClass({
                 debugger;
                 setTimeout(function() {
                   self.setState({showAnnotatorView: false});
+                  self.setState({showAnnotatorButton: false});
                   self.setState({showFriendsAnnotations: true});
                 }, 200)
               });
@@ -65,6 +84,7 @@ var App = React.createClass({
             break;
         case 'showFeedView':
             $(function() {
+              debugger;
               $('#annotation-sidebar').animate({right: (0)}, {queue: false, duration: 200});
               $('#annotation-header').animate({width: '630px'}, {queue: false, duration: 200})
             })
@@ -72,6 +92,7 @@ var App = React.createClass({
                 self.setState({spotlight: ''});
                 self.setState({showFriendsAnnotations: false});
                 self.setState({showAnnotatorView: false});
+                self.setState({showAnnotatorButton: false});
                 self.setState({showFeedView: true});
               });
             break;
@@ -137,7 +158,7 @@ var App = React.createClass({
   render: function() {
     return (
       <div className='app-container'>      
-        <AnnotatorButton updateView={this.updateView} />
+        {this.state.showAnnotatorButton ? <AnnotatorButton updateView={this.updateView} /> : null}
         {this.state.showAnnotatorView ? <AnnotatorView updateView={this.updateView} /> : null}
         {this.state.showFeedView ? <FeedView updateView={this.updateView} /> : null} 
         {this.state.showFriendsAnnotations ? <FriendsAnnotations annotations={this.state.annotations} changeSpotlight={this.changeSpotlight} spotlight={this.state.spotlight} updateView={this.updateView} /> : null} 
