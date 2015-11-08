@@ -8,7 +8,7 @@ var MyAnnotationsLink = React.createClass({
     var user = window.localStorage.user_id;
     var urls = info.map(function(annotation, index) {
       return (
-        <MyLink annotation={annotation} info={info} user={user} index={this.index} />
+        <MyLink annotation={annotation} info={info} user={user} index={index} />
       );
     });
     return (

@@ -22304,17 +22304,6 @@ var App = React.createClass({displayName: "App",
                   })
                 }, 130)
               });
-              // $(function () {
-              //   $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
-              //   $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
-              // })
-              // .promise().done(function() {
-              //   setTimeout(function() {
-              //     self.setState({showAnnotatorView: false});
-              //     self.setState({showFeedView: false});
-              //     self.setState({showFriendsAnnotations: true});
-              //   }, 180)
-              // })
             } else {
               $(function () {
                 $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
@@ -22338,7 +22327,7 @@ var App = React.createClass({displayName: "App",
             $(function() {
               debugger;
               $('#annotation-sidebar').animate({right: (0)}, {queue: false, duration: 200});
-              $('#annotation-header').animate({width: '630px'}, {queue: false, duration: 200})
+              $('#annotation-header').animate({width: '600px'}, {queue: false, duration: 200})
             })
             .promise().done(function() {
                 self.setState({spotlight: ''});
@@ -22719,8 +22708,8 @@ var FeedFriendsButton = React.createClass({displayName: "FeedFriendsButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
-        React.createElement("img", {className: "feed-button", src: "http://www.clker.com/cliparts/T/W/F/L/n/h/home-png-md.png"})
+      React.createElement("div", {onClick: this.handleClick, className: "feed-nav"}, 
+        "FEED"
       )
     );
   }
@@ -22737,8 +22726,8 @@ var FeedHomeButton = React.createClass({displayName: "FeedHomeButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
-        React.createElement("img", {className: "feed-button", src: "https://cdn3.iconfinder.com/data/icons/black-easy/512/535106-user_512x512.png"})
+      React.createElement("div", {onClick: this.handleClick, className: "feed-nav"}, 
+        "MY POSTS"
       )
     );
   }
@@ -22753,15 +22742,20 @@ var MyLink = React.createClass({displayName: "MyLink",
   getInitialState: function() {
     return {
       showComments: false,
-      showLikes: false, 
-      annotation: [] 
+      showLikes: false,  
+      annotation: {},
+      generalPost: ''
     };
+  },
+  componentWillMount: function() {
+    this.setState({annotation: this.props.annotation, generalPost: this.props.annotation.general_post});
   },
   handleClick: function(e) {
     e.preventDefault();
     // console.log('stuff',this);
-    var message = this.refs.postContent.getDOMNode().value;
-    var uri = this.refs.uri.getDOMNode('a').href;
+    debugger;
+    var message = $('.inputContent#'+this.props.index).val();
+    var uri = this.state.annotation.uri_link;
     var user = window.localStorage.user_id;
     console.log('USER ID!!!', user, message, uri);
     var generalPost = {
@@ -22784,31 +22778,38 @@ var MyLink = React.createClass({displayName: "MyLink",
       data: generalPost,
       dataType: 'json'
     });
+    this.setState({generalPost: generalPost.generalPost});
 // /api/personalfeed/share?user_id=INTEGER&uri=STRING&is_shared=BOOLEAN
   },
   render: function() {
-    console.log('in MyAnnotationsLink', this.props.annotation);
-    var annotation = this.props.annotation;
+    console.log('in MyAnnotationsLink', this.state.annotation);
+    debugger;
+    var annotation = this.state.annotation;
     var numberOfLikes = annotation.likes.length;
     var redirectUri = annotation.uri_link;
+    var generalPost = this.state.generalPost;
+
     console.log(redirectUri);
     return (
       React.createElement("div", {key: this.props.index, className: "my-annotations-link-container"}, 
         React.createElement("div", {className: "my-annotations-title-container"}, 
           React.createElement("a", {href: redirectUri, ref: "uri", target: "blank", className: "redirectLink"}, annotation.title)
         ), 
-        React.createElement("div", {className: "my-annotations-likes-container"}, 
-          "Likes : ", numberOfLikes
-        ), 
-        React.createElement("div", {className: "my-annotations-form-container"}, 
-          React.createElement("form", {onSubmit: this.handleClick}, 
-              React.createElement("input", {id: "inputContent", type: "text", placeholder: "Write a comment...", ref: "postContent"}), 
-              React.createElement("button", {type: "submit"}, "Post")
+        
+        !generalPost ? 
+          React.createElement("div", {className: "my-annotations-form-container"}, 
+            React.createElement("form", {autocomplete: "off", onSubmit: this.handleClick}, 
+                React.createElement("textArea", {id: this.props.index, className: "inputContent", type: "text", placeholder: "Write a comment...", ref: "postContent"}), 
+                React.createElement("button", {className: "my-annotations-submit-button", onClick: this.handleClick}, "Submit")
+            )
           )
-        )
+        : React.createElement("div", {className: "my-annotations-general-post"}, generalPost)
+        
+
       )
     )
   }
+
 });
 
 module.exports = MyLink;
@@ -22824,7 +22825,7 @@ var MyAnnotationsLink = React.createClass({displayName: "MyAnnotationsLink",
     var user = window.localStorage.user_id;
     var urls = info.map(function(annotation, index) {
       return (
-        React.createElement(MyLink, {annotation: annotation, info: info, user: user, index: this.index})
+        React.createElement(MyLink, {annotation: annotation, info: info, user: user, index: index})
       );
     });
     return (
@@ -22855,24 +22856,33 @@ var MyAnnotationsLink = require('./feed-my-annotations-link');
 var MyAnnotations = React.createClass({displayName: "MyAnnotations",
   getInitialState: function() {
     return {
-      info: []
+      info: [],
+      user: {}
     };
-  },
-  componentWillMount: function() {
-
   },
   componentDidMount: function() {
     console.log('MyAnnotations - componentDidMount');
     var user = window.localStorage.user_id;
     var uri = window.location.href.split("?")[0];
     var completeUri = 'https://test2server.herokuapp.com/api/personalfeed?user_id=' + user;
+    var self = this;
     $.get(completeUri, function(result) {
-      if (this.isMounted()) {
-        this.setState({
+      if (self.isMounted()) {
+        self.setState({
           info: result
         });
       }
-      console.log('MyAnnotations state:INFO = ', this.state.info);
+      console.log('MyAnnotations state:INFO = ', self.state.info);
+    });
+
+
+    chrome.storage.sync.get('user',function(data){
+      var userInfo = {
+        pic_url: data.user.picUrl,
+        username: data.user.fullName,
+        description: data.user.description || 'OnWords  !!  '
+      };
+      this.setState({user: userInfo});
     }.bind(this));
 
     $(document).on('click', '.redirectLink', function(e) {
@@ -22881,12 +22891,17 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
     });
   },
   componentWillUnmount: function() {
+    $('#annotation-header').slideDown('fast');
     console.log('MyAnnotationsLink - componentWillUnmount');
     $(document).off();
   },
   render: function() {
     return (
       React.createElement("div", {className: "feed-my-annotations-container"}, 
+       
+        React.createElement("div", {className: "banner-pic-container"}, 
+          React.createElement("img", {className: "banner-pic", src: this.state.user.pic_url})
+        ), 
         React.createElement(MyAnnotationsLink, {info: this.state.info})
       )
     );
@@ -22904,8 +22919,8 @@ var FeedSearchButton = React.createClass({displayName: "FeedSearchButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
-        React.createElement("img", {className: "feed-button", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Feedbin-Icon-home-search.svg/2000px-Feedbin-Icon-home-search.svg.png"})
+      React.createElement("div", {onClick: this.handleClick, className: "search-button-container"}, 
+        React.createElement("img", {className: "search-button", src: chrome.extension.getURL('/assets/search.png')})
       )
     );
   }
@@ -23223,6 +23238,9 @@ var FeedView = React.createClass({displayName: "FeedView",
       if(getSelection().toString()) {
         return;
       }
+      if (e.target.className === 'annotation-header') {
+        return;
+      }
       if($(e.target).attr('data-reactid')) {
         e.preventDefault();
         return;
@@ -23299,25 +23317,28 @@ var FeedView = React.createClass({displayName: "FeedView",
   render: function() {
     return (
       React.createElement("div", {className: "feed-view-container"}, 
-        React.createElement("div", {className: "header-container"}, 
-          React.createElement(MinimizeButton, React.__spread({},  this.props)), 
-          React.createElement("div", {className: "app-name"}, "ONWORDS")
-        ), 
-
         React.createElement("div", {className: "body-container"}, 
-
-          React.createElement("div", {className: "button-container"}, 
-            React.createElement(HomeButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
-            React.createElement(FriendsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
-            React.createElement(SearchButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})), 
-            React.createElement(SettingsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+          React.createElement(MinimizeButton, React.__spread({},  this.props)), 
+          React.createElement("ul", {className: "nav-container"}, 
+            React.createElement("li", null, 
+              React.createElement(FriendsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+            ), 
+            React.createElement("li", null, 
+              React.createElement(HomeButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+            ), 
+            React.createElement("li", null, 
+              React.createElement(SettingsButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+            )
           ), 
-            React.createElement(ReactCSSTransitionGroup, {transitionName: "feedview", transitionLeaveTimeout: 100}, 
+          React.createElement("ul", {className: "button-container"}, 
+            React.createElement("li", null, 
+              React.createElement(SearchButton, React.__spread({},  this.props, {updateBodyView: this.updateBodyView}))
+            )
+          ), 
               this.state.showFriendsAnnotations ? React.createElement(FriendsAnnotations, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null, 
               this.state.showMyAnnotations ? React.createElement(MyAnnotations, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null, 
               this.state.showSearchView ? React.createElement(SearchView, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null, 
               this.state.showSettingsPage ? React.createElement(Settings, React.__spread({},  this.props, {updateBodyView: this.updateBodyView})) : null
-            )
         )
       )
     );
@@ -23336,7 +23357,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "minimize-button-container"}, 
-        React.createElement("img", {className: "minimize-button", src: chrome.extension.getURL('/assets/right-copy.png')})
+        React.createElement("img", {className: "minimize-button", src: chrome.extension.getURL('/assets/arrow_right.png')})
       )
     );
   }
@@ -23353,8 +23374,8 @@ var SettingsButton = React.createClass({displayName: "SettingsButton",
   },
   render: function() {
     return (
-      React.createElement("div", {onClick: this.handleClick, className: "feed-button"}, 
-        React.createElement("img", {className: "feed-button", src: "https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_settings_48px-128.png"})
+      React.createElement("div", {onClick: this.handleClick, className: "feed-nav"}, 
+        "SETTINGS"
       )
     );
   }
@@ -23828,9 +23849,13 @@ var test = require('./test');
 console.log('inside main');
 var renderComponents = function() {
   var element = "<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300' rel='stylesheet' type='text/css'>";
-  var element2 = "<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>";
+  var element2 = "<link href='https://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>";
+  var element3 = "<link href='https://fonts.googleapis.com/css?family=Libre+Baskerville' rel='stylesheet' type='text/css'>";
+  var element4 = "<link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>";
   $('head').after(element);
-  $('head').after(element2)
+  $('head').after(element2);
+  $('head').after(element3);
+  $('head').after(element4);
 
   $('body').append("<div id='annotation-sidebar'></div>");
   $('#annotation-sidebar').append("<div id='annotation-header'></div>")
