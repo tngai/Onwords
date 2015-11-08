@@ -445,7 +445,7 @@ ul {
 }
 .feed-friends-annotations-post {
   width: 600px;
-  height: 150px;
+  min-height: 150px;
   /*text-align: center;*/
   border-bottom: 1px solid black;
 }
@@ -493,6 +493,51 @@ ul {
 }
 .post-comments-container {
   display: inline-block;
+  width: 600px;
+  overflow-y: scroll;
+}
+.post-likes-and-comments-container {
+  width: 450px;
+}
+
+
+/*PostComments*/
+.comment-main-container {
+  width: 600px;
+  min-height: 50px;
+}
+.comment-containers {
+  width: 596px;
+  min-height: 65px;
+  background: white;
+  padding: 5px 5px 5px 5px;
+  border: solid 2px black;
+}
+.comment-header {
+  width: 600px;
+  height: 25px;
+}
+.comment-pic-container {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+}
+.comment-pic {
+  width: 25px;
+  height: 25px; 
+  display: inline-block;
+  float: left;
+  margin-right: 5px;
+  border-radius: 50%;
+}
+.comment-username {
+  width: 500px;
+  height: 25px;
+  display: inline-block;
+}
+.comment-message {
+  min-height: 25px;
+  width: 600px;
 }
 
 /*FriendsButtonsContainer*/
