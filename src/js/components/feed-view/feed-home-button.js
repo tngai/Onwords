@@ -6,8 +6,8 @@ var FeedHomeButton = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={this.handleClick} className='feed-button'>
-        <img className='feed-button' src='https://cdn3.iconfinder.com/data/icons/black-easy/512/535106-user_512x512.png' />
+      <div onClick={this.handleClick} className='feed-nav'>
+        MY POSTS
       </div>
     );
   }

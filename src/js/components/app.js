@@ -52,17 +52,6 @@ var App = React.createClass({
                   })
                 }, 130)
               });
-              // $(function () {
-              //   $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
-              //   $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
-              // })
-              // .promise().done(function() {
-              //   setTimeout(function() {
-              //     self.setState({showAnnotatorView: false});
-              //     self.setState({showFeedView: false});
-              //     self.setState({showFriendsAnnotations: true});
-              //   }, 180)
-              // })
             } else {
               $(function () {
                 $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
@@ -86,7 +75,7 @@ var App = React.createClass({
             $(function() {
               debugger;
               $('#annotation-sidebar').animate({right: (0)}, {queue: false, duration: 200});
-              $('#annotation-header').animate({width: '630px'}, {queue: false, duration: 200})
+              $('#annotation-header').animate({width: '600px'}, {queue: false, duration: 200})
             })
             .promise().done(function() {
                 self.setState({spotlight: ''});
