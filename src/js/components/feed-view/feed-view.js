@@ -35,6 +35,9 @@ var FeedView = React.createClass({
       if(getSelection().toString()) {
         return;
       }
+      if (e.target.className === 'annotation-header') {
+        return;
+      }
       if($(e.target).attr('data-reactid')) {
         e.preventDefault();
         return;
@@ -113,18 +116,20 @@ var FeedView = React.createClass({
       <div className='feed-view-container'>
         <div className='body-container'>
           <MinimizeButton {...this.props} />
-          <ul className='button-container'>
+          <ul className='nav-container'>
+            <li>
+              <FriendsButton {...this.props} updateBodyView={this.updateBodyView} />
+            </li>
             <li>
               <HomeButton {...this.props} updateBodyView={this.updateBodyView} />
             </li>
             <li>
-              <FriendsButton {...this.props} updateBodyView={this.updateBodyView} />
+              <SettingsButton {...this.props} updateBodyView={this.updateBodyView} />
             </li>
+          </ul>
+          <ul className='button-container'>
             <li>  
               <SearchButton {...this.props} updateBodyView={this.updateBodyView} />
-            </li>
-            <li>
-              <SettingsButton {...this.props} updateBodyView={this.updateBodyView} />
             </li>
           </ul>
               {this.state.showFriendsAnnotations ? <FriendsAnnotations {...this.props} updateBodyView={this.updateBodyView} /> : null}

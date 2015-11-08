@@ -5,8 +5,7 @@ var MyAnnotations = React.createClass({
   getInitialState: function() {
     return {
       info: [],
-      user: {},
-      showHeader: false
+      user: {}
     };
   },
   componentDidMount: function() {
@@ -15,16 +14,13 @@ var MyAnnotations = React.createClass({
     var uri = window.location.href.split("?")[0];
     var completeUri = 'https://test2server.herokuapp.com/api/personalfeed?user_id=' + user;
     var self = this;
-    $('#annotation-header').slideUp('fast', function() {
-      $.get(completeUri, function(result) {
-        if (self.isMounted()) {
-          self.setState({
-            info: result
-          });
-        }
-        console.log('MyAnnotations state:INFO = ', self.state.info);
-        self.setState({showHeader: true});
-      });
+    $.get(completeUri, function(result) {
+      if (self.isMounted()) {
+        self.setState({
+          info: result
+        });
+      }
+      console.log('MyAnnotations state:INFO = ', self.state.info);
     });
 
 

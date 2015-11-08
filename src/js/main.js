@@ -5,7 +5,7 @@ var test = require('./test');
 console.log('inside main');
 var renderComponents = function() {
   var element = "<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300' rel='stylesheet' type='text/css'>";
-  var element2 = "<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>";
+  var element2 = "<link href='https://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>";
   var element3 = "<link href='https://fonts.googleapis.com/css?family=Libre+Baskerville' rel='stylesheet' type='text/css'>";
   var element4 = "<link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>";
   $('head').after(element);

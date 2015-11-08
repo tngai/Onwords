@@ -6,8 +6,8 @@ var FeedHomeButton = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={this.handleClick} className='feed-button'>
-        PROFILE
+      <div onClick={this.handleClick} className='feed-nav'>
+        MY POSTS
       </div>
     );
   }

@@ -53,14 +53,13 @@
 }
 
 #annotation-header {
+  z-index: 1;
   height: 38px;
-  background: #2c3e50;
+  background: #475F77;
   position: absolute;
   left: 31px;
   width: 0px;
-  border-top: 1px solid #e6e6e6;
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
+  margin-left: 2px;
 }
 
 /* React */
@@ -174,8 +173,6 @@
   border-bottom: 1px solid black;
   padding: 0px 20px 5px 20px;
 }
-  
-
 
   /* Feed View */
 .app-name {
@@ -186,7 +183,7 @@
   width: 600px;
 
   text-align: center;
-  /*background-color: #2c3e50;*/
+  /*background-color: #475F77;*/
   background-color: #fbfbfb;
 }
 .header-container {
@@ -240,28 +237,55 @@
 }
 /*ButtonContainer*/
 .button-container {
-  margin-top: 20px; 
-  margin-right: 10px;
-  height: 130px;
-  width: 25px;
   position: absolute;
-  top: 0;
+  width: 7%;
+  z-index: 1;
   right: 0;
+  margin-top: 10px;
 }
 .button-container li {
-  display: inline;
+  display: inline-block;
 }
-.feed-button {
-  margin-top: 2px;
+.nav-container {
+  position: absolute;
+  z-index: 1;
+  width: 50%;
+  margin-top: 10px;
+  margin-left: 35px;
+  padding: 0px;
+}
+.nav-container li {
+  display: inline-block;
+}
+.search-button-container {
+  height: 20px;
+  width: 20px;
+}
+.search-button {
+  height: 20px;
+  width: 20px;
+}
+.settings-button {
   height: 25px;
   width: 25px;
+
 }
-.feed-button:hover {
-  background-color: rgb(255, 61, 46);
+.feed-nav:hover {
+  border-bottom: 1px solid white;
   border-radius: 3px;
 }
 
+.feed-nav {
+  font-family: 'lato', sans-serif;
+  font-size: 16px;
+  color: white;
+  margin-right: 35px;
+}
+
 /*Settings*/
+.settings-view-container {
+  margin-top: 38px;
+}
 .settings-profile-edit-icon {
   height: 16px;
   width: 16px;
@@ -303,10 +327,17 @@
   height: 800px;
   width: 600px;
   border: 1px, bold, #b6b6b6;
+  margin-top: 38px;
 }
 
 .my-annotations-title-container {
   font-family: 'libre baskerville', serif;
+  margin-bottom: 15px;
+  height: 44px;
+}
+
+.my-annotations-title-container a{
+  color: black;
 }
 
 .my-annotations-likes-container {
@@ -317,21 +348,68 @@
   display: inline-block;
   width: 600px;
   background: white;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 .my-annotations-link-container {
   text-align: left;
+  overflow: auto;
   border-bottom: 1px solid #b6b6b6;
   display: inline-block;
-  height: 100px;
+  min-height: 100px;
   width: 495px;
-  margin: 15px 0px 15px 0px;
   /*background-color: rgb(92, 162, 190);  */
   background-color: rgb(255, 255, 255);
-  
+  color: black;
+  margin-top: 7px;
   /*border: 1px solid;
   border-color: #e5e6e9 #dfe0e4 #d0d1d5;*/
   border-radius: 3px;
+}
+.my-annotations-submit-button {
+  float: right;
+  border: none;
+  background: none;
+  font-family: 'source sans pro', sans-serif;
+  font-size: 17px;
+}
+.my-annotations-general-post {
+  font-size: 17px;
+  font-family: 'source sans pro', sans-serif;
+  color: grey;
+}
+.my-annotations-likes-container{
+  position: absolute;
+  bottom: 5px;
+  width: 6%;
+  float: right;
+}
+
+.my-annotations-heart-button {
+  height: 16px;
+  width: 16px;
+  margin-right: 5px;
+}
+.my-annotations-like-number {
+  display: inline;
+  font-family: 'source sans pro', sans-serif;
+}
+.inputContent {
+  color: black;
+  width: 100%;
+  padding: 0px;
+  border: none;
+  resize: none; 
+  font-family: 'source sans pro', sans-serif;
+  font-size: 17px;
+}
+::-webkit-input-placeholder {
+  color: #b6b6b6;
+}
+input:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
 }
 .redirectLink {
   /*color: white;*/
@@ -426,10 +504,10 @@
 .friends-annotations-header {
   z-index: 99999;
   background: #fbfbfb;
-  border-top: 1px solid #e6e6e6;
-  border-left: 1px solid #e6e6e6;
-  border-bottom: 1px solid #e6e6e6;
   position: fixed;
+  border-right: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
+  border-left: 1px solid #e6e6e6;
 }
 
 .annotations-title {
@@ -445,7 +523,7 @@
 .annotation {
   color: #31353D;
   font-family: 'Source Sans Pro', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   background: #fbfbfb;
   min-height: 55px;
   max-height: 300px;
@@ -484,6 +562,7 @@ ul {
   height: 1000px;
   text-align: left;
   overflow-y: scroll;
+  margin-top: 38px;
 }
 .feed-friends-annotations-post {
   width: 600px;
@@ -541,7 +620,7 @@ ul {
 .friends-annotations-buttons-container {
   width: 300px;
   height: 38px;
-  background: #2c3e50;
+  background: #475F77;
 }
 .my-annotations-button-container {
   float: right;
