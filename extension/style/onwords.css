@@ -635,7 +635,6 @@ ul {
   margin-right: 10px;
 }
 .post-comments-container {
-  display: none;
   width: 590px;
   overflow-y: scroll;
 }
@@ -681,6 +680,7 @@ ul {
   /*border-top: solid 1px black;*/
 }
 .comment-header {
+  margin-bottom: 5px;
   width: 580px;
   height: 25px;
   display: inline-block;
@@ -711,7 +711,20 @@ ul {
   width: 100%;
   display: inline-block;
 }
-
+.comment-input {
+  height: 25px;
+  width: 500px;
+}
+.comment-input-button {
+  margin-left: 10px;
+  height: 25px;
+  width: 30px;
+  background-color: white;
+  border: solid 1px rgb(248, 255, 255);
+}
+.comment-main-containers {
+  background-color: #f9fafc;
+}
 /*FriendsButtonsContainer*/
 .friends-annotations-buttons-container {
   width: 300px;
