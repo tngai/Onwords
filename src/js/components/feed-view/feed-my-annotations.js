@@ -33,10 +33,6 @@ var MyAnnotations = React.createClass({
       this.setState({user: userInfo});
     }.bind(this));
 
-    $(document).on('click', '.redirectLink', function(e) {
-      var url = $(this).attr('href');
-      window.open(url, '_blank');  
-    });
   },
   componentWillUnmount: function() {
     $('#annotation-header').slideDown('fast');
