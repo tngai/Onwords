@@ -1,6 +1,5 @@
 var React = require('react');
 var AnnotatorBody = require('./annotator-body');
-var AnnotatorHeader = require('../header/header');
 var HomeButton = require('./home-button');
 var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 var FriendsAnnotationsButton = require('./friends-annotations-button');

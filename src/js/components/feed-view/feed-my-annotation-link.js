@@ -14,12 +14,10 @@ var MyLink = React.createClass({
   },
   handleClick: function(e) {
     e.preventDefault();
-    // console.log('stuff',this);
     debugger;
     var message = $('.inputContent#'+this.props.index).val();
     var uri = this.state.annotation.uri_link;
     var user = window.localStorage.user_id;
-    console.log('USER ID!!!', user, message, uri);
     var generalPost = {
       uri: uri,
       user_id: user,
@@ -41,7 +39,7 @@ var MyLink = React.createClass({
       dataType: 'json'
     });
     this.setState({generalPost: generalPost.generalPost});
-// /api/personalfeed/share?user_id=INTEGER&uri=STRING&is_shared=BOOLEAN
+
   },
   render: function() {
     console.log('in MyAnnotationsLink', this.state.annotation);

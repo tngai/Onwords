@@ -21874,19 +21874,8 @@ var renderAnnotations = function() {
   }
 
   return {
-    // annotationsLoaded: function(annotations) {
-    //   var uri = window.location.href.split("?")[0];
-    //   console.log("annotations loaded", annotations);
-    //   var obj = {};
-    //   obj[uri] = annotations;
-    //   chrome.storage.local.set(obj);
-    // },
-
     annotationCreated: function(annotation) {
-      console.log("annotation created:", annotation);
       chrome.storage.local.get(uri, function(obj) {
-        debugger;
-        console.log('values before CREATING:', obj[uri])
         if (!obj[uri]) {
           obj[uri] = [];
         }
@@ -21904,7 +21893,6 @@ var renderAnnotations = function() {
              }
           }
         })
-        console.log('values after CREATING:', obj[uri]);
         var newObj = {};
         newObj[uri] = obj[uri];
         chrome.storage.local.set(newObj);
@@ -21915,14 +21903,11 @@ var renderAnnotations = function() {
       var id = annotation.id;
       $('[data-annotation-id=' + id + ']').contents().unwrap();
       chrome.storage.local.get(uri, function(obj) {
-        debugger;
-        console.log('values before DELETING:', obj[uri]);
         for (var i = 0; i < obj[uri].length; i++) {
           if (obj[uri][i].id === annotation.id) {
             obj[uri].splice(i, 1);
             var newObj = {};
             newObj[uri] = obj[uri];
-            console.log('values after DELETING:', newObj[uri]);
             chrome.storage.local.set(newObj);
           }
         }
@@ -21930,9 +21915,7 @@ var renderAnnotations = function() {
     },
 
     beforeRenderDeleted: function(annotations) {
-      debugger;
       chrome.storage.local.get(uri, function(obj) {
-        debugger;
         for (var i = 0; i < annotations.length; i++) {
           var id = annotations[i].id;
           $('[data-annotation-id=' + id + ']').contents().unwrap();
@@ -21951,13 +21934,11 @@ var renderAnnotations = function() {
 
     beforeAnnotationUpdated: function(annotation) {
       chrome.storage.local.get(uri, function(obj) {
-        console.log('values before UPDATING:', obj[uri]);
         for (var i = 0; i < obj[uri].length; i++) {
           if (obj[uri][i].id === annotation.id) {
             obj[uri][i].text = annotation.text;
             var newObj = {};
             newObj[uri] = obj[uri];
-            console.log('values after UPDATING', newObj[uri]);
             chrome.storage.local.set(newObj);
           }
         }
@@ -22012,7 +21993,6 @@ var annotationComment = React.createClass({displayName: "annotationComment",
     };
 
     var deleteAnn = function(e) {
-      debugger;
       console.log(e.target);
       e.stopPropagation();
       self.props.deleteAnn(annotation);
@@ -22164,7 +22144,6 @@ module.exports = AnnotatorMinimizeButton;
 },{"react":174}],181:[function(require,module,exports){
 var React = require('react');
 var AnnotatorBody = require('./annotator-body');
-var AnnotatorHeader = require('../header/header');
 var HomeButton = require('./home-button');
 var AnnotatorMinimizeButton = require('./annotator-minimize-button');
 var FriendsAnnotationsButton = require('./friends-annotations-button');
@@ -22212,7 +22191,7 @@ var AnnotatorView = React.createClass({displayName: "AnnotatorView",
 
 module.exports = AnnotatorView;
 
-},{"../header/header":206,"./annotator-body":178,"./annotator-minimize-button":180,"./friends-annotations-button":182,"./home-button":183,"react":174}],182:[function(require,module,exports){
+},{"./annotator-body":178,"./annotator-minimize-button":180,"./friends-annotations-button":182,"./home-button":183,"react":174}],182:[function(require,module,exports){
 var React = require('react');
 
 var FriendsAnnotationsButton = React.createClass({displayName: "FriendsAnnotationsButton",
@@ -22275,71 +22254,71 @@ var App = React.createClass({displayName: "App",
     var self = this;
 
     switch(action) {
-        case 'showAnnotatorButton':
-            console.log('showAnnotatorButton!!');
-            $(function() {
-              $('#annotation-header').animate({width: '0px'}, {queue: false, duration: 200});
-              $('#annotation-sidebar').animate({right: -(600)}, {queue: false, duration: 200});  
-            })       
-            .promise().done(function() {
-              setTimeout(function() {
-                self.setState({showFeedView: false})
-                self.setState({showFriendsAnnotations: false});
-                self.setState({showAnnotatorView: false});
-                self.setState({showAnnotatorButton: true});
-                self.setState({spotlight: ''});
-              }, 200)
-            })
-            break;
-        case 'showAnnotatorView':
-            if (!this.state.showFeedView) {
-              self.setState({showFriendsAnnotations: true});
-              self.setState({showAnnotatorView: false});
-              self.setState({showFeedView: false}, function() {
-                setTimeout(function() {
+            case 'showAnnotatorButton':
+                console.log('showAnnotatorButton!!');
+                $(function() {
+                  $('#annotation-header').animate({width: '0px'}, {queue: false, duration: 200});
+                  $('#annotation-sidebar').animate({right: -(600)}, {queue: false, duration: 200});  
+                })       
+                .promise().done(function() {
+                  setTimeout(function() {
+                    self.setState({showFeedView: false})
+                    self.setState({showFriendsAnnotations: false});
+                    self.setState({showAnnotatorView: false});
+                    self.setState({showAnnotatorButton: true});
+                    self.setState({spotlight: ''});
+                  }, 200)
+                })
+                break;
+            case 'showAnnotatorView':
+                if (!this.state.showFeedView) {
+                  self.setState({showFriendsAnnotations: true});
+                  self.setState({showAnnotatorView: false});
+                  self.setState({showFeedView: false}, function() {
+                    setTimeout(function() {
+                      $(function () {
+                        self.setState({showAnnotatorButton: false});
+                        $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
+                        $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
+                      })
+                    }, 130)
+                  });
+                } else {
                   $(function () {
-                    self.setState({showAnnotatorButton: false});
                     $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
                     $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
+                    setTimeout(function() {
+                      self.setState({showFeedView: false})
+                    }, 100);
+                  
                   })
-                }, 130)
-              });
-            } else {
-              $(function () {
-                $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
-                $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
-                setTimeout(function() {
-                  self.setState({showFeedView: false})
-                }, 100);
-              
-              })
-              .promise().done(function() {
-                debugger;
-                setTimeout(function() {
-                  self.setState({showAnnotatorView: false});
-                  self.setState({showAnnotatorButton: false});
-                  self.setState({showFriendsAnnotations: true});
-                }, 200)
-              });
-            }
-            break;
-        case 'showFeedView':
-            $(function() {
-              debugger;
-              $('#annotation-sidebar').animate({right: (0)}, {queue: false, duration: 200});
-              $('#annotation-header').animate({width: '600px'}, {queue: false, duration: 200})
-            })
-            .promise().done(function() {
-                self.setState({spotlight: ''});
-                self.setState({showFriendsAnnotations: false});
-                self.setState({showAnnotatorView: false});
-                self.setState({showAnnotatorButton: false});
-                self.setState({showFeedView: true});
-              });
-            break;
-        default:
-            console.log('nothing happened')
-    }
+                  .promise().done(function() {
+                    debugger;
+                    setTimeout(function() {
+                      self.setState({showAnnotatorView: false});
+                      self.setState({showAnnotatorButton: false});
+                      self.setState({showFriendsAnnotations: true});
+                    }, 200)
+                  });
+                }
+                break;
+            case 'showFeedView':
+                $(function() {
+                  debugger;
+                  $('#annotation-sidebar').animate({right: (0)}, {queue: false, duration: 200});
+                  $('#annotation-header').animate({width: '600px'}, {queue: false, duration: 200})
+                })
+                .promise().done(function() {
+                    self.setState({spotlight: ''});
+                    self.setState({showFriendsAnnotations: false});
+                    self.setState({showAnnotatorView: false});
+                    self.setState({showAnnotatorButton: false});
+                    self.setState({showFeedView: true});
+                  });
+                break;
+            default:
+                console.log('nothing happened')
+        }
   },
 
   componentDidMount: function() {
@@ -22349,7 +22328,6 @@ var App = React.createClass({displayName: "App",
       if (!self.state.showFriendsAnnotations) {
         self.updateView('showAnnotatorView');
       }
-      console.log('spotlight this annotation:', e.detail.targetAnnotation);
     });
 
     var uri = window.location.href.split("?")[0];
@@ -22717,12 +22695,10 @@ var MyLink = React.createClass({displayName: "MyLink",
   },
   handleClick: function(e) {
     e.preventDefault();
-    // console.log('stuff',this);
     debugger;
     var message = $('.inputContent#'+this.props.index).val();
     var uri = this.state.annotation.uri_link;
     var user = window.localStorage.user_id;
-    console.log('USER ID!!!', user, message, uri);
     var generalPost = {
       uri: uri,
       user_id: user,
@@ -22744,7 +22720,7 @@ var MyLink = React.createClass({displayName: "MyLink",
       dataType: 'json'
     });
     this.setState({generalPost: generalPost.generalPost});
-// /api/personalfeed/share?user_id=INTEGER&uri=STRING&is_shared=BOOLEAN
+
   },
   render: function() {
     console.log('in MyAnnotationsLink', this.state.annotation);
@@ -22857,7 +22833,6 @@ var MyAnnotations = React.createClass({displayName: "MyAnnotations",
   },
   componentWillUnmount: function() {
     $('#annotation-header').slideDown('fast');
-    console.log('MyAnnotationsLink - componentWillUnmount');
     $(document).off();
   },
   render: function() {
@@ -23171,8 +23146,6 @@ var ReactAddons = require('react/addons');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var MinimizeButton = require('./minimize-button');
-var Header = require('../header/header');
-var AnnotatorMixin = require('../mixins/annotatormixin');
 var SettingsButton = require('./settings-button');
 var HomeButton = require('./feed-home-button');
 var FriendsButton = require('./feed-friends-button');
@@ -23312,7 +23285,7 @@ var FeedView = React.createClass({displayName: "FeedView",
 
 module.exports = FeedView;
 
-},{"../header/header":206,"../mixins/annotatormixin":207,"./feed-friends-annotations":188,"./feed-friends-button":189,"./feed-home-button":190,"./feed-my-annotations":193,"./feed-search-button":194,"./feed-search-view":197,"./feed-settings":198,"./minimize-button":200,"./settings-button":201,"react":174,"react/addons":2}],200:[function(require,module,exports){
+},{"./feed-friends-annotations":188,"./feed-friends-button":189,"./feed-home-button":190,"./feed-my-annotations":193,"./feed-search-button":194,"./feed-search-view":197,"./feed-settings":198,"./minimize-button":200,"./settings-button":201,"react":174,"react/addons":2}],200:[function(require,module,exports){
 var React = require('react');
 
 var MinimizeButton = React.createClass({displayName: "MinimizeButton",
@@ -23414,7 +23387,6 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
   },
 
   unhighlight: function() {
-    debugger;
     var oldSpotlight = this.state.spotlight.id;
     var oldSpotlightColorWithUmph = $('span[data-annotation-id="' + oldSpotlight + '"]').css('background-color'); 
     if (oldSpotlightColorWithUmph) {
@@ -23430,7 +23402,6 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
   },
 
   highlight: function(annotation) {
-    debugger;
     $('html, body').animate({
       scrollTop: annotation.offsetTop - 200
     }, 350);
@@ -23446,13 +23417,11 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
   },
 
   clickHandler: function(annotation) {
-    debugger;
     this.props.changeSpotlight(annotation);
     
   },
 
   componentWillMount: function() {
-    debugger;
     var newSpotlight = '';
     if (this.props.spotlight !== '') {
       newSpotlight = this.props.spotlight;
@@ -23462,7 +23431,6 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
   },
 
   componentWillReceiveProps: function(nextProps) {
-    debugger;
 
     if (nextProps.spotlight !== this.state.spotlight) {
       if (this.state.spotlight !== '') {
@@ -23477,7 +23445,6 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
   },
 
   componentWillUnmount: function() {
-    debugger;
     if (this.state.spotlight !== '') {
       this.unhighlight();
       this.props.changeSpotlight('');
@@ -23496,8 +23463,6 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
   },
 
   render: function() {
-    console.log('hellloooooo, friendsAnnotationList:', this.props.friends);
-    debugger;
     var ownId = window.localStorage.getItem('user_id');
     var friends = this.props.friends;
     var annotations = this.state.annotations;
@@ -23506,7 +23471,6 @@ var friendsAnnotationList = React.createClass({displayName: "friendsAnnotationLi
 
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
-      console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
         if (friends[user]) {
           console.log('friend is', friends[user]);
           return (
@@ -23556,12 +23520,9 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   },
 
   componentWillMount: function() {
-    
-    console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
       
-      console.log('e is : ', e);
       if (e.target.className === 'annotator-button') {
         return;
       }
@@ -23583,12 +23544,9 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
 
   componentWillReceiveProps: function(nextProps) {
-
-    debugger;
     if (nextProps.annotations !== this.props.annotations) {
       var newFriends = {};
       var oldFriends = this.state.friendsShown;
-      console.log('chrome storage changed mothafucka', nextProps.annotations);
       if (nextProps.annotations.length > 0) {
         for (var i = 0; i < nextProps.annotations.length; i++) {
           var user = nextProps.annotations[i].user_id;
@@ -23607,27 +23565,18 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   
 
   componentWillUnmount: function() {
-    debugger;
-    console.log('friends annotaions mounted unmounted');
     $(document).off();
   },
 
   toggleFriendAnnotations: function(id) {
-    
-    console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friendsShown;
-
 
     if (!friends[id].shown) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      console.log('friends are now', this.state.friendsShown);
-      console.log(friends[id], ' stored in chrome now')
     } else {
-      console.log('friends are now', this.state.friendsShown);
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
-        console.log(this.state.annotations[i]);
         if (this.state.annotations[i].user_id.toString() === id) {
           targetAnnotations.push(this.state.annotations[i]);
         }
@@ -23653,7 +23602,6 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
       }
     })
     
-    console.log('inside-friendsview, annotations:', this.state.annotations)
 
     return (
       React.createElement("div", {className: "friends-annotations-view-container"}, 
@@ -23678,8 +23626,6 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
   },
 
   componentDidMount: function() {
-    
-    console.log('friend annotations view mounted');
     var self = this;
     var ownId = window.localStorage.getItem('user_id');
     var uri = window.location.href.split("?")[0];
@@ -23694,9 +23640,7 @@ var FriendsAnnotationsView = React.createClass({displayName: "FriendsAnnotations
 
     $.get('https://test2server.herokuapp.com/api/users/uri/annotations', {uri: uri, user_id: ownId})
       .done(function(data) { 
-        debugger;
         var oldAnnotations = self.props.annotations;
-        debugger;
         if(oldAnnotations) {
           for (var i = 0; i < oldAnnotations.length; i++) {
             friendsShown[oldAnnotations[i].user_id] = { shown: true };
@@ -23755,63 +23699,10 @@ var MyAnnotationsButton = React.createClass({displayName: "MyAnnotationsButton",
 module.exports = MyAnnotationsButton;
 
 },{"react":174}],206:[function(require,module,exports){
-var React = require('react');
-
-var AnnotatorHead = React.createClass({displayName: "AnnotatorHead",
-  render: function() {
-    return (
-      React.createElement("div", {className: "annotator-head-container"}, 
-        React.createElement("div", {className: "user-image-container"}, 
-          React.createElement("img", {src: "http://frsports-bucket-0001.s3.amazonaws.com/wp-content/uploads/sites/6/2015/02/26224056/white-llama.jpg", className: "annotator-user-image"})
-        ), 
-
-        React.createElement("div", {className: "username-container"}, "Hoonthegoon9000"), 
-
-        React.createElement("div", {className: "profile-statistics-container"}, 
-          React.createElement("div", {className: "posts-container"}, 
-            React.createElement("span", {className: "statistic"}, "3"), React.createElement("span", null, "posts")
-          ), 
-
-          React.createElement("div", {className: "followers-container"}, 
-            React.createElement("span", {className: "statistic"}, "87"), React.createElement("span", null, "followers")
-          ), 
-
-          React.createElement("div", {className: "following-container"}, 
-            React.createElement("span", {className: "statistic"}, "33"), React.createElement("span", null, "following")
-          )
-        ), 
-
-        React.createElement("div", {className: "description-container"}, "Hi guys, my name is hoon. Im a full time llama. I eat grass and annotate things on the web.")
-      )
-    );
-  }
-});
-
-module.exports = AnnotatorHead;
-
-},{"react":174}],207:[function(require,module,exports){
-var React = require('react');
-
-var AnnotatorMixin = {
-
-  componentWillMount: function() {
-    console.log('Mounted inside bro!');
-    $(document).on('click', 'body', function() {
-        // console.log('clicked on body!!', this)
-        // updateView('showAnnotatorButton');
-    });
-  }
-
-};
-
-module.exports = AnnotatorMixin;
-
-},{"react":174}],208:[function(require,module,exports){
 var App = require('./components/app');
 var React = require('react');
 var test = require('./test');
 
-console.log('inside main');
 var renderComponents = function() {
   var element = "<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300' rel='stylesheet' type='text/css'>";
   var element2 = "<link href='https://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>";
@@ -23837,7 +23728,6 @@ if (code.substring(code.length - 11)) {
 
 var identityListener = function(changes) {
   if (changes.user && changes.user.newValue) {
-    debugger;
     if (!userId) {
       userId = changes.user.newValue.id
     }
@@ -23848,7 +23738,6 @@ var identityListener = function(changes) {
 };
 
 chrome.storage.sync.get('user', function(obj) {
-  debugger;
   if (obj.user) {
     if (!userId) {
       userId = obj.user.id;
@@ -23857,12 +23746,11 @@ chrome.storage.sync.get('user', function(obj) {
     renderComponents();
     test.annotate(userId);
   } else {
-    debugger;
     chrome.storage.onChanged.addListener(identityListener);
   }
 });
 
-},{"./components/app":184,"./test":209,"react":174}],209:[function(require,module,exports){
+},{"./components/app":184,"./test":207,"react":174}],207:[function(require,module,exports){
 var renderAnnotations = require('./annotationRender');
 
 exports.annotate = function(userId) {
@@ -23910,7 +23798,6 @@ exports.annotate = function(userId) {
     })
 
   document.addEventListener('getFriendAnnotations', function(e) {
-    console.log("show this dude's annotation:", e.detail.userId);
     app.annotations.load({
       uri: targetUri,
       user: e.detail.userId
@@ -23918,7 +23805,6 @@ exports.annotate = function(userId) {
   });
 
   chrome.runtime.onMessage.addListener(function(request) {
-    debugger;
     if (request.message === 'destroyApp') {
       document.body.removeChild(document.getElementById('annotation-sidebar'));
       app.destroy();
@@ -23926,4 +23812,4 @@ exports.annotate = function(userId) {
   });
 };
 
-},{"./annotationRender":175}]},{},[208]);
+},{"./annotationRender":175}]},{},[206]);
