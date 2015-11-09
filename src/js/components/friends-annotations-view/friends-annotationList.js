@@ -25,7 +25,6 @@ var friendsAnnotationList = React.createClass({
   },
 
   unhighlight: function() {
-    debugger;
     var oldSpotlight = this.state.spotlight.id;
     var oldSpotlightColorWithUmph = $('span[data-annotation-id="' + oldSpotlight + '"]').css('background-color'); 
     if (oldSpotlightColorWithUmph) {
@@ -41,7 +40,6 @@ var friendsAnnotationList = React.createClass({
   },
 
   highlight: function(annotation) {
-    debugger;
     $('html, body').animate({
       scrollTop: annotation.offsetTop - 200
     }, 350);
@@ -57,13 +55,11 @@ var friendsAnnotationList = React.createClass({
   },
 
   clickHandler: function(annotation) {
-    debugger;
     this.props.changeSpotlight(annotation);
     
   },
 
   componentWillMount: function() {
-    debugger;
     var newSpotlight = '';
     if (this.props.spotlight !== '') {
       newSpotlight = this.props.spotlight;
@@ -73,7 +69,6 @@ var friendsAnnotationList = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    debugger;
 
     if (nextProps.spotlight !== this.state.spotlight) {
       if (this.state.spotlight !== '') {
@@ -88,7 +83,6 @@ var friendsAnnotationList = React.createClass({
   },
 
   componentWillUnmount: function() {
-    debugger;
     if (this.state.spotlight !== '') {
       this.unhighlight();
       this.props.changeSpotlight('');
@@ -107,8 +101,6 @@ var friendsAnnotationList = React.createClass({
   },
 
   render: function() {
-    console.log('hellloooooo, friendsAnnotationList:', this.props.friends);
-    debugger;
     var ownId = window.localStorage.getItem('user_id');
     var friends = this.props.friends;
     var annotations = this.state.annotations;
@@ -117,7 +109,6 @@ var friendsAnnotationList = React.createClass({
 
     var annotationList = annotations.map(function(annotation, index) {
       var user = annotation.user_id;
-      console.log('INSIDE FRIEND ANNOTATION LIST: ', annotation.user_id);
         if (friends[user]) {
           console.log('friend is', friends[user]);
           return (

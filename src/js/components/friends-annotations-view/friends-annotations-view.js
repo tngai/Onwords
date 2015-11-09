@@ -17,12 +17,9 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   componentWillMount: function() {
-    
-    console.log('friends annotaions mounted');
     var THIS = this;
     $(document).on('click', 'body', function(e) {
       
-      console.log('e is : ', e);
       if (e.target.className === 'annotator-button') {
         return;
       }
@@ -44,12 +41,9 @@ var FriendsAnnotationsView = React.createClass({
 
 
   componentWillReceiveProps: function(nextProps) {
-
-    debugger;
     if (nextProps.annotations !== this.props.annotations) {
       var newFriends = {};
       var oldFriends = this.state.friendsShown;
-      console.log('chrome storage changed mothafucka', nextProps.annotations);
       if (nextProps.annotations.length > 0) {
         for (var i = 0; i < nextProps.annotations.length; i++) {
           var user = nextProps.annotations[i].user_id;
@@ -68,27 +62,18 @@ var FriendsAnnotationsView = React.createClass({
   
 
   componentWillUnmount: function() {
-    debugger;
-    console.log('friends annotaions mounted unmounted');
     $(document).off();
   },
 
   toggleFriendAnnotations: function(id) {
-    
-    console.log('toggleFriendAnnotations: ', id)
     var friends = this.state.friendsShown;
-
 
     if (!friends[id].shown) {
       var ev = new CustomEvent('getFriendAnnotations', {detail: {userId: id}});
       document.dispatchEvent(ev);
-      console.log('friends are now', this.state.friendsShown);
-      console.log(friends[id], ' stored in chrome now')
     } else {
-      console.log('friends are now', this.state.friendsShown);
       var targetAnnotations = [];
       for (var i = 0; i < this.state.annotations.length; i++) {
-        console.log(this.state.annotations[i]);
         if (this.state.annotations[i].user_id.toString() === id) {
           targetAnnotations.push(this.state.annotations[i]);
         }
@@ -114,7 +99,6 @@ var FriendsAnnotationsView = React.createClass({
       }
     })
     
-    console.log('inside-friendsview, annotations:', this.state.annotations)
 
     return (
       <div className='friends-annotations-view-container'>
@@ -139,8 +123,6 @@ var FriendsAnnotationsView = React.createClass({
   },
 
   componentDidMount: function() {
-    
-    console.log('friend annotations view mounted');
     var self = this;
     var ownId = window.localStorage.getItem('user_id');
     var uri = window.location.href.split("?")[0];
@@ -155,9 +137,7 @@ var FriendsAnnotationsView = React.createClass({
 
     $.get('https://test2server.herokuapp.com/api/users/uri/annotations', {uri: uri, user_id: ownId})
       .done(function(data) { 
-        debugger;
         var oldAnnotations = self.props.annotations;
-        debugger;
         if(oldAnnotations) {
           for (var i = 0; i < oldAnnotations.length; i++) {
             friendsShown[oldAnnotations[i].user_id] = { shown: true };

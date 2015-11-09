@@ -3,8 +3,6 @@ var ReactAddons = require('react/addons');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var MinimizeButton = require('./minimize-button');
-var Header = require('../header/header');
-var AnnotatorMixin = require('../mixins/annotatormixin');
 var SettingsButton = require('./settings-button');
 var HomeButton = require('./feed-home-button');
 var FriendsButton = require('./feed-friends-button');
