@@ -23,82 +23,71 @@ var App = React.createClass({
     var self = this;
 
     switch(action) {
-        case 'showAnnotatorButton':
-            console.log('showAnnotatorButton!!');
-            $(function() {
-              $('#annotation-header').animate({width: '0px'}, {queue: false, duration: 200});
-              $('#annotation-sidebar').animate({right: -(600)}, {queue: false, duration: 200});  
-            })       
-            .promise().done(function() {
-              setTimeout(function() {
-                self.setState({showFeedView: false})
-                self.setState({showFriendsAnnotations: false});
-                self.setState({showAnnotatorView: false});
-                self.setState({showAnnotatorButton: true});
-                self.setState({spotlight: ''});
-              }, 200)
-            })
-            break;
-        case 'showAnnotatorView':
-            if (!this.state.showFeedView) {
-              self.setState({showFriendsAnnotations: true});
-              self.setState({showAnnotatorView: false});
-              self.setState({showFeedView: false}, function() {
-                setTimeout(function() {
+            case 'showAnnotatorButton':
+                console.log('showAnnotatorButton!!');
+                $(function() {
+                  $('#annotation-header').animate({width: '0px'}, {queue: false, duration: 200});
+                  $('#annotation-sidebar').animate({right: -(600)}, {queue: false, duration: 200});  
+                })       
+                .promise().done(function() {
+                  setTimeout(function() {
+                    self.setState({showFeedView: false})
+                    self.setState({showFriendsAnnotations: false});
+                    self.setState({showAnnotatorView: false});
+                    self.setState({showAnnotatorButton: true});
+                    self.setState({spotlight: ''});
+                  }, 200)
+                })
+                break;
+            case 'showAnnotatorView':
+                if (!this.state.showFeedView) {
+                  self.setState({showFriendsAnnotations: true});
+                  self.setState({showAnnotatorView: false});
+                  self.setState({showFeedView: false}, function() {
+                    setTimeout(function() {
+                      $(function () {
+                        self.setState({showAnnotatorButton: false});
+                        $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
+                        $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
+                      })
+                    }, 130)
+                  });
+                } else {
                   $(function () {
-                    self.setState({showAnnotatorButton: false});
                     $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
                     $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
+                    setTimeout(function() {
+                      self.setState({showFeedView: false})
+                    }, 100);
+                  
                   })
-                }, 130)
-              });
-              // $(function () {
-              //   $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
-              //   $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
-              // })
-              // .promise().done(function() {
-              //   setTimeout(function() {
-              //     self.setState({showAnnotatorView: false});
-              //     self.setState({showFeedView: false});
-              //     self.setState({showFriendsAnnotations: true});
-              //   }, 180)
-              // })
-            } else {
-              $(function () {
-                $('#annotation-sidebar').animate({right: -(300)}, {queue: false, duration: 200});
-                $('#annotation-header').animate({width: '300px'}, {queue: false, duration: 200});
-                setTimeout(function() {
-                  self.setState({showFeedView: false})
-                }, 100);
-              
-              })
-              .promise().done(function() {
-                debugger;
-                setTimeout(function() {
-                  self.setState({showAnnotatorView: false});
-                  self.setState({showAnnotatorButton: false});
-                  self.setState({showFriendsAnnotations: true});
-                }, 200)
-              });
-            }
-            break;
-        case 'showFeedView':
-            $(function() {
-              debugger;
-              $('#annotation-sidebar').animate({right: (0)}, {queue: false, duration: 200});
-              $('#annotation-header').animate({width: '630px'}, {queue: false, duration: 200})
-            })
-            .promise().done(function() {
-                self.setState({spotlight: ''});
-                self.setState({showFriendsAnnotations: false});
-                self.setState({showAnnotatorView: false});
-                self.setState({showAnnotatorButton: false});
-                self.setState({showFeedView: true});
-              });
-            break;
-        default:
-            console.log('nothing happened')
-    }
+                  .promise().done(function() {
+                    debugger;
+                    setTimeout(function() {
+                      self.setState({showAnnotatorView: false});
+                      self.setState({showAnnotatorButton: false});
+                      self.setState({showFriendsAnnotations: true});
+                    }, 200)
+                  });
+                }
+                break;
+            case 'showFeedView':
+                $(function() {
+                  debugger;
+                  $('#annotation-sidebar').animate({right: (0)}, {queue: false, duration: 200});
+                  $('#annotation-header').animate({width: '600px'}, {queue: false, duration: 200})
+                })
+                .promise().done(function() {
+                    self.setState({spotlight: ''});
+                    self.setState({showFriendsAnnotations: false});
+                    self.setState({showAnnotatorView: false});
+                    self.setState({showAnnotatorButton: false});
+                    self.setState({showFeedView: true});
+                  });
+                break;
+            default:
+                console.log('nothing happened')
+        }
   },
 
   componentDidMount: function() {
@@ -108,7 +97,6 @@ var App = React.createClass({
       if (!self.state.showFriendsAnnotations) {
         self.updateView('showAnnotatorView');
       }
-      console.log('spotlight this annotation:', e.detail.targetAnnotation);
     });
 
     var uri = window.location.href.split("?")[0];

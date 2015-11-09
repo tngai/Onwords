@@ -7,19 +7,8 @@ var renderAnnotations = function() {
   }
 
   return {
-    // annotationsLoaded: function(annotations) {
-    //   var uri = window.location.href.split("?")[0];
-    //   console.log("annotations loaded", annotations);
-    //   var obj = {};
-    //   obj[uri] = annotations;
-    //   chrome.storage.local.set(obj);
-    // },
-
     annotationCreated: function(annotation) {
-      console.log("annotation created:", annotation);
       chrome.storage.local.get(uri, function(obj) {
-        debugger;
-        console.log('values before CREATING:', obj[uri])
         if (!obj[uri]) {
           obj[uri] = [];
         }
@@ -37,7 +26,6 @@ var renderAnnotations = function() {
              }
           }
         })
-        console.log('values after CREATING:', obj[uri]);
         var newObj = {};
         newObj[uri] = obj[uri];
         chrome.storage.local.set(newObj);
@@ -48,14 +36,11 @@ var renderAnnotations = function() {
       var id = annotation.id;
       $('[data-annotation-id=' + id + ']').contents().unwrap();
       chrome.storage.local.get(uri, function(obj) {
-        debugger;
-        console.log('values before DELETING:', obj[uri]);
         for (var i = 0; i < obj[uri].length; i++) {
           if (obj[uri][i].id === annotation.id) {
             obj[uri].splice(i, 1);
             var newObj = {};
             newObj[uri] = obj[uri];
-            console.log('values after DELETING:', newObj[uri]);
             chrome.storage.local.set(newObj);
           }
         }
@@ -63,9 +48,7 @@ var renderAnnotations = function() {
     },
 
     beforeRenderDeleted: function(annotations) {
-      debugger;
       chrome.storage.local.get(uri, function(obj) {
-        debugger;
         for (var i = 0; i < annotations.length; i++) {
           var id = annotations[i].id;
           $('[data-annotation-id=' + id + ']').contents().unwrap();
@@ -84,13 +67,11 @@ var renderAnnotations = function() {
 
     beforeAnnotationUpdated: function(annotation) {
       chrome.storage.local.get(uri, function(obj) {
-        console.log('values before UPDATING:', obj[uri]);
         for (var i = 0; i < obj[uri].length; i++) {
           if (obj[uri][i].id === annotation.id) {
             obj[uri][i].text = annotation.text;
             var newObj = {};
             newObj[uri] = obj[uri];
-            console.log('values after UPDATING', newObj[uri]);
             chrome.storage.local.set(newObj);
           }
         }

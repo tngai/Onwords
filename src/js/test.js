@@ -45,7 +45,6 @@ exports.annotate = function(userId) {
     })
 
   document.addEventListener('getFriendAnnotations', function(e) {
-    console.log("show this dude's annotation:", e.detail.userId);
     app.annotations.load({
       uri: targetUri,
       user: e.detail.userId
@@ -53,7 +52,6 @@ exports.annotate = function(userId) {
   });
 
   chrome.runtime.onMessage.addListener(function(request) {
-    debugger;
     if (request.message === 'destroyApp') {
       document.body.removeChild(document.getElementById('annotation-sidebar'));
       app.destroy();

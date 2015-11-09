@@ -41,7 +41,6 @@ var annotationComment = React.createClass({
     };
 
     var deleteAnn = function(e) {
-      debugger;
       console.log(e.target);
       e.stopPropagation();
       self.props.deleteAnn(annotation);
