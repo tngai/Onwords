@@ -1,10 +1,12 @@
 var React = require('react');
-var AnnotationLink = require('./feed-friends-annotationslink');
+var AnnotationLikeComment = require('./feed-friends-annotationlink-like-comment');
 
 var FriendsAnnotationLink = React.createClass({
   render: function() {
     var info = this.props.info
     var allSharedPost = [];
+    console.log('INFO FROM API CALL', info);
+
     // sort data based on isShared into an array(allSharedPost)
     info.forEach(function(user, key1) {
       var userName = user.full_name;
@@ -40,8 +42,6 @@ var FriendsAnnotationLink = React.createClass({
           //   }, false);
           //   console.log('is it liked!?', isLikedByMe);
           // }
-          var currentTime = new Date();
-
           var postMinute = Number(time.slice(8,10));
           var currentMinute = Number(currentTime.toUTCString().slice(20,22));
 
@@ -81,32 +81,43 @@ var FriendsAnnotationLink = React.createClass({
         }
       });
     });
-          debugger;
 
-    allSharedPost.sort(function(a,b) {
-      if (a.time[3] === 'm' && (b.time[3] === 'h' || b.time[3] === 'd')) {
-        return -1;
-      } else if (b.time[3] === 'm' && (a.time[3] === 'h' || a.time[3] === 'd')) {
-        return 1;
-      } else if (a.time[3] === 'h' && b.time[3] === 'd') {
-        return -1;
-      } else if (b.time[3] === 'd' && b.time[3] === 'd') {
-        return 1;
-      } else if((a.time[3] === 'm' && b.time[3] === 'm') || (a.time[3] === 'h' && b.time[3] === 'h') || (a.time[3] === 'd' && b.time[3] === 'd')) {
-        if (Number(a.time.slice(0,2)) < Number(a.time.slice(0,2))) {
-          return -1;
-        } else if (Number(a.time.slice(0,2)) > Number(a.time.slice(0,2))) {
-          return 1;
-        } 
-      }
-    })
+    console.log('allSharedPost', allSharedPost);
 
     // creating react elements for all allSharedPost
     var allPost = allSharedPost.map(function(post, key) {
-      console.log('POST: ', post, key);
+      console.log('POST: ', post, key, this.handleCommentClick);
+      // var THIS = this;
       return (
         <div className='feed-friends-annotations-post' key={key}>
-          <AnnotationLink post={post} key={key}/>
+          <div className='post-pic-container'>
+            <img src={post.picUrl} className='post-pic' />
+          </div>
+
+          <div className='post-body-container'>
+            <div className='post-header-container'>
+              <div className='post-name-container'>
+                {post.userName}
+              </div>
+
+              <div className='post-time-container'>
+                {post.time}
+              </div>
+            </div>
+
+            <div className='post-title-container'>
+              <a href={post.redirectUri} target='blank' className='redirectLink'>{post.title}</a>
+            </div>
+
+            <div className='post-general-post-container'>
+              {post.generalPost}
+            </div>
+
+            <div className='post-like-comment-container'>
+              <AnnotationLikeComment post={post} key={key} />            
+            </div>
+          </div>
+
         </div>
       )
     }, this);

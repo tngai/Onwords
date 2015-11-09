@@ -118,14 +118,15 @@
 }
 .annotator-my-view-button-container {
   float: left;
-  width: 20px; 
-  height: 20px;
-  margin: 10px 5px;
+  width: 40px; 
+  height: 30px;
+  margin-top: 4px;
+  margin-left: -5px;
   display: inline-block;
 } 
 .annotator-my-view-button {
-  width: 20px; 
-  height: 20px;
+  width: 50px; 
+  height: 30px;
   border-radius: 50%;
 }
 
@@ -197,9 +198,10 @@
   position: absolute;
   float: left;
   height: 20px;
-  width: 20px;
+  width: 40px;
   z-index: 1;
-  margin: 10px 5px;
+  margin-top: 4px;
+  margin-left: -5px;
 }
 .posts-container {
   border-right: 2px solid black;
@@ -229,8 +231,8 @@
 
   /* Feed View */
 .minimize-button {
-  height: 20px;
-  width: 20px;
+  height: 30px;
+  width: 50px;
 }
 .body-container {
   display: inline-block;
@@ -252,8 +254,8 @@
   position: absolute;
   z-index: 1;
   width: 50%;
-  margin-top: 10px;
-  margin-left: 35px;
+  margin-top: 7px;
+  margin-left: 55px;
   padding: 0px;
 }
 .nav-container li {
