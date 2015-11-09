@@ -10,7 +10,7 @@ var AnnotatorMinimizeButton = React.createClass({
   render: function() {
     return (
       <div onClick={this.handleClick} className='annotator-my-view-button-container' >
-        <img className='annotator-my-view-button' src={chrome.extension.getURL('/assets/arrow_left.png')} />
+        <img className='annotator-my-view-button' src={chrome.extension.getURL('/assets/angle.png')} />
       </div>
     );
   }

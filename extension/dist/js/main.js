@@ -22133,7 +22133,7 @@ var AnnotatorMinimizeButton = React.createClass({displayName: "AnnotatorMinimize
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "annotator-my-view-button-container"}, 
-        React.createElement("img", {className: "annotator-my-view-button", src: chrome.extension.getURL('/assets/arrow_left.png')})
+        React.createElement("img", {className: "annotator-my-view-button", src: chrome.extension.getURL('/assets/angle.png')})
       )
     );
   }
@@ -22524,6 +22524,30 @@ var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLi
           //   }, false);
           //   console.log('is it liked!?', isLikedByMe);
           // }
+          var currentTime = new Date();
+
+          var postMinute = Number(time.slice(8,10));
+          var currentMinute = Number(currentTime.toUTCString().slice(20,22));
+
+          var postHour = Number(time.slice(11, 13));
+          var currentHour = Number(currentTime.toUTCString().slice(17,19));
+
+          var postDate = Number(time.slice(8, 10));
+          var currentDate = Number(currentTime.toUTCString().slice(5,7));
+          var diff, message;
+
+          if (postDate === currentDate) {
+              if (postHour === currentHour) {
+                  diff = currentMinute - postMinute;
+                  message = diff + ' minutes ago'
+              } else {
+                  diff = currentHour - postHour;
+                  message = diff + ' hours ago'
+              }
+          } else {
+              diff = currentDate - postDate;
+              message = diff + ' days ago'
+          }
 
           allSharedPost.push({
             picUrl: picUrl,
@@ -22534,13 +22558,32 @@ var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLi
             generalPost: generalPost,
             redirectUri: redirectUri,
             isShared: isShared,
-            time: time,
+            time: message,
             comments: comments,
             likes: likes
           });
         }
       });
     });
+          debugger;
+
+    allSharedPost.sort(function(a,b) {
+      if (a.time[3] === 'm' && (b.time[3] === 'h' || b.time[3] === 'd')) {
+        return -1;
+      } else if (b.time[3] === 'm' && (a.time[3] === 'h' || a.time[3] === 'd')) {
+        return 1;
+      } else if (a.time[3] === 'h' && b.time[3] === 'd') {
+        return -1;
+      } else if (b.time[3] === 'd' && b.time[3] === 'd') {
+        return 1;
+      } else if((a.time[3] === 'm' && b.time[3] === 'm') || (a.time[3] === 'h' && b.time[3] === 'h') || (a.time[3] === 'd' && b.time[3] === 'd')) {
+        if (Number(a.time.slice(0,2)) < Number(a.time.slice(0,2))) {
+          return -1;
+        } else if (Number(a.time.slice(0,2)) > Number(a.time.slice(0,2))) {
+          return 1;
+        } 
+      }
+    })
 
     // creating react elements for all allSharedPost
     var allPost = allSharedPost.map(function(post, key) {
@@ -23337,7 +23380,7 @@ var MinimizeButton = React.createClass({displayName: "MinimizeButton",
   render: function() {
     return (
       React.createElement("div", {onClick: this.handleClick, className: "minimize-button-container"}, 
-        React.createElement("img", {className: "minimize-button", src: chrome.extension.getURL('/assets/arrow_right.png')})
+        React.createElement("img", {className: "minimize-button", src: chrome.extension.getURL('/assets/angle2.png')})
       )
     );
   }
