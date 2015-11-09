@@ -1,4 +1,5 @@
 var React = require('react');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var Settings = React.createClass({
   getInitialState: function(){
@@ -85,20 +86,24 @@ var Settings = React.createClass({
   },
   render: function() {
     return (
-      <div className="settings-view-container">
-        <div className="picture-settings">
+        <div className="settings-view-container">
+          <div className="picture-settings">
           <img id="profile-pic" src={this.state.pic_url} onClick={this.handleClick} data-setting="pic"/> 
-          {this.state.editPicUrl ? <input type="text" placeholder={this.state.pic_url} data-setting="picUrl" onKeyPress={this.handleSubmit} /> : null}
-        </div>
+          <ReactCSSTransitionGroup transitionName="example">
+            {this.state.editPicUrl ? <input type="text" className="inputBox" placeholder={this.state.pic_url} data-setting="picUrl" onKeyPress={this.handleSubmit} /> : null}
+          </ReactCSSTransitionGroup> 
+        </div> 
         <div className="username-settings">
           {this.state.username} 
         </div>
         <div className="settingsdescription-settings">
           Description: {this.state.description} 
+          <ReactCSSTransitionGroup transitionName="example">
           <button  type="submit" onClick={this.handleClick} id="submit-button" >
             <img data-setting="description" className="settings-profile-edit-icon" src="https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png" />
           </button> 
-          {this.state.editDescription ? <input type="text" placeholder={this.state.description} data-setting="description" onKeyPress={this.handleSubmit} /> : null}
+            {this.state.editDescription ? <input type="text" className="inputBox" placeholder={this.state.description} data-setting="description" onKeyPress={this.handleSubmit} /> : null}
+          </ReactCSSTransitionGroup>
         </div>
       </div>
     );

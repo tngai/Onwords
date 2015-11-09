@@ -23040,6 +23040,7 @@ module.exports = FeedSearchView;
 
 },{"./feed-search-list":196,"react":174}],198:[function(require,module,exports){
 var React = require('react');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var Settings = React.createClass({displayName: "Settings",
   getInitialState: function(){
@@ -23069,7 +23070,7 @@ var Settings = React.createClass({displayName: "Settings",
     chrome.storage.sync.set({'user': user}, function(){
       $.ajax({
         method: "POST",
-        url: "https://test2server.herokuapp.com/api/users/update",
+        url: "http://localhost:9000/api/users/update",
         data: { picUrl: user.picUrl, description: user.description, user_id: user.id }
       }) 
     });
@@ -23126,20 +23127,24 @@ var Settings = React.createClass({displayName: "Settings",
   },
   render: function() {
     return (
-      React.createElement("div", {className: "settings-view-container"}, 
-        React.createElement("div", {className: "picture-settings"}, 
+        React.createElement("div", {className: "settings-view-container"}, 
+          React.createElement("div", {className: "picture-settings"}, 
           React.createElement("img", {id: "profile-pic", src: this.state.pic_url, onClick: this.handleClick, "data-setting": "pic"}), 
-          this.state.editPicUrl ? React.createElement("input", {type: "text", placeholder: this.state.pic_url, "data-setting": "picUrl", onKeyPress: this.handleSubmit}) : null
+          React.createElement(ReactCSSTransitionGroup, {transitionName: "example"}, 
+            this.state.editPicUrl ? React.createElement("input", {type: "text", className: "inputBox", placeholder: this.state.pic_url, "data-setting": "picUrl", onKeyPress: this.handleSubmit}) : null
+          )
         ), 
         React.createElement("div", {className: "username-settings"}, 
           this.state.username
         ), 
         React.createElement("div", {className: "settingsdescription-settings"}, 
           "Description: ", this.state.description, 
+          React.createElement(ReactCSSTransitionGroup, {transitionName: "example"}, 
           React.createElement("button", {type: "submit", onClick: this.handleClick, id: "submit-button"}, 
             React.createElement("img", {"data-setting": "description", className: "settings-profile-edit-icon", src: "https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png"})
           ), 
-          this.state.editDescription ? React.createElement("input", {type: "text", placeholder: this.state.description, "data-setting": "description", onKeyPress: this.handleSubmit}) : null
+            this.state.editDescription ? React.createElement("input", {type: "text", className: "inputBox", placeholder: this.state.description, "data-setting": "description", onKeyPress: this.handleSubmit}) : null
+          )
         )
       )
     );
