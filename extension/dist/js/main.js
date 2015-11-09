@@ -22633,8 +22633,10 @@ var AnnotationLink = React.createClass({displayName: "AnnotationLink",
     console.log('showComments');
     if(this.state.showComments === false){
       this.setState({showComments: true});
+      $('.post-comments-container').css('display', 'inline-block');
     } else {
       this.setState({showComments: false});
+      $('.post-comments-container').css('display', 'none');
     }
   },
   render: function() {
@@ -22671,9 +22673,10 @@ var AnnotationLink = React.createClass({displayName: "AnnotationLink",
         ), 
   
         React.createElement("div", {className: "post-comments-container"}, 
+          this.state.showComments ? React.createElement("hr", {className: "comment-line", align: "center"}) : null, 
           this.state.showComments ? React.createElement(AnnotationLinkComment, {post: this.props.post}) : null
         )
-        
+
       )
     );
   }

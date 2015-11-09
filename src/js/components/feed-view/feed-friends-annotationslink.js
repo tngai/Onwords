@@ -12,8 +12,10 @@ var AnnotationLink = React.createClass({
     console.log('showComments');
     if(this.state.showComments === false){
       this.setState({showComments: true});
+      $('.post-comments-container').css('display', 'inline-block');
     } else {
       this.setState({showComments: false});
+      $('.post-comments-container').css('display', 'none');
     }
   },
   render: function() {
@@ -50,9 +52,10 @@ var AnnotationLink = React.createClass({
         </div>
   
         <div className='post-comments-container'>
+          {this.state.showComments ? <hr className='comment-line'  align="center" /> : null} 
           {this.state.showComments ? <AnnotationLinkComment post={this.props.post} /> : null}
         </div>
-        
+
       </div>
     );
   }
