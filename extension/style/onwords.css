@@ -39,7 +39,8 @@
   float: left;
 }
 
-#annotation-sidebar { 
+#annotation-sidebar {
+  all: initial; 
   z-index: 9999999;
   position: fixed; 
   top: 0; 
@@ -118,14 +119,15 @@
 }
 .annotator-my-view-button-container {
   float: left;
-  width: 20px; 
-  height: 20px;
-  margin: 10px 5px;
+  width: 40px; 
+  height: 30px;
+  margin-top: 4px;
+  margin-left: -5px;
   display: inline-block;
 } 
 .annotator-my-view-button {
-  width: 20px; 
-  height: 20px;
+  width: 50px; 
+  height: 30px;
   border-radius: 50%;
 }
 
@@ -197,9 +199,10 @@
   position: absolute;
   float: left;
   height: 20px;
-  width: 20px;
+  width: 40px;
   z-index: 1;
-  margin: 10px 5px;
+  margin-top: 4px;
+  margin-left: -5px;
 }
 .posts-container {
   border-right: 2px solid black;
@@ -229,8 +232,8 @@
 
   /* Feed View */
 .minimize-button {
-  height: 20px;
-  width: 20px;
+  height: 30px;
+  width: 50px;
 }
 .body-container {
   display: inline-block;
@@ -252,8 +255,8 @@
   position: absolute;
   z-index: 1;
   width: 50%;
-  margin-top: 10px;
-  margin-left: 35px;
+  margin-top: 5px;
+  margin-left: 55px;
   padding: 0px;
 }
 .nav-container li {
@@ -414,10 +417,11 @@ textarea:focus,
 button:focus {
   outline: none;
 }
-}
-.redirectLink {
-  /*color: white;*/
+
+a .redirectLink {
+  text-decoration: none;
   color: rgb(39, 47, 50);
+  all: inherit;
 }
 
 /*FriendsFeed*/
@@ -523,13 +527,10 @@ button:focus {
   font-size: 16px;
   color: black;
   text-align: center;
-  margin: 10px 25%;
+  margin: 8px 25%;
 }
 
 .annotation {
-  color: #31353D;
-  font-family: 'Source Sans Pro', sans-serif;
-  font-size: 16px;
   background: #fbfbfb;
   min-height: 55px;
   max-height: 300px;
@@ -539,7 +540,12 @@ button:focus {
   border-top:1px solid #e6e6e6;
   border-bottom:1px solid #e6e6e6;
   overflow-x: visible;
+}
+.annotation-text {
   text-align: left;
+  color: #31353D;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 16px;
 }
 #annotationEdit {
   font-family: 'Source Sans Pro', sans-serif;
@@ -557,6 +563,9 @@ button:focus {
   overflow-y: scroll;
   margin-top: 126px;
   margin-bottom: 25px;
+}
+.annotationListItem {
+  all: initial;
 }
 ul {
   list-style-type: none;
@@ -610,8 +619,13 @@ ul {
 .post-title-container {
   width: 450px;
   font-weight: 900;
+  font-size: 16px;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  color: black;
   /*height: 25px; */
 }
+
+
 .post-like-comment-container {
   width: 450px;
   /*height: 25px; */
@@ -650,8 +664,6 @@ ul {
 
 /*PostComments*/
 .comment-main-container {
-  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-  font-size: 16px;
   margin: 0px 5px 0px 5px;
   width: 590px;
   background-color: rgb(249, 250, 252);
