@@ -22441,18 +22441,20 @@ var AnnotationLinkComment = React.createClass({displayName: "AnnotationLinkComme
       console.log('EACH COMMENT', comment);
       return (
         React.createElement("div", {className: "comment-containers", key: key}, 
+
           React.createElement("div", {className: "comment-header"}, 
             React.createElement("div", {className: "comment-pic-container"}, 
               React.createElement("img", {src: comment.pic_url, className: "comment-pic"})
             ), 
-            React.createElement("div", {className: "comment-username"}, 
+            React.createElement("span", {className: "comment-username"}, 
               comment.full_name
             )
           ), 
 
           React.createElement("div", {className: "comment-message"}, 
             comment.message
-          )
+          ), 
+          React.createElement("hr", {className: "comment-line", align: "center"})
         )
       );
     });
@@ -22488,11 +22490,11 @@ var AnnotationLikeComment = React.createClass({displayName: "AnnotationLikeComme
     return (
       React.createElement("div", {className: "post-likes-and-comments-container"}, 
         React.createElement("div", {className: "post-likes-container", onClick: THIS.handleLikeClick}, 
-          "likes : ", this.props.post.likes.length
+          React.createElement("img", {src: chrome.extension.getURL('/assets/heart.png'), className: "heart-icon"}), "  ", this.props.post.likes.length
         ), 
 
         React.createElement("div", {className: "post-comments-button-container", onClick: THIS.handleClick}, 
-          "comments : ", this.props.post.comments.length
+          React.createElement("img", {src: chrome.extension.getURL('/assets/comment.png'), className: "comment-icon"}), "  ", this.props.post.comments.length
         )
       )
     );
@@ -22690,8 +22692,10 @@ var AnnotationLink = React.createClass({displayName: "AnnotationLink",
           )
         ), 
   
-        this.state.showComments ? React.createElement(AnnotationLinkComment, {post: this.props.post}) : null
-
+        React.createElement("div", {className: "post-comments-container"}, 
+          this.state.showComments ? React.createElement(AnnotationLinkComment, {post: this.props.post}) : null
+        )
+        
       )
     );
   }

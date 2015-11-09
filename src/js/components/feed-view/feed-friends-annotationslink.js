@@ -49,8 +49,10 @@ var AnnotationLink = React.createClass({
           </div>
         </div>
   
-        {this.state.showComments ? <AnnotationLinkComment post={this.props.post} /> : null}
-
+        <div className='post-comments-container'>
+          {this.state.showComments ? <AnnotationLinkComment post={this.props.post} /> : null}
+        </div>
+        
       </div>
     );
   }

@@ -18,11 +18,11 @@ var AnnotationLikeComment = React.createClass({
     return (
       <div className='post-likes-and-comments-container'>
         <div className='post-likes-container' onClick={THIS.handleLikeClick}>
-          likes : {this.props.post.likes.length}
+          <img src={chrome.extension.getURL('/assets/heart.png')} className='heart-icon' />  {this.props.post.likes.length}
         </div>
 
         <div className='post-comments-button-container' onClick={THIS.handleClick}>
-          comments : {this.props.post.comments.length} 
+          <img src={chrome.extension.getURL('/assets/comment.png')} className='comment-icon' />  {this.props.post.comments.length} 
         </div>
       </div>
     );

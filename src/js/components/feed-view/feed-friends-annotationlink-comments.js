@@ -30,18 +30,20 @@ var AnnotationLinkComment = React.createClass({
       console.log('EACH COMMENT', comment);
       return (
         <div  className='comment-containers' key={key}>
+
           <div className='comment-header'>
             <div className='comment-pic-container'>
               <img src={comment.pic_url} className='comment-pic' />
             </div>
-            <div className='comment-username'>
+            <span className='comment-username'>
               {comment.full_name}
-            </div>
+            </span>
           </div>
 
           <div className='comment-message'>
             {comment.message}
           </div>
+          <hr className='comment-line'  align="center" />
         </div>
       );
     });
