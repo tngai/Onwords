@@ -418,20 +418,10 @@ button:focus {
   outline: none;
 }
 
-.redirectLink {
-  /*color: white;*/
-}
-
 a .redirectLink {
   text-decoration: none;
   color: rgb(39, 47, 50);
   all: inherit;
-}
-
-a:hover, a:link, a:visited, a:visited {
-  text-decoration: none;
-  color: rgb(39, 47, 50);
-  all: initial;
 }
 
 /*FriendsFeed*/
