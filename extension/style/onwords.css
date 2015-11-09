@@ -325,7 +325,7 @@
 
 .example-enter {
   opacity: 0.01;
-  transition: opacity .8s ease-in;
+  transition: opacity .9s ease-in;
 }
 
 .example-enter.example-enter-active {
@@ -334,7 +334,7 @@
 
 .example-leave {
   opacity: 1;
-  transition: opacity .8s ease-in;
+  transition: opacity .9s ease-in;
 }
 
 .example-leave.example-leave-active {

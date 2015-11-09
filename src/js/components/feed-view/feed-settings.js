@@ -29,7 +29,7 @@ var Settings = React.createClass({
     chrome.storage.sync.set({'user': user}, function(){
       $.ajax({
         method: "POST",
-        url: "http://localhost:9000/api/users/update",
+        url: "http://test2server.herokuapp.com/api/users/update",
         data: { picUrl: user.picUrl, description: user.description, user_id: user.id }
       }) 
     });
@@ -98,10 +98,10 @@ var Settings = React.createClass({
         </div>
         <div className="settingsdescription-settings">
           Description: {this.state.description} 
-          <ReactCSSTransitionGroup transitionName="example">
           <button  type="submit" onClick={this.handleClick} id="submit-button" >
             <img data-setting="description" className="settings-profile-edit-icon" src="https://icons.iconarchive.com/icons/custom-icon-design/mono-general-2/512/edit-icon.png" />
           </button> 
+          <ReactCSSTransitionGroup transitionName="example">
             {this.state.editDescription ? <input type="text" className="inputBox" placeholder={this.state.description} data-setting="description" onKeyPress={this.handleSubmit} /> : null}
           </ReactCSSTransitionGroup>
         </div>
