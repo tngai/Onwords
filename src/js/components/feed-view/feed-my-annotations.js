@@ -40,7 +40,6 @@ var MyAnnotations = React.createClass({
   },
   componentWillUnmount: function() {
     $('#annotation-header').slideDown('fast');
-    console.log('MyAnnotationsLink - componentWillUnmount');
     $(document).off();
   },
   render: function() {
