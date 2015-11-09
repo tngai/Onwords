@@ -495,6 +495,7 @@ button:focus {
 }
 .redirectLink {
   z-index: 1000;
+  color: black;
 }
 .friends-heading {
   text-align: center;
@@ -571,26 +572,27 @@ ul {
 }
 .feed-friends-annotations-post {
   width: 600px;
-  height: 150px;
+  min-height: 150px;
   /*text-align: center;*/
   border-bottom: 1px solid black;
 }
 .post-pic-container {
-  width: 150px;
+  width: 125px;
   height: 150px;
   float: left;
 }
 .post-pic {
-  width: 125px;
-  height: 125px;
-  margin-top: 12.5px;
+  width: 100px;
+  height: 100px;
+  margin-top: 20px;
+  margin-left: 10px;
   margin-bottom: 12.5px; 
   border-radius: 50%;
 }
 .post-body-container {
-  padding: 12.5px 0px 12.5px 0px;
-  float: right;
-  width: 450px;
+  padding: 12.5px 0px 12.5px 10px;
+  float: left;
+  width: 445px;
   height: 125px;
 }
 .post-header-container {
@@ -607,6 +609,7 @@ ul {
 }
 .post-title-container {
   width: 450px;
+  font-weight: 900;
   /*height: 25px; */
 }
 .post-like-comment-container {
@@ -618,6 +621,82 @@ ul {
   margin-right: 10px;
 }
 .post-comments-container {
+  display: none;
+  width: 590px;
+  overflow-y: scroll;
+}
+/*.post-comments-container-two {
+  border-top: solid 1px black;
+  display: none;
+  width: 590px;
+  overflow-y: scroll;
+}*/
+.post-likes-and-comments-container {
+  width: 450px;
+}
+.post-comments-button-container {
+  display: inline-block;
+}
+.post-general-post-container {
+  color: rgb(145, 146, 148);
+}
+.heart-icon {
+  height: 16px;
+  width: 16px;
+}
+.comment-icon {
+  height: 16px;
+  width: 16px; 
+}
+
+/*PostComments*/
+.comment-main-container {
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-size: 16px;
+  margin: 0px 5px 0px 5px;
+  width: 590px;
+  background-color: rgb(249, 250, 252);
+  min-height: 150px;
+}
+.comment-container {
+  width: 590px;
+}
+.comment-containers {
+  width: 580px;
+  min-height: 25px;
+  background: white;
+  padding: 5px 5px 5px 5px;
+  /*border-top: solid 1px black;*/
+}
+.comment-header {
+  width: 580px;
+  height: 25px;
+  display: inline-block;
+}
+.comment-pic-container {
+  margin-right: 10px; 
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+}
+.comment-pic {
+  vertical-align: middle;
+  width: 25px;
+  height: 25px; 
+  display: inline-block;
+  border-radius: 50%;
+}
+.comment-username {
+  min-width: 100px;
+  display: inline-block;
+}
+.comment-message {
+  min-height: 25px;
+  color: rgb(145, 146, 148);
+  width: 580px;
+}
+.comment-line {
+  width: 100%;
   display: inline-block;
 }
 
