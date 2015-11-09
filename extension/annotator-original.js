@@ -4337,7 +4337,7 @@ function highlightRange(normedRange, cssClass, userId) { // Onwords
       colors.splice(index, 1);
     }
 // /Onwords
-
+  debugger;
     var nodes = normedRange.textNodes(),
         results = [];
     for (var i = 0, len = nodes.length; i < len; i++) {
