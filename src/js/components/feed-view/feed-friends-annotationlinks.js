@@ -1,12 +1,10 @@
 var React = require('react');
-var AnnotationLikeComment = require('./feed-friends-annotationlink-like-comment');
+var AnnotationLink = require('./feed-friends-annotationslink');
 
 var FriendsAnnotationLink = React.createClass({
   render: function() {
     var info = this.props.info
     var allSharedPost = [];
-    console.log('INFO FROM API CALL', info);
-
     // sort data based on isShared into an array(allSharedPost)
     info.forEach(function(user, key1) {
       var userName = user.full_name;
@@ -60,42 +58,12 @@ var FriendsAnnotationLink = React.createClass({
       });
     });
 
-    console.log('allSharedPost', allSharedPost);
-
     // creating react elements for all allSharedPost
     var allPost = allSharedPost.map(function(post, key) {
-      console.log('POST: ', post, key, this.handleCommentClick);
-      // var THIS = this;
+      console.log('POST: ', post, key);
       return (
         <div className='feed-friends-annotations-post' key={key}>
-          <div className='post-pic-container'>
-            <img src={post.picUrl} className='post-pic' />
-          </div>
-
-          <div className='post-body-container'>
-            <div className='post-header-container'>
-              <div className='post-name-container'>
-                {post.userName}
-              </div>
-
-              <div className='post-time-container'>
-                {post.time}
-              </div>
-            </div>
-
-            <div className='post-title-container'>
-              <a href={post.redirectUri} target='blank' className='redirectLink'>{post.title}</a>
-            </div>
-
-            <div className='post-general-post-container'>
-              {post.generalPost}
-            </div>
-
-            <div className='post-like-comment-container'>
-              <AnnotationLikeComment post={post} key={key} />            
-            </div>
-          </div>
-
+          <AnnotationLink post={post} key={key}/>
         </div>
       )
     }, this);

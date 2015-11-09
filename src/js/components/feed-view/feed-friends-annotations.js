@@ -2,7 +2,7 @@ var React = require('react');
 var ReactAddons = require('react/addons');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
-var AnnotationLink = require('./feed-friends-annotationlink');
+var AnnotationLinks = require('./feed-friends-annotationlinks');
 
 var FriendsAnnotations = React.createClass({
   getInitialState: function() {
@@ -13,7 +13,7 @@ var FriendsAnnotations = React.createClass({
   render: function() {
     return (
       <ReactCSSTransitionGroup transitionName='feedview' transitionLeaveTimeout={200}>
-        <AnnotationLink info={this.state.info} />
+        <AnnotationLinks info={this.state.info} />
       </ReactCSSTransitionGroup>
     );
   },
