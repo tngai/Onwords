@@ -24,30 +24,27 @@ var FriendsAnnotationLink = React.createClass({
           var comments = article.commentsOnGeneralPost.map(function(comment, key) {
             return comment;
           });
-          console.log('COMMENTS!!', comments);
 
           var likes = article.likes.map(function(like, key) {
             return like;
           });
 
           // check if its liked by me
-          // if(likes.length >= 1){
-          //   var isLikedByMe = article.likes.reduce(function(previousValue, currId, i) {
-          //     console.log(currId.follower_id, userId, previousValue);
-          //     if(currId.follower_id === userId && previousValue.follower_id === false){
-          //       return true;
-          //     }
-          //   }, false);
-          //   console.log('is it liked!?', isLikedByMe);
-          // }
-          var currentTime = new Date();
+          var liked = false;
+          var myID = window.localStorage.user_id;
+          if(likes.length >= 1){
+            var isLikedByMe = article.likes.forEach(function(curr, i) {
+              if(curr.follower_id === myID){
+                liked = true;
+              }
+            });
+          }
 
+          var currentTime = new Date();
           var postMinute = Number(time.slice(8,10));
           var currentMinute = Number(currentTime.toUTCString().slice(20,22));
-
           var postHour = Number(time.slice(11, 13));
           var currentHour = Number(currentTime.toUTCString().slice(17,19));
-
           var postDate = Number(time.slice(8, 10));
           var currentDate = Number(currentTime.toUTCString().slice(5,7));
           var diff, message;
@@ -76,30 +73,12 @@ var FriendsAnnotationLink = React.createClass({
             isShared: isShared,
             time: message,
             comments: comments,
-            likes: likes
+            likes: likes,
+            liked: liked
           });
         }
       });
     });
-          debugger;
-
-    allSharedPost.sort(function(a,b) {
-      if (a.time[3] === 'm' && (b.time[3] === 'h' || b.time[3] === 'd')) {
-        return -1;
-      } else if (b.time[3] === 'm' && (a.time[3] === 'h' || a.time[3] === 'd')) {
-        return 1;
-      } else if (a.time[3] === 'h' && b.time[3] === 'd') {
-        return -1;
-      } else if (b.time[3] === 'd' && b.time[3] === 'd') {
-        return 1;
-      } else if((a.time[3] === 'm' && b.time[3] === 'm') || (a.time[3] === 'h' && b.time[3] === 'h') || (a.time[3] === 'd' && b.time[3] === 'd')) {
-        if (Number(a.time.slice(0,2)) < Number(a.time.slice(0,2))) {
-          return -1;
-        } else if (Number(a.time.slice(0,2)) > Number(a.time.slice(0,2))) {
-          return 1;
-        } 
-      }
-    })
 
     // creating react elements for all allSharedPost
     var allPost = allSharedPost.map(function(post, key) {

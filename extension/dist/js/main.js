@@ -22452,23 +22452,74 @@ var React = require('react');
 var AnnotationLinkComment = require('./feed-friends-annotationlink-comments');
 
 var AnnotationLikeComment = React.createClass({displayName: "AnnotationLikeComment",
+  getInitialState: function() {
+    return {
+      liked: false,
+      likeCount: ''
+    };
+  },
   handleLikeClick: function() {
-    console.log('likeClick!');
-    // shange state to true and color image depending on what the current state is
-    
-    // make api call to server to change it there too.
+    console.log('likeClick!',this.state.likeCount );
+    if(this.state.liked){
+      var currentCount = this.state.likeCount;
+      currentCount--;
+      this.setState({liked: false});
+      this.setState({likeCount: currentCount});
+      // // make api call  
+      var uri = this.props.post.uriLink;
+      var user = window.localStorage.user_id;
+      var likeInfo = {
+        uri: uri,
+        user_id: this.props.post.userId,
+        follower_id: user,
+        likeToggle: false
+      };
+      console.log('WE ARE un LIKING IT');
+      $.ajax({
+        url: 'https://test2server.herokuapp.com/api/likes',
+        method: 'post',
+        data: likeInfo,
+        dataType: 'json'
+      });
+    } else {
+      var currentCount = this.state.likeCount;
+      currentCount++;
+      this.setState({liked: true});
+      this.setState({likeCount: currentCount});
+      // make api call
+      var uri = this.props.post.uriLink;
+      var user = window.localStorage.user_id;
+      var likeInfo = {
+        uri: uri,
+        user_id: this.props.post.userId,
+        follower_id: user,
+        likeToggle: true
+      };
+      console.log('WE ARE LIKING IT');
+      $.ajax({
+        url: 'https://test2server.herokuapp.com/api/likes',
+        method: 'post',
+        data: likeInfo,
+        dataType: 'json'
+      });
+    }
 
   },
   handleClick: function() {
     console.log('IT WAS CLICKED!', this.props);
     this.props.handleCommentClick();
   },
+  componentWillMount: function() {
+    console.log('PORPS COMMING IN', this.props.post.likes.length);
+    this.setState({liked: this.props.post.liked});
+    this.setState({likeCount: this.props.post.likes.length});
+  },
   render: function() {
     var THIS = this;
     return (
       React.createElement("div", {className: "post-likes-and-comments-container"}, 
         React.createElement("div", {className: "post-likes-container", onClick: THIS.handleLikeClick}, 
-          React.createElement("img", {src: chrome.extension.getURL('/assets/heart.png'), className: "heart-icon"}), "  ", this.props.post.likes.length
+          this.state.liked ? React.createElement("img", {src: chrome.extension.getURL('/assets/heart-red.png'), className: "heart-icon"}) : React.createElement("img", {src: chrome.extension.getURL('/assets/heart.png'), className: "heart-icon"}), "  ", this.state.likeCount
         ), 
 
         React.createElement("div", {className: "post-comments-button-container", onClick: THIS.handleClick}, 
@@ -22508,30 +22559,27 @@ var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLi
           var comments = article.commentsOnGeneralPost.map(function(comment, key) {
             return comment;
           });
-          console.log('COMMENTS!!', comments);
 
           var likes = article.likes.map(function(like, key) {
             return like;
           });
 
           // check if its liked by me
-          // if(likes.length >= 1){
-          //   var isLikedByMe = article.likes.reduce(function(previousValue, currId, i) {
-          //     console.log(currId.follower_id, userId, previousValue);
-          //     if(currId.follower_id === userId && previousValue.follower_id === false){
-          //       return true;
-          //     }
-          //   }, false);
-          //   console.log('is it liked!?', isLikedByMe);
-          // }
-          var currentTime = new Date();
+          var liked = false;
+          var myID = window.localStorage.user_id;
+          if(likes.length >= 1){
+            var isLikedByMe = article.likes.forEach(function(curr, i) {
+              if(curr.follower_id === myID){
+                liked = true;
+              }
+            });
+          }
 
+          var currentTime = new Date();
           var postMinute = Number(time.slice(8,10));
           var currentMinute = Number(currentTime.toUTCString().slice(20,22));
-
           var postHour = Number(time.slice(11, 13));
           var currentHour = Number(currentTime.toUTCString().slice(17,19));
-
           var postDate = Number(time.slice(8, 10));
           var currentDate = Number(currentTime.toUTCString().slice(5,7));
           var diff, message;
@@ -22560,30 +22608,12 @@ var FriendsAnnotationLink = React.createClass({displayName: "FriendsAnnotationLi
             isShared: isShared,
             time: message,
             comments: comments,
-            likes: likes
+            likes: likes,
+            liked: liked
           });
         }
       });
     });
-          debugger;
-
-    allSharedPost.sort(function(a,b) {
-      if (a.time[3] === 'm' && (b.time[3] === 'h' || b.time[3] === 'd')) {
-        return -1;
-      } else if (b.time[3] === 'm' && (a.time[3] === 'h' || a.time[3] === 'd')) {
-        return 1;
-      } else if (a.time[3] === 'h' && b.time[3] === 'd') {
-        return -1;
-      } else if (b.time[3] === 'd' && b.time[3] === 'd') {
-        return 1;
-      } else if((a.time[3] === 'm' && b.time[3] === 'm') || (a.time[3] === 'h' && b.time[3] === 'h') || (a.time[3] === 'd' && b.time[3] === 'd')) {
-        if (Number(a.time.slice(0,2)) < Number(a.time.slice(0,2))) {
-          return -1;
-        } else if (Number(a.time.slice(0,2)) > Number(a.time.slice(0,2))) {
-          return 1;
-        } 
-      }
-    })
 
     // creating react elements for all allSharedPost
     var allPost = allSharedPost.map(function(post, key) {
