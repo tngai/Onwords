@@ -29,7 +29,7 @@ var insertQueries = {
 					 "VALUES (" +
 					 		"(SELECT id FROM uri WHERE uri_link = '" + uri + "')," +
 							"(SELECT id FROM users_followers " +
-							  "WHERE user_id = " + user_id + " AND uf.follower_id = " + follower_id + ")" +
+							  "WHERE user_id = " + user_id + " AND follower_id = " + follower_id + ")" +
 					 ");";
 	},
 

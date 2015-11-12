@@ -22,8 +22,8 @@ var pg = require('pg');
 
 var Pg = Promise.promisifyAll(require('pg'))
 Promise.promisifyAll(pg.Client.prototype)
-
-var connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/onwords_backend_test';
+//postgres://localhost:5432/onwords_backend_test
+var connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/test1';
 
 var selectQueries = require('./db/queries/selectQueries.js'); 
 var insertQueries = require('./db/queries/insertQueries.js');
@@ -1076,7 +1076,48 @@ app.post('/api/comments', function(req,res) {
   var user_id = req.body.user_id;
   var follower_id = req.body.follower_id;
   var message = validator.escape(validator.toString(req.body.message));
-
+console.log('adding comments request handler ')
+  
+  var checkURIUserFollower = function (uri, user_id, follower_id) {
+    return new Promise(function(resolve,reject) {
+      pg.connect(connectionString,function(error,client,done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
+        }
+        client.query(checkQueries.checkURIUserFollower(uri, user_id, follower_id), function(err,result){
+          done();
+          if (err) {
+            console.error('Error in handling data within /api/comments ');
+            resolve(error);
+          }
+          else{
+            resolve(result.rows[0].exists)
+          } 
+        });    
+      });  
+    });
+  };
+  var insertURIUserFollower = function (uri, user_id, follower_id) {
+    return new Promise(function(resolve,reject) {
+      pg.connect(connectionString,function(error,client,done) {
+        if (error) {
+          console.error('Connection error: ', error);
+          reject(err);
+        }
+        client.query(insertQueries.insertURIUserFollower(uri, user_id, follower_id), function(err,result){
+          done();
+          if (err) {
+            console.error('Error in handling data within /api/comments ');
+            resolve(error);
+          }
+          else{
+            resolve(result.rows)
+          } 
+        });    
+      });  
+    });
+  };
   var insertComments =  function(uri,user_id,follower_id,message){
     return new Promise(function(resolve,reject){
       pg.connect(connectionString,function(error,client,done) {
@@ -1095,13 +1136,23 @@ app.post('/api/comments', function(req,res) {
       });  
     })
   };
-
-  insertComments(uri, user_id, follower_id, message)
-  .then(function(data){
-    res.set('Content-Type','application/JSON'); 
-    res.json(req.body);
-  })
+  checkURIUserFollower(uri, user_id, follower_id).then(function(data){
+    if (!data) {
+      insertURIUserFollower(uri, user_id, follower_id).then(function(data){
+        insertComments(uri, user_id, follower_id, message).then(function(){
+          res.set('Content-Type','application/JSON'); 
+          res.json(req.body);     
+        });  
+      });  
+    }
+    insertComments(uri, user_id, follower_id, message).then(function(){
+      res.set('Content-Type','application/JSON'); 
+      res.json(req.body);     
+    }); 
+  });  
 });
+
+
 
 app.post('/api/likes',function(req,res) {
   var uri = req.body.uri;

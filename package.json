@@ -54,6 +54,7 @@
     "reactify": "^1.1.1",
     "sinon": "^1.17.2",
     "sinon-chrome": "^0.2.1",
+    "validator": "^4.2.1",
     "vinyl-source-stream": "^1.1.0"
   },
   "devDependencies": {
